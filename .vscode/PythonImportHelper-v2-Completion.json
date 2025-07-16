@@ -8,6 +8,15 @@
         "documentation": {}
     },
     {
+        "label": "sqlalchemy",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
         "label": "engine_from_config",
         "importPath": "sqlalchemy",
         "description": "sqlalchemy",
@@ -24,11 +33,131 @@
         "documentation": {}
     },
     {
+        "label": "Column",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "ForeignKey",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "String",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "Table",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "DateTime",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "String",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "func",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "db",
+        "importPath": "app.core.common.database",
+        "description": "app.core.common.database",
+        "isExtraImport": true,
+        "detail": "app.core.common.database",
+        "documentation": {}
+    },
+    {
+        "label": "db",
+        "importPath": "app.core.common.database",
+        "description": "app.core.common.database",
+        "isExtraImport": true,
+        "detail": "app.core.common.database",
+        "documentation": {}
+    },
+    {
+        "label": "db",
+        "importPath": "app.core.common.database",
+        "description": "app.core.common.database",
+        "isExtraImport": true,
+        "detail": "app.core.common.database",
+        "documentation": {}
+    },
+    {
+        "label": "db",
+        "importPath": "app.core.common.database",
+        "description": "app.core.common.database",
+        "isExtraImport": true,
+        "detail": "app.core.common.database",
+        "documentation": {}
+    },
+    {
+        "label": "db",
+        "importPath": "app.core.common.database",
+        "description": "app.core.common.database",
+        "isExtraImport": true,
+        "detail": "app.core.common.database",
+        "documentation": {}
+    },
+    {
         "label": "context",
         "importPath": "alembic",
         "description": "alembic",
         "isExtraImport": true,
         "detail": "alembic",
+        "documentation": {}
+    },
+    {
+        "label": "*",
+        "importPath": "app.models.users",
+        "description": "app.models.users",
+        "isExtraImport": true,
+        "detail": "app.models.users",
+        "documentation": {}
+    },
+    {
+        "label": "*",
+        "importPath": "app.models.permissions",
+        "description": "app.models.permissions",
+        "isExtraImport": true,
+        "detail": "app.models.permissions",
+        "documentation": {}
+    },
+    {
+        "label": "*",
+        "importPath": "app.models.roles",
+        "description": "app.models.roles",
+        "isExtraImport": true,
+        "detail": "app.models.roles",
         "documentation": {}
     },
     {
@@ -64,6 +193,78 @@
         "documentation": {}
     },
     {
+        "label": "Mapped",
+        "importPath": "sqlalchemy.orm",
+        "description": "sqlalchemy.orm",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.orm",
+        "documentation": {}
+    },
+    {
+        "label": "mapped_column",
+        "importPath": "sqlalchemy.orm",
+        "description": "sqlalchemy.orm",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.orm",
+        "documentation": {}
+    },
+    {
+        "label": "relationship",
+        "importPath": "sqlalchemy.orm",
+        "description": "sqlalchemy.orm",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.orm",
+        "documentation": {}
+    },
+    {
+        "label": "Mapped",
+        "importPath": "sqlalchemy.orm",
+        "description": "sqlalchemy.orm",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.orm",
+        "documentation": {}
+    },
+    {
+        "label": "mapped_column",
+        "importPath": "sqlalchemy.orm",
+        "description": "sqlalchemy.orm",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.orm",
+        "documentation": {}
+    },
+    {
+        "label": "relationship",
+        "importPath": "sqlalchemy.orm",
+        "description": "sqlalchemy.orm",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.orm",
+        "documentation": {}
+    },
+    {
+        "label": "Mapped",
+        "importPath": "sqlalchemy.orm",
+        "description": "sqlalchemy.orm",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.orm",
+        "documentation": {}
+    },
+    {
+        "label": "mapped_column",
+        "importPath": "sqlalchemy.orm",
+        "description": "sqlalchemy.orm",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.orm",
+        "documentation": {}
+    },
+    {
+        "label": "relationship",
+        "importPath": "sqlalchemy.orm",
+        "description": "sqlalchemy.orm",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.orm",
+        "documentation": {}
+    },
+    {
         "label": "AsyncGenerator",
         "importPath": "typing",
         "description": "typing",
@@ -77,6 +278,14 @@
         "description": "app.core.common.setting",
         "isExtraImport": true,
         "detail": "app.core.common.setting",
+        "documentation": {}
+    },
+    {
+        "label": "BaseModel",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
         "documentation": {}
     },
     {
@@ -96,11 +305,84 @@
         "documentation": {}
     },
     {
+        "label": "uuid",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "uuid",
+        "description": "uuid",
+        "detail": "uuid",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "ROLE_PERMISSION_PIVOT",
+        "importPath": "app.models.association",
+        "description": "app.models.association",
+        "isExtraImport": true,
+        "detail": "app.models.association",
+        "documentation": {}
+    },
+    {
+        "label": "USER_PERMISSION_PIVOT",
+        "importPath": "app.models.association",
+        "description": "app.models.association",
+        "isExtraImport": true,
+        "detail": "app.models.association",
+        "documentation": {}
+    },
+    {
+        "label": "USER_ROLE_PIVOT",
+        "importPath": "app.models.association",
+        "description": "app.models.association",
+        "isExtraImport": true,
+        "detail": "app.models.association",
+        "documentation": {}
+    },
+    {
+        "label": "USER_PERMISSION_PIVOT",
+        "importPath": "app.models.association",
+        "description": "app.models.association",
+        "isExtraImport": true,
+        "detail": "app.models.association",
+        "documentation": {}
+    },
+    {
+        "label": "USER_ROLE_PIVOT",
+        "importPath": "app.models.association",
+        "description": "app.models.association",
+        "isExtraImport": true,
+        "detail": "app.models.association",
+        "documentation": {}
+    },
+    {
         "label": "run_migrations_offline",
         "kind": 2,
         "importPath": "alembic.env",
         "description": "alembic.env",
-        "peekOfCode": "def run_migrations_offline() -> None:\n    \"\"\"Run migrations in 'offline' mode.\n    This configures the context with just a URL\n    and not an Engine, though an Engine is acceptable\n    here as well.  By skipping the Engine creation\n    we don't even need a DBAPI to be available.\n    Calls to context.execute() here emit the given string to the\n    script output.\n    \"\"\"\n    url = config.get_main_option(\"sqlalchemy.url\")",
+        "peekOfCode": "def run_migrations_offline():\n    \"\"\"Run migrations in 'offline' mode.\"\"\"\n    url = db.engine.url.render_as_string(hide_password=False)\n    context.configure(\n        url=url,\n        target_metadata=target_metadata,\n        literal_binds=True,\n        dialect_opts={\"paramstyle\": \"named\"},\n    )\n    with context.begin_transaction():",
         "detail": "alembic.env",
         "documentation": {}
     },
@@ -109,7 +391,7 @@
         "kind": 2,
         "importPath": "alembic.env",
         "description": "alembic.env",
-        "peekOfCode": "def run_migrations_online() -> None:\n    \"\"\"Run migrations in 'online' mode.\n    In this scenario we need to create an Engine\n    and associate a connection with the context.\n    \"\"\"\n    connectable = engine_from_config(\n        config.get_section(config.config_ini_section, {}),\n        prefix=\"sqlalchemy.\",\n        poolclass=pool.NullPool,\n    )",
+        "peekOfCode": "def run_migrations_online():\n    \"\"\"Run migrations in 'online' mode with async.\"\"\"\n    from sqlalchemy.ext.asyncio import AsyncEngine\n    connectable = db.engine\n    if isinstance(connectable, AsyncEngine):\n        import asyncio\n        async def do_run_migrations(connection):\n            context.configure(\n                connection=connection,\n                target_metadata=target_metadata,",
         "detail": "alembic.env",
         "documentation": {}
     },
@@ -118,7 +400,7 @@
         "kind": 5,
         "importPath": "alembic.env",
         "description": "alembic.env",
-        "peekOfCode": "config = context.config\n# Interpret the config file for Python logging.\n# This line sets up loggers basically.\nif config.config_file_name is not None:\n    fileConfig(config.config_file_name)\n# add your model's MetaData object here\n# for 'autogenerate' support\n# from myapp import mymodel\n# target_metadata = mymodel.Base.metadata\ntarget_metadata = None",
+        "peekOfCode": "config = context.config\n# Interpret the config file for Python logging.\n# This line sets up loggers basically.\nif config.config_file_name is not None:\n    fileConfig(config.config_file_name)\n# add your model's MetaData object here\n# for 'autogenerate' support\n# from myapp import mymodel\n# target_metadata = db.Base.metadata\ntarget_metadata = db.Base.metadata",
         "detail": "alembic.env",
         "documentation": {}
     },
@@ -127,17 +409,8 @@
         "kind": 5,
         "importPath": "alembic.env",
         "description": "alembic.env",
-        "peekOfCode": "target_metadata = None\n# other values from the config, defined by the needs of env.py,\n# can be acquired:\n# my_important_option = config.get_main_option(\"my_important_option\")\n# ... etc.\ndef run_migrations_offline() -> None:\n    \"\"\"Run migrations in 'offline' mode.\n    This configures the context with just a URL\n    and not an Engine, though an Engine is acceptable\n    here as well.  By skipping the Engine creation",
+        "peekOfCode": "target_metadata = db.Base.metadata\n# other values from the config, defined by the needs of env.py,\n# can be acquired:\n# my_important_option = config.get_main_option(\"my_important_option\")\n# ... etc.\n# def run_migrations_offline() -> None:\n#     \"\"\"Run migrations in 'offline' mode.\n#     This configures the context with just a URL\n#     and not an Engine, though an Engine is acceptable\n#     here as well.  By skipping the Engine creation",
         "detail": "alembic.env",
-        "documentation": {}
-    },
-    {
-        "label": "AppService",
-        "kind": 6,
-        "importPath": "app.core.common.app_service",
-        "description": "app.core.common.app_service",
-        "peekOfCode": "class AppService:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age",
-        "detail": "app.core.common.app_service",
         "documentation": {}
     },
     {
@@ -159,6 +432,24 @@
         "documentation": {}
     },
     {
+        "label": "db",
+        "kind": 5,
+        "importPath": "app.core.common.database",
+        "description": "app.core.common.database",
+        "peekOfCode": "db = Database()",
+        "detail": "app.core.common.database",
+        "documentation": {}
+    },
+    {
+        "label": "BaseSchema",
+        "kind": 6,
+        "importPath": "app.core.common.schema",
+        "description": "app.core.common.schema",
+        "peekOfCode": "class BaseSchema(BaseModel):\n    pass",
+        "detail": "app.core.common.schema",
+        "documentation": {}
+    },
+    {
         "label": "Settings",
         "kind": 6,
         "importPath": "app.core.common.setting",
@@ -174,6 +465,60 @@
         "description": "app.core.common.setting",
         "peekOfCode": "def reload_settings():\n    load_dotenv(override=True)\n    return Settings()",
         "detail": "app.core.common.setting",
+        "documentation": {}
+    },
+    {
+        "label": "USER_ROLE_PIVOT",
+        "kind": 5,
+        "importPath": "app.models.association",
+        "description": "app.models.association",
+        "peekOfCode": "USER_ROLE_PIVOT = Table(\n    'user_role_association',\n    db.Base.metadata,\n    Column('id_user_role_association', String(36), primary_key=True, default=lambda: str(uuid.uuid4()), index=True),\n    Column('id_role', String(36), ForeignKey('role.id'), nullable=False),\n    Column('id_user', String(36), ForeignKey('user.id'), nullable=False)\n)\nROLE_PERMISSION_PIVOT = Table(\n    'permission_role_association',\n    db.Base.metadata,",
+        "detail": "app.models.association",
+        "documentation": {}
+    },
+    {
+        "label": "ROLE_PERMISSION_PIVOT",
+        "kind": 5,
+        "importPath": "app.models.association",
+        "description": "app.models.association",
+        "peekOfCode": "ROLE_PERMISSION_PIVOT = Table(\n    'permission_role_association',\n    db.Base.metadata,\n    Column('id_permission_role_association', String(36), primary_key=True, default=lambda: str(uuid.uuid4()), index=True),\n    Column('id_role', String(36), ForeignKey('role.id'), nullable=False),\n    Column('id_permission', String(36), ForeignKey('permission.id'), nullable=False)\n)\nUSER_PERMISSION_PIVOT = Table(\n    'user_permission_association',\n    db.Base.metadata,",
+        "detail": "app.models.association",
+        "documentation": {}
+    },
+    {
+        "label": "USER_PERMISSION_PIVOT",
+        "kind": 5,
+        "importPath": "app.models.association",
+        "description": "app.models.association",
+        "peekOfCode": "USER_PERMISSION_PIVOT = Table(\n    'user_permission_association',\n    db.Base.metadata,\n    Column('id_user_permission_association', String(36), primary_key=True, default=lambda: str(uuid.uuid4()), index=True),\n    Column('id_user', String(36), ForeignKey('user.id'), nullable=False),\n    Column('id_permission', String(36), ForeignKey('permission.id'), nullable=False)\n)",
+        "detail": "app.models.association",
+        "documentation": {}
+    },
+    {
+        "label": "Permission",
+        "kind": 6,
+        "importPath": "app.models.permissions",
+        "description": "app.models.permissions",
+        "peekOfCode": "class Permission(db.Base):\n    __tablename__ = \"permissions\"\n    id: Mapped[str] = mapped_column(\n        sqlalchemy.String(36),\n        primary_key=True, default=lambda: str(uuid.uuid4()),\n        unique=True, index=True\n    )\n    codename: Mapped[str] = mapped_column(nullable=False, unique=True, index=True)\n    categorie: Mapped[str] = mapped_column(nullable=False)\n    description: Mapped[str] = mapped_column(nullable=True)",
+        "detail": "app.models.permissions",
+        "documentation": {}
+    },
+    {
+        "label": "Role",
+        "kind": 6,
+        "importPath": "app.models.roles",
+        "description": "app.models.roles",
+        "peekOfCode": "class Role(db.Base):\n    __tablename__ = \"roles\"\n    id: Mapped[str] = mapped_column(\n        sqlalchemy.String(36),\n        primary_key=True, default=lambda: str(uuid.uuid4()),\n        unique=True, index=True\n    )\n    libelle: Mapped[str] = mapped_column(nullable=False, unique=True, index=True)\n    created_at = Mapped[datetime] = mapped_column(\n        sqlalchemy.DateTime(True),",
+        "detail": "app.models.roles",
+        "documentation": {}
+    },
+    {
+        "label": "User",
+        "kind": 6,
+        "importPath": "app.models.users",
+        "description": "app.models.users",
+        "peekOfCode": "class User(db.Base):\n    __tablename__ = \"users\"\n    id: Mapped[str] = mapped_column(\n        String(36),\n        primary_key=True, \n        default=lambda: str(uuid.uuid4()),\n        unique=True, \n        index=True\n    )\n    first_name: Mapped[str] = mapped_column(nullable=True)",
+        "detail": "app.models.users",
         "documentation": {}
     }
 ]

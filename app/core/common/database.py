@@ -17,3 +17,7 @@ class Database:
     async def get_db(self) -> AsyncGenerator[AsyncSession, None]:
         async with self.AsyncSessionLocal() as session:
             yield session
+
+
+# ✅ Instancie une DB globale
+db = Database()
