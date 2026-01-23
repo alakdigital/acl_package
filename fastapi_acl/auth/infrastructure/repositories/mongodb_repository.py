@@ -145,7 +145,7 @@ class MongoDBAuthRepository(IAuthRepository):
         )
 
         if result.matched_count == 0:
-            raise UserNotFoundError(f"{user.id}", f"Utilisateur non trouvé: {user.id}")
+            raise UserNotFoundError(f"Utilisateur non trouvé: {user.id}")
 
         logger.debug(f"Utilisateur mis à jour: {user.username}")
         return user
@@ -306,7 +306,7 @@ class MongoDBAuthRepository(IAuthRepository):
             True si l'ajout a réussi
         """
         result = await self._collection.update_one(
-            {"_id": str(user_id)},
+            {"_id": ObjectId(user_id)},
             {"$push": {field_name: value}}
         )
         return result.modified_count > 0
@@ -329,7 +329,7 @@ class MongoDBAuthRepository(IAuthRepository):
             True si la suppression a réussi
         """
         result = await self._collection.update_one(
-            {"_id": str(user_id)},
+            {"_id": ObjectId(user_id)},
             {"$pull": {field_name: value}}
         )
         return result.modified_count > 0
