@@ -5,7 +5,6 @@ Supporte les modèles personnalisés avec colonnes supplémentaires.
 """
 
 from typing import Optional, List, Type
-from uuid import UUID
 
 from sqlalchemy import select, func
 from sqlalchemy.exc import IntegrityError
@@ -94,8 +93,8 @@ class PostgreSQLAuthRepository(IAuthRepository):
                     "Un utilisateur avec ce username ou email existe déjà"
                 )
 
-    async def get_by_id(self, user_id: UUID) -> Optional[AuthUser]:
-        """Récupère un utilisateur par son ID."""
+    async def get_by_id(self, user_id: str) -> Optional[AuthUser]:
+        """Récupère un utilisateur par son ID (string UUID)."""
         async with self._db.session() as session:
             result = await session.execute(
                 select(self._model_class).where(self._model_class.id == user_id)
@@ -153,8 +152,8 @@ class PostgreSQLAuthRepository(IAuthRepository):
             logger.debug(f"Utilisateur mis à jour: {user.username}")
             return self._mapper.to_entity(model)
 
-    async def delete_user(self, user_id: UUID) -> bool:
-        """Supprime un utilisateur."""
+    async def delete_user(self, user_id: str) -> bool:
+        """Supprime un utilisateur par son ID (string UUID)."""
         async with self._db.session() as session:
             result = await session.execute(
                 select(self._model_class).where(self._model_class.id == user_id)

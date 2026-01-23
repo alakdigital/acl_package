@@ -9,11 +9,15 @@ from datetime import datetime
 from typing import Any, Dict, Type, Optional
 from uuid import uuid4
 
-from sqlalchemy import Column, String, Boolean, DateTime, JSON
-from sqlalchemy.dialects.postgresql import UUID as PG_UUID
+from sqlalchemy import Column, String, Boolean, DateTime, JSON, CHAR
 from sqlalchemy.orm import declared_attr
 
 from ....shared.database.postgresql import Base
+
+
+def generate_uuid_str() -> str:
+    """Génère un UUID sous forme de string."""
+    return str(uuid4())
 
 
 class SQLAuthUserModel(Base):
@@ -26,7 +30,7 @@ class SQLAuthUserModel(Base):
     des colonnes personnalisées.
 
     Attributes:
-        id: Identifiant unique UUID
+        id: Identifiant unique UUID (stocké en CHAR(36) pour compatibilité MySQL)
         username: Nom d'utilisateur unique
         email: Email unique
         hashed_password: Mot de passe hashé
@@ -62,10 +66,11 @@ class SQLAuthUserModel(Base):
     def __tablename__(cls) -> str:
         return getattr(cls, '_custom_tablename', 'acl_auth_users')
 
+    # UUID stocké en CHAR(36) pour compatibilité PostgreSQL et MySQL
     id = Column(
-        PG_UUID(as_uuid=True),
+        CHAR(36),
         primary_key=True,
-        default=uuid4,
+        default=generate_uuid_str,
         index=True,
     )
     username = Column(

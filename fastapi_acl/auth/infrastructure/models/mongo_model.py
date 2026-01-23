@@ -7,8 +7,8 @@ peut personnaliser en ajoutant ses propres champs.
 
 from datetime import datetime
 from typing import Any, Dict, Optional, Type
-from uuid import UUID, uuid4
 
+from bson import ObjectId
 from pydantic import BaseModel, Field, EmailStr, ConfigDict
 
 
@@ -20,7 +20,7 @@ class MongoAuthUserModel(BaseModel):
     des champs personnalisés.
 
     Attributes:
-        id: Identifiant unique UUID (stocké comme string dans MongoDB)
+        id: Identifiant unique (ObjectId généré par MongoDB, stocké comme string)
         username: Nom d'utilisateur unique
         email: Email unique
         hashed_password: Mot de passe hashé
@@ -51,14 +51,16 @@ class MongoAuthUserModel(BaseModel):
 
     model_config = ConfigDict(
         populate_by_name=True,
+        arbitrary_types_allowed=True,
         json_encoders={
-            UUID: str,
+            ObjectId: str,
             datetime: lambda v: v.isoformat(),
         },
         extra="allow",  # Permet les champs supplémentaires
     )
 
-    id: UUID = Field(default_factory=uuid4, alias="_id")
+    # _id est optionnel car MongoDB le génère automatiquement lors de l'insertion
+    id: Optional[str] = Field(default=None, alias="_id")
     username: str = Field(..., min_length=3, max_length=50)
     email: EmailStr
     hashed_password: str
@@ -70,18 +72,22 @@ class MongoAuthUserModel(BaseModel):
     last_login: Optional[datetime] = None
     extra_data: Dict[str, Any] = Field(default_factory=dict)
 
-    def to_mongo_dict(self) -> dict:
+    def to_mongo_dict(self, include_id: bool = False) -> dict:
         """
         Convertit le modèle en dictionnaire pour MongoDB.
 
         Inclut automatiquement les champs personnalisés.
 
+        Args:
+            include_id: Si True, inclut _id dans le dictionnaire
+
         Returns:
             Dictionnaire compatible MongoDB
         """
         data = self.model_dump(by_alias=True, exclude_none=False)
-        # Convertir l'UUID en string pour MongoDB
-        data["_id"] = str(data["_id"])
+        # Ne pas inclure _id lors de la création (MongoDB le génère)
+        if not include_id or data.get("_id") is None:
+            data.pop("_id", None)
         return data
 
     @classmethod
@@ -96,7 +102,8 @@ class MongoAuthUserModel(BaseModel):
             Instance du modèle
         """
         if "_id" in data:
-            data["_id"] = UUID(data["_id"]) if isinstance(data["_id"], str) else data["_id"]
+            # Convertir ObjectId en string
+            data["_id"] = str(data["_id"])
         return cls(**data)
 
     def get_extra_fields(self) -> Dict[str, Any]:

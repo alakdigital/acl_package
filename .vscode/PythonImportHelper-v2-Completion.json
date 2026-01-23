@@ -80,6 +80,38 @@
         "documentation": {}
     },
     {
+        "label": "Integer",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "Boolean",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "Column",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "String",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
         "label": "Boolean",
         "importPath": "sqlalchemy",
         "description": "sqlalchemy",
@@ -104,6 +136,14 @@
         "documentation": {}
     },
     {
+        "label": "CHAR",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
         "label": "select",
         "importPath": "sqlalchemy",
         "description": "sqlalchemy",
@@ -113,6 +153,102 @@
     },
     {
         "label": "func",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "Column",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "String",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "Boolean",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "DateTime",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "JSON",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "CHAR",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "Integer",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "Table",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "ForeignKey",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "select",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "func",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "delete",
         "importPath": "sqlalchemy",
         "description": "sqlalchemy",
         "isExtraImport": true,
@@ -411,6 +547,14 @@
         "documentation": {}
     },
     {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "List",
         "importPath": "typing",
         "description": "typing",
@@ -627,6 +771,22 @@
         "documentation": {}
     },
     {
+        "label": "Type",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "List",
         "importPath": "typing",
         "description": "typing",
@@ -676,6 +836,326 @@
     },
     {
         "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Type",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Union",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Type",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Type",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Type",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Type",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Type",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
         "importPath": "typing",
         "description": "typing",
         "isExtraImport": true,
@@ -883,6 +1363,22 @@
         "documentation": {}
     },
     {
+        "label": "Type",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "AsyncGenerator",
         "importPath": "typing",
         "description": "typing",
@@ -940,6 +1436,30 @@
     },
     {
         "label": "Depends",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "FastAPI",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "Depends",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "HTTPException",
         "importPath": "fastapi",
         "description": "fastapi",
         "isExtraImport": true,
@@ -1060,6 +1580,70 @@
     },
     {
         "label": "status",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "Depends",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "HTTPException",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "status",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "APIRouter",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "Depends",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "HTTPException",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "status",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "Query",
         "importPath": "fastapi",
         "description": "fastapi",
         "isExtraImport": true,
@@ -1203,6 +1787,22 @@
         "documentation": {}
     },
     {
+        "label": "declared_attr",
+        "importPath": "sqlalchemy.orm",
+        "description": "sqlalchemy.orm",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.orm",
+        "documentation": {}
+    },
+    {
+        "label": "relationship",
+        "importPath": "sqlalchemy.orm",
+        "description": "sqlalchemy.orm",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.orm",
+        "documentation": {}
+    },
+    {
         "label": "declarative_base",
         "importPath": "sqlalchemy.orm",
         "description": "sqlalchemy.orm",
@@ -1311,6 +1911,14 @@
         "documentation": {}
     },
     {
+        "label": "wraps",
+        "importPath": "functools",
+        "description": "functools",
+        "isExtraImport": true,
+        "detail": "functools",
+        "documentation": {}
+    },
+    {
         "label": "logging",
         "kind": 6,
         "isExtraImport": true,
@@ -1385,6 +1993,22 @@
         "documentation": {}
     },
     {
+        "label": "BaseModel",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "Field",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
         "label": "EmailStr",
         "importPath": "pydantic",
         "description": "pydantic",
@@ -1426,6 +2050,46 @@
     },
     {
         "label": "field_validator",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "BaseModel",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "Field",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "BaseModel",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "Field",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "ConfigDict",
         "importPath": "pydantic",
         "description": "pydantic",
         "isExtraImport": true,
@@ -1705,6 +2369,54 @@
         "documentation": {}
     },
     {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
         "label": "timedelta",
         "importPath": "datetime",
         "description": "datetime",
@@ -1873,6 +2585,30 @@
         "documentation": {}
     },
     {
+        "label": "ABC",
+        "importPath": "abc",
+        "description": "abc",
+        "isExtraImport": true,
+        "detail": "abc",
+        "documentation": {}
+    },
+    {
+        "label": "abstractmethod",
+        "importPath": "abc",
+        "description": "abc",
+        "isExtraImport": true,
+        "detail": "abc",
+        "documentation": {}
+    },
+    {
+        "label": "asynccontextmanager",
+        "importPath": "contextlib",
+        "description": "contextlib",
+        "isExtraImport": true,
+        "detail": "contextlib",
+        "documentation": {}
+    },
+    {
         "label": "asynccontextmanager",
         "importPath": "contextlib",
         "description": "contextlib",
@@ -1977,6 +2713,78 @@
         "documentation": {}
     },
     {
+        "label": "AuthUser",
+        "importPath": "fastapi_acl",
+        "description": "fastapi_acl",
+        "isExtraImport": true,
+        "detail": "fastapi_acl",
+        "documentation": {}
+    },
+    {
+        "label": "get_current_user",
+        "importPath": "fastapi_acl",
+        "description": "fastapi_acl",
+        "isExtraImport": true,
+        "detail": "fastapi_acl",
+        "documentation": {}
+    },
+    {
+        "label": "get_current_active_user",
+        "importPath": "fastapi_acl",
+        "description": "fastapi_acl",
+        "isExtraImport": true,
+        "detail": "fastapi_acl",
+        "documentation": {}
+    },
+    {
+        "label": "# Modèles extensibles\n    SQLAuthUserModel",
+        "importPath": "fastapi_acl",
+        "description": "fastapi_acl",
+        "isExtraImport": true,
+        "detail": "fastapi_acl",
+        "documentation": {}
+    },
+    {
+        "label": "create_user_model",
+        "importPath": "fastapi_acl",
+        "description": "fastapi_acl",
+        "isExtraImport": true,
+        "detail": "fastapi_acl",
+        "documentation": {}
+    },
+    {
+        "label": "MongoAuthUserModel",
+        "importPath": "fastapi_acl",
+        "description": "fastapi_acl",
+        "isExtraImport": true,
+        "detail": "fastapi_acl",
+        "documentation": {}
+    },
+    {
+        "label": "create_mongo_user_model",
+        "importPath": "fastapi_acl",
+        "description": "fastapi_acl",
+        "isExtraImport": true,
+        "detail": "fastapi_acl",
+        "documentation": {}
+    },
+    {
+        "label": "ACLManager",
+        "importPath": "fastapi_acl",
+        "description": "fastapi_acl",
+        "isExtraImport": true,
+        "detail": "fastapi_acl",
+        "documentation": {}
+    },
+    {
+        "label": "ACLConfig",
+        "importPath": "fastapi_acl",
+        "description": "fastapi_acl",
+        "isExtraImport": true,
+        "detail": "fastapi_acl",
+        "documentation": {}
+    },
+    {
         "label": "ACLManager",
         "importPath": "fastapi_acl",
         "description": "fastapi_acl",
@@ -2058,46 +2866,6 @@
         "documentation": {}
     },
     {
-        "label": "UUID",
-        "importPath": "uuid",
-        "description": "uuid",
-        "isExtraImport": true,
-        "detail": "uuid",
-        "documentation": {}
-    },
-    {
-        "label": "UUID",
-        "importPath": "uuid",
-        "description": "uuid",
-        "isExtraImport": true,
-        "detail": "uuid",
-        "documentation": {}
-    },
-    {
-        "label": "uuid4",
-        "importPath": "uuid",
-        "description": "uuid",
-        "isExtraImport": true,
-        "detail": "uuid",
-        "documentation": {}
-    },
-    {
-        "label": "UUID",
-        "importPath": "uuid",
-        "description": "uuid",
-        "isExtraImport": true,
-        "detail": "uuid",
-        "documentation": {}
-    },
-    {
-        "label": "UUID",
-        "importPath": "uuid",
-        "description": "uuid",
-        "isExtraImport": true,
-        "detail": "uuid",
-        "documentation": {}
-    },
-    {
         "label": "uuid4",
         "importPath": "uuid",
         "description": "uuid",
@@ -2146,7 +2914,7 @@
         "documentation": {}
     },
     {
-        "label": "UUID",
+        "label": "uuid4",
         "importPath": "uuid",
         "description": "uuid",
         "isExtraImport": true,
@@ -2154,7 +2922,7 @@
         "documentation": {}
     },
     {
-        "label": "UUID",
+        "label": "uuid4",
         "importPath": "uuid",
         "description": "uuid",
         "isExtraImport": true,
@@ -2242,6 +3010,22 @@
         "documentation": {}
     },
     {
+        "label": "field",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
+        "label": "dataclass",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
         "label": "re",
         "kind": 6,
         "isExtraImport": true,
@@ -2251,11 +3035,11 @@
         "documentation": {}
     },
     {
-        "label": "UUID",
-        "importPath": "sqlalchemy.dialects.postgresql",
-        "description": "sqlalchemy.dialects.postgresql",
+        "label": "ObjectId",
+        "importPath": "bson",
+        "description": "bson",
         "isExtraImport": true,
-        "detail": "sqlalchemy.dialects.postgresql",
+        "detail": "bson",
         "documentation": {}
     },
     {
@@ -2264,6 +3048,22 @@
         "description": "bson",
         "isExtraImport": true,
         "detail": "bson",
+        "documentation": {}
+    },
+    {
+        "label": "ObjectId",
+        "importPath": "bson",
+        "description": "bson",
+        "isExtraImport": true,
+        "detail": "bson",
+        "documentation": {}
+    },
+    {
+        "label": "IntegrityError",
+        "importPath": "sqlalchemy.exc",
+        "description": "sqlalchemy.exc",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.exc",
         "documentation": {}
     },
     {
@@ -3049,6 +3849,69 @@
         "documentation": {}
     },
     {
+        "label": "CustomUserModel",
+        "kind": 6,
+        "importPath": "examples.custom_fields_usage",
+        "description": "examples.custom_fields_usage",
+        "peekOfCode": "class CustomUserModel(SQLAuthUserModel):\n    \"\"\"\n    Modèle utilisateur personnalisé avec des colonnes supplémentaires.\n    Ces colonnes seront créées automatiquement dans la table.\n    \"\"\"\n    __tablename__ = \"users\"  # Nom personnalisé de la table\n    # Colonnes personnalisées\n    phone = Column(String(20), nullable=True)\n    company = Column(String(100), nullable=True)\n    department = Column(String(50), nullable=True)",
+        "detail": "examples.custom_fields_usage",
+        "documentation": {}
+    },
+    {
+        "label": "CustomMongoUserModel",
+        "kind": 6,
+        "importPath": "examples.custom_fields_usage",
+        "description": "examples.custom_fields_usage",
+        "peekOfCode": "class CustomMongoUserModel(MongoAuthUserModel):\n    \"\"\"\n    Modèle utilisateur MongoDB avec des champs supplémentaires.\n    Note: L'_id est généré automatiquement par MongoDB (ObjectId).\n    \"\"\"\n    phone: Optional[str] = Field(None, max_length=20)\n    company: Optional[str] = Field(None, max_length=100)\n    department: Optional[str] = Field(None, max_length=50)\n    employee_id: Optional[str] = Field(None, max_length=20)\n    age: Optional[int] = Field(None, ge=0, le=150)",
+        "detail": "examples.custom_fields_usage",
+        "documentation": {}
+    },
+    {
+        "label": "UserProfileUpdate",
+        "kind": 6,
+        "importPath": "examples.custom_fields_usage",
+        "description": "examples.custom_fields_usage",
+        "peekOfCode": "class UserProfileUpdate(BaseModel):\n    \"\"\"Schéma pour mettre à jour le profil utilisateur.\"\"\"\n    phone: Optional[str] = Field(None, max_length=20)\n    company: Optional[str] = Field(None, max_length=100)\n    department: Optional[str] = Field(None, max_length=50)\n    age: Optional[int] = Field(None, ge=0, le=150)\nclass UserProfileResponse(BaseModel):\n    \"\"\"Réponse avec les informations du profil.\"\"\"\n    id: str\n    username: str",
+        "detail": "examples.custom_fields_usage",
+        "documentation": {}
+    },
+    {
+        "label": "UserProfileResponse",
+        "kind": 6,
+        "importPath": "examples.custom_fields_usage",
+        "description": "examples.custom_fields_usage",
+        "peekOfCode": "class UserProfileResponse(BaseModel):\n    \"\"\"Réponse avec les informations du profil.\"\"\"\n    id: str\n    username: str\n    email: str\n    phone: Optional[str] = None\n    company: Optional[str] = None\n    department: Optional[str] = None\n    employee_id: Optional[str] = None\n    age: Optional[int] = None",
+        "detail": "examples.custom_fields_usage",
+        "documentation": {}
+    },
+    {
+        "label": "config",
+        "kind": 5,
+        "importPath": "examples.custom_fields_usage",
+        "description": "examples.custom_fields_usage",
+        "peekOfCode": "config = ACLConfig(\n    # PostgreSQL avec modèle personnalisé\n    database_type=\"postgresql\",\n    postgresql_uri=\"postgresql+asyncpg://postgres:password@localhost:5432/acl_db\",\n    users_table_name=\"users\",  # Doit correspondre à __tablename__\n    # Cache Redis\n    enable_cache=True,\n    redis_url=\"redis://localhost:6379/0\",\n    # JWT\n    jwt_secret_key=\"votre-cle-secrete-de-minimum-32-caracteres-ici\",",
+        "detail": "examples.custom_fields_usage",
+        "documentation": {}
+    },
+    {
+        "label": "app",
+        "kind": 5,
+        "importPath": "examples.custom_fields_usage",
+        "description": "examples.custom_fields_usage",
+        "peekOfCode": "app = FastAPI(\n    title=\"Application avec champs personnalisés\",\n    description=\"Exemple d'utilisation des champs personnalisés fastapi-acl\",\n    version=\"1.0.0\",\n    lifespan=lifespan,\n)\n# Initialisation avec le modèle personnalisé\nacl = ACLManager(\n    config=config,\n    app=app,",
+        "detail": "examples.custom_fields_usage",
+        "documentation": {}
+    },
+    {
+        "label": "acl",
+        "kind": 5,
+        "importPath": "examples.custom_fields_usage",
+        "description": "examples.custom_fields_usage",
+        "peekOfCode": "acl = ACLManager(\n    config=config,\n    app=app,\n    sql_user_model=CustomUserModel,  # Passer le modèle personnalisé\n    # mongo_user_model=CustomMongoUserModel,  # Pour MongoDB\n    # extra_user_indexes=[\"phone\", \"company\", \"employee_id\"],  # Index MongoDB\n)\n# ============================================\n# Schémas Pydantic pour les API\n# ============================================",
+        "detail": "examples.custom_fields_usage",
+        "documentation": {}
+    },
+    {
         "label": "config",
         "kind": 5,
         "importPath": "examples.env_config",
@@ -3188,7 +4051,16 @@
         "kind": 6,
         "importPath": "fastapi_acl.auth.domain.entities.auth_user",
         "description": "fastapi_acl.auth.domain.entities.auth_user",
-        "peekOfCode": "class AuthUser:\n    \"\"\"\n    Entité métier représentant un utilisateur authentifiable.\n    Cette entité est indépendante de la base de données et contient\n    uniquement la logique métier liée à l'authentification.\n    Le champ `extra_fields` permet au développeur d'ajouter des\n    attributs personnalisés qui seront persistés en base de données.\n    Attributes:\n        id: Identifiant unique de l'utilisateur\n        username: Nom d'utilisateur unique",
+        "peekOfCode": "class AuthUser:\n    \"\"\"\n    Entité métier représentant un utilisateur authentifiable.\n    Cette entité est indépendante de la base de données et contient\n    uniquement la logique métier liée à l'authentification.\n    Le champ `extra_fields` permet au développeur d'ajouter des\n    attributs personnalisés qui seront persistés en base de données.\n    Attributes:\n        id: Identifiant unique de l'utilisateur (string UUID)\n        username: Nom d'utilisateur unique",
+        "detail": "fastapi_acl.auth.domain.entities.auth_user",
+        "documentation": {}
+    },
+    {
+        "label": "generate_id",
+        "kind": 2,
+        "importPath": "fastapi_acl.auth.domain.entities.auth_user",
+        "description": "fastapi_acl.auth.domain.entities.auth_user",
+        "peekOfCode": "def generate_id() -> str:\n    \"\"\"Génère un ID unique sous forme de string UUID.\"\"\"\n    return str(uuid4())\n@dataclass\nclass AuthUser:\n    \"\"\"\n    Entité métier représentant un utilisateur authentifiable.\n    Cette entité est indépendante de la base de données et contient\n    uniquement la logique métier liée à l'authentification.\n    Le champ `extra_fields` permet au développeur d'ajouter des",
         "detail": "fastapi_acl.auth.domain.entities.auth_user",
         "documentation": {}
     },
@@ -3260,7 +4132,7 @@
         "kind": 6,
         "importPath": "fastapi_acl.auth.infrastructure.models.mongo_model",
         "description": "fastapi_acl.auth.infrastructure.models.mongo_model",
-        "peekOfCode": "class MongoAuthUserModel(BaseModel):\n    \"\"\"\n    Modèle Pydantic de base pour les documents utilisateurs MongoDB.\n    Ce modèle peut être étendu par le développeur pour ajouter\n    des champs personnalisés.\n    Attributes:\n        id: Identifiant unique UUID (stocké comme string dans MongoDB)\n        username: Nom d'utilisateur unique\n        email: Email unique\n        hashed_password: Mot de passe hashé",
+        "peekOfCode": "class MongoAuthUserModel(BaseModel):\n    \"\"\"\n    Modèle Pydantic de base pour les documents utilisateurs MongoDB.\n    Ce modèle peut être étendu par le développeur pour ajouter\n    des champs personnalisés.\n    Attributes:\n        id: Identifiant unique (ObjectId généré par MongoDB, stocké comme string)\n        username: Nom d'utilisateur unique\n        email: Email unique\n        hashed_password: Mot de passe hashé",
         "detail": "fastapi_acl.auth.infrastructure.models.mongo_model",
         "documentation": {}
     },
@@ -3278,7 +4150,16 @@
         "kind": 6,
         "importPath": "fastapi_acl.auth.infrastructure.models.sql_model",
         "description": "fastapi_acl.auth.infrastructure.models.sql_model",
-        "peekOfCode": "class SQLAuthUserModel(Base):\n    \"\"\"\n    Modèle SQLAlchemy de base pour la table des utilisateurs.\n    Compatible PostgreSQL et MySQL.\n    Ce modèle peut être étendu par le développeur pour ajouter\n    des colonnes personnalisées.\n    Attributes:\n        id: Identifiant unique UUID\n        username: Nom d'utilisateur unique\n        email: Email unique",
+        "peekOfCode": "class SQLAuthUserModel(Base):\n    \"\"\"\n    Modèle SQLAlchemy de base pour la table des utilisateurs.\n    Compatible PostgreSQL et MySQL.\n    Ce modèle peut être étendu par le développeur pour ajouter\n    des colonnes personnalisées.\n    Attributes:\n        id: Identifiant unique UUID (stocké en CHAR(36) pour compatibilité MySQL)\n        username: Nom d'utilisateur unique\n        email: Email unique",
+        "detail": "fastapi_acl.auth.infrastructure.models.sql_model",
+        "documentation": {}
+    },
+    {
+        "label": "generate_uuid_str",
+        "kind": 2,
+        "importPath": "fastapi_acl.auth.infrastructure.models.sql_model",
+        "description": "fastapi_acl.auth.infrastructure.models.sql_model",
+        "peekOfCode": "def generate_uuid_str() -> str:\n    \"\"\"Génère un UUID sous forme de string.\"\"\"\n    return str(uuid4())\nclass SQLAuthUserModel(Base):\n    \"\"\"\n    Modèle SQLAlchemy de base pour la table des utilisateurs.\n    Compatible PostgreSQL et MySQL.\n    Ce modèle peut être étendu par le développeur pour ajouter\n    des colonnes personnalisées.\n    Attributes:",
         "detail": "fastapi_acl.auth.infrastructure.models.sql_model",
         "documentation": {}
     },
@@ -3305,7 +4186,7 @@
         "kind": 6,
         "importPath": "fastapi_acl.auth.infrastructure.repositories.mysql_repository",
         "description": "fastapi_acl.auth.infrastructure.repositories.mysql_repository",
-        "peekOfCode": "class MySQLAuthRepository(PostgreSQLAuthRepository):\n    \"\"\"\n    Implémentation du repository d'authentification pour MySQL.\n    Hérite de PostgreSQLAuthRepository car les deux utilisent SQLAlchemy\n    avec la même syntaxe.\n    Attributes:\n        db: Instance de connexion MySQL\n    \"\"\"\n    def __init__(self, db: MySQLDatabase):\n        \"\"\"",
+        "peekOfCode": "class MySQLAuthRepository(PostgreSQLAuthRepository):\n    \"\"\"\n    Implémentation du repository d'authentification pour MySQL.\n    Hérite de PostgreSQLAuthRepository car les deux utilisent SQLAlchemy\n    avec la même syntaxe.\n    Supporte les modèles utilisateur personnalisés avec colonnes supplémentaires.\n    Attributes:\n        db: Instance de connexion MySQL\n        model_class: Classe du modèle utilisateur (par défaut ou personnalisée)\n        mapper: Instance du mapper",
         "detail": "fastapi_acl.auth.infrastructure.repositories.mysql_repository",
         "documentation": {}
     },
@@ -3505,6 +4386,474 @@
         "description": "fastapi_acl.auth.interface.schemas",
         "peekOfCode": "class UpdateUserRequest(BaseModel):\n    \"\"\"Schéma de requête pour mettre à jour un utilisateur.\"\"\"\n    username: Optional[str] = Field(\n        None,\n        min_length=3,\n        max_length=50,\n        description=\"Nouveau nom d'utilisateur\",\n    )\n    email: Optional[EmailStr] = Field(\n        None,",
         "detail": "fastapi_acl.auth.interface.schemas",
+        "documentation": {}
+    },
+    {
+        "label": "IRoleRepository",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.application.interface.role_repository",
+        "description": "fastapi_acl.roles.application.interface.role_repository",
+        "peekOfCode": "class IRoleRepository(ABC):\n    \"\"\"\n    Interface abstraite pour le repository des rôles.\n    Définit le contrat que chaque implémentation de repository\n    (MongoDB, PostgreSQL, MySQL) doit respecter.\n    \"\"\"\n    # ==========================================\n    # CRUD Rôles\n    # ==========================================\n    @abstractmethod",
+        "detail": "fastapi_acl.roles.application.interface.role_repository",
+        "documentation": {}
+    },
+    {
+        "label": "CreateRoleUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.application.usecases.role_usecases",
+        "description": "fastapi_acl.roles.application.usecases.role_usecases",
+        "peekOfCode": "class CreateRoleUseCase:\n    \"\"\"Use case pour créer un nouveau rôle.\"\"\"\n    def __init__(self, role_repository: IRoleRepository):\n        self._role_repository = role_repository\n    async def execute(self, dto: CreateRoleDTO) -> Role:\n        \"\"\"\n        Crée un nouveau rôle.\n        Args:\n            dto: Données du rôle à créer\n        Returns:",
+        "detail": "fastapi_acl.roles.application.usecases.role_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "UpdateRoleUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.application.usecases.role_usecases",
+        "description": "fastapi_acl.roles.application.usecases.role_usecases",
+        "peekOfCode": "class UpdateRoleUseCase:\n    \"\"\"Use case pour mettre à jour un rôle.\"\"\"\n    def __init__(self, role_repository: IRoleRepository):\n        self._role_repository = role_repository\n    async def execute(self, role_id: str, dto: UpdateRoleDTO) -> Role:\n        \"\"\"\n        Met à jour un rôle.\n        Args:\n            role_id: ID du rôle\n            dto: Données à mettre à jour",
+        "detail": "fastapi_acl.roles.application.usecases.role_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "DeleteRoleUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.application.usecases.role_usecases",
+        "description": "fastapi_acl.roles.application.usecases.role_usecases",
+        "peekOfCode": "class DeleteRoleUseCase:\n    \"\"\"Use case pour supprimer un rôle.\"\"\"\n    def __init__(self, role_repository: IRoleRepository):\n        self._role_repository = role_repository\n    async def execute(self, role_id: str) -> bool:\n        \"\"\"\n        Supprime un rôle.\n        Args:\n            role_id: ID du rôle\n        Returns:",
+        "detail": "fastapi_acl.roles.application.usecases.role_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "GetRoleUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.application.usecases.role_usecases",
+        "description": "fastapi_acl.roles.application.usecases.role_usecases",
+        "peekOfCode": "class GetRoleUseCase:\n    \"\"\"Use case pour récupérer un rôle.\"\"\"\n    def __init__(self, role_repository: IRoleRepository):\n        self._role_repository = role_repository\n    async def execute_by_id(self, role_id: str) -> Optional[Role]:\n        \"\"\"Récupère un rôle par son ID.\"\"\"\n        return await self._role_repository.get_by_id(role_id)\n    async def execute_by_name(self, name: str) -> Optional[Role]:\n        \"\"\"Récupère un rôle par son nom.\"\"\"\n        return await self._role_repository.get_by_name(name)",
+        "detail": "fastapi_acl.roles.application.usecases.role_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "ListRolesUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.application.usecases.role_usecases",
+        "description": "fastapi_acl.roles.application.usecases.role_usecases",
+        "peekOfCode": "class ListRolesUseCase:\n    \"\"\"Use case pour lister les rôles.\"\"\"\n    def __init__(self, role_repository: IRoleRepository):\n        self._role_repository = role_repository\n    async def execute(\n        self,\n        skip: int = 0,\n        limit: int = 100,\n        is_active: Optional[bool] = None,\n    ) -> tuple[List[Role], int]:",
+        "detail": "fastapi_acl.roles.application.usecases.role_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "AssignRoleUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.application.usecases.role_usecases",
+        "description": "fastapi_acl.roles.application.usecases.role_usecases",
+        "peekOfCode": "class AssignRoleUseCase:\n    \"\"\"Use case pour assigner un rôle à un utilisateur.\"\"\"\n    def __init__(self, role_repository: IRoleRepository):\n        self._role_repository = role_repository\n    async def execute(self, user_id: str, role_id: str) -> bool:\n        \"\"\"\n        Assigne un rôle à un utilisateur.\n        Args:\n            user_id: ID de l'utilisateur\n            role_id: ID du rôle",
+        "detail": "fastapi_acl.roles.application.usecases.role_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "RemoveRoleUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.application.usecases.role_usecases",
+        "description": "fastapi_acl.roles.application.usecases.role_usecases",
+        "peekOfCode": "class RemoveRoleUseCase:\n    \"\"\"Use case pour retirer un rôle d'un utilisateur.\"\"\"\n    def __init__(self, role_repository: IRoleRepository):\n        self._role_repository = role_repository\n    async def execute(self, user_id: str, role_id: str) -> bool:\n        \"\"\"\n        Retire un rôle d'un utilisateur.\n        Args:\n            user_id: ID de l'utilisateur\n            role_id: ID du rôle",
+        "detail": "fastapi_acl.roles.application.usecases.role_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "GetUserRolesUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.application.usecases.role_usecases",
+        "description": "fastapi_acl.roles.application.usecases.role_usecases",
+        "peekOfCode": "class GetUserRolesUseCase:\n    \"\"\"Use case pour récupérer les rôles d'un utilisateur.\"\"\"\n    def __init__(self, role_repository: IRoleRepository):\n        self._role_repository = role_repository\n    async def execute(self, user_id: str) -> List[Role]:\n        \"\"\"\n        Récupère les rôles d'un utilisateur.\n        Args:\n            user_id: ID de l'utilisateur\n        Returns:",
+        "detail": "fastapi_acl.roles.application.usecases.role_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "GetUserPermissionsUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.application.usecases.role_usecases",
+        "description": "fastapi_acl.roles.application.usecases.role_usecases",
+        "peekOfCode": "class GetUserPermissionsUseCase:\n    \"\"\"Use case pour récupérer les permissions d'un utilisateur.\"\"\"\n    def __init__(self, role_repository: IRoleRepository):\n        self._role_repository = role_repository\n    async def execute(self, user_id: str) -> List[str]:\n        \"\"\"\n        Récupère toutes les permissions d'un utilisateur.\n        Args:\n            user_id: ID de l'utilisateur\n        Returns:",
+        "detail": "fastapi_acl.roles.application.usecases.role_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "CheckPermissionUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.application.usecases.role_usecases",
+        "description": "fastapi_acl.roles.application.usecases.role_usecases",
+        "peekOfCode": "class CheckPermissionUseCase:\n    \"\"\"Use case pour vérifier si un utilisateur a une permission.\"\"\"\n    def __init__(self, role_repository: IRoleRepository):\n        self._role_repository = role_repository\n    async def execute(self, user_id: str, permission: str) -> bool:\n        \"\"\"\n        Vérifie si un utilisateur a une permission.\n        Args:\n            user_id: ID de l'utilisateur\n            permission: Permission à vérifier",
+        "detail": "fastapi_acl.roles.application.usecases.role_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "CheckRoleUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.application.usecases.role_usecases",
+        "description": "fastapi_acl.roles.application.usecases.role_usecases",
+        "peekOfCode": "class CheckRoleUseCase:\n    \"\"\"Use case pour vérifier si un utilisateur a un rôle.\"\"\"\n    def __init__(self, role_repository: IRoleRepository):\n        self._role_repository = role_repository\n    async def execute(self, user_id: str, role_id: str) -> bool:\n        \"\"\"Vérifie si un utilisateur a un rôle par ID.\"\"\"\n        return await self._role_repository.user_has_role(user_id, role_id)\n    async def execute_by_name(self, user_id: str, role_name: str) -> bool:\n        \"\"\"Vérifie si un utilisateur a un rôle par nom.\"\"\"\n        return await self._role_repository.user_has_role_by_name(user_id, role_name)",
+        "detail": "fastapi_acl.roles.application.usecases.role_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "SetUserRolesUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.application.usecases.role_usecases",
+        "description": "fastapi_acl.roles.application.usecases.role_usecases",
+        "peekOfCode": "class SetUserRolesUseCase:\n    \"\"\"Use case pour définir la liste complète des rôles d'un utilisateur.\"\"\"\n    def __init__(self, role_repository: IRoleRepository):\n        self._role_repository = role_repository\n    async def execute(self, user_id: str, role_ids: List[str]) -> bool:\n        \"\"\"\n        Définit tous les rôles d'un utilisateur.\n        Args:\n            user_id: ID de l'utilisateur\n            role_ids: Liste des IDs de rôles",
+        "detail": "fastapi_acl.roles.application.usecases.role_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "AssignDefaultRolesUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.application.usecases.role_usecases",
+        "description": "fastapi_acl.roles.application.usecases.role_usecases",
+        "peekOfCode": "class AssignDefaultRolesUseCase:\n    \"\"\"Use case pour assigner les rôles par défaut à un nouvel utilisateur.\"\"\"\n    def __init__(self, role_repository: IRoleRepository):\n        self._role_repository = role_repository\n    async def execute(self, user_id: str) -> List[Role]:\n        \"\"\"\n        Assigne les rôles par défaut à un utilisateur.\n        Args:\n            user_id: ID de l'utilisateur\n        Returns:",
+        "detail": "fastapi_acl.roles.application.usecases.role_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "CreateRoleDTO",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.domain.dtos.role_dto",
+        "description": "fastapi_acl.roles.domain.dtos.role_dto",
+        "peekOfCode": "class CreateRoleDTO(BaseModel):\n    \"\"\"DTO pour créer un nouveau rôle.\"\"\"\n    name: str = Field(..., min_length=2, max_length=50, description=\"Nom unique du rôle\")\n    display_name: Optional[str] = Field(None, max_length=100, description=\"Nom d'affichage\")\n    description: Optional[str] = Field(None, max_length=500, description=\"Description du rôle\")\n    permissions: List[str] = Field(default_factory=list, description=\"Liste des permissions\")\n    is_default: bool = Field(False, description=\"Rôle par défaut pour les nouveaux utilisateurs\")\n    priority: int = Field(0, ge=0, description=\"Priorité du rôle\")\n    metadata: Dict[str, Any] = Field(default_factory=dict, description=\"Métadonnées\")\n    model_config = {",
+        "detail": "fastapi_acl.roles.domain.dtos.role_dto",
+        "documentation": {}
+    },
+    {
+        "label": "UpdateRoleDTO",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.domain.dtos.role_dto",
+        "description": "fastapi_acl.roles.domain.dtos.role_dto",
+        "peekOfCode": "class UpdateRoleDTO(BaseModel):\n    \"\"\"DTO pour mettre à jour un rôle.\"\"\"\n    display_name: Optional[str] = Field(None, max_length=100)\n    description: Optional[str] = Field(None, max_length=500)\n    permissions: Optional[List[str]] = None\n    is_active: Optional[bool] = None\n    is_default: Optional[bool] = None\n    priority: Optional[int] = Field(None, ge=0)\n    metadata: Optional[Dict[str, Any]] = None\n    model_config = {",
+        "detail": "fastapi_acl.roles.domain.dtos.role_dto",
+        "documentation": {}
+    },
+    {
+        "label": "RoleResponseDTO",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.domain.dtos.role_dto",
+        "description": "fastapi_acl.roles.domain.dtos.role_dto",
+        "peekOfCode": "class RoleResponseDTO(BaseModel):\n    \"\"\"DTO pour la réponse d'un rôle.\"\"\"\n    id: str\n    name: str\n    display_name: str\n    description: Optional[str] = None\n    permissions: List[str]\n    is_active: bool\n    is_default: bool\n    is_system: bool",
+        "detail": "fastapi_acl.roles.domain.dtos.role_dto",
+        "documentation": {}
+    },
+    {
+        "label": "RoleListResponseDTO",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.domain.dtos.role_dto",
+        "description": "fastapi_acl.roles.domain.dtos.role_dto",
+        "peekOfCode": "class RoleListResponseDTO(BaseModel):\n    \"\"\"DTO pour la liste des rôles avec pagination.\"\"\"\n    items: List[RoleResponseDTO]\n    total: int\n    skip: int\n    limit: int\nclass AssignRoleDTO(BaseModel):\n    \"\"\"DTO pour assigner/retirer un rôle à un utilisateur.\"\"\"\n    user_id: str = Field(..., description=\"ID de l'utilisateur\")\n    role_id: str = Field(..., description=\"ID du rôle\")",
+        "detail": "fastapi_acl.roles.domain.dtos.role_dto",
+        "documentation": {}
+    },
+    {
+        "label": "AssignRoleDTO",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.domain.dtos.role_dto",
+        "description": "fastapi_acl.roles.domain.dtos.role_dto",
+        "peekOfCode": "class AssignRoleDTO(BaseModel):\n    \"\"\"DTO pour assigner/retirer un rôle à un utilisateur.\"\"\"\n    user_id: str = Field(..., description=\"ID de l'utilisateur\")\n    role_id: str = Field(..., description=\"ID du rôle\")\n    model_config = {\n        \"json_schema_extra\": {\n            \"example\": {\n                \"user_id\": \"550e8400-e29b-41d4-a716-446655440001\",\n                \"role_id\": \"550e8400-e29b-41d4-a716-446655440000\",\n            }",
+        "detail": "fastapi_acl.roles.domain.dtos.role_dto",
+        "documentation": {}
+    },
+    {
+        "label": "AssignRolesDTO",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.domain.dtos.role_dto",
+        "description": "fastapi_acl.roles.domain.dtos.role_dto",
+        "peekOfCode": "class AssignRolesDTO(BaseModel):\n    \"\"\"DTO pour assigner plusieurs rôles à un utilisateur.\"\"\"\n    user_id: str = Field(..., description=\"ID de l'utilisateur\")\n    role_ids: List[str] = Field(..., description=\"Liste des IDs de rôles\")\nclass UserRolesResponseDTO(BaseModel):\n    \"\"\"DTO pour la réponse des rôles d'un utilisateur.\"\"\"\n    user_id: str\n    roles: List[RoleResponseDTO]\n    all_permissions: List[str] = Field(\n        default_factory=list,",
+        "detail": "fastapi_acl.roles.domain.dtos.role_dto",
+        "documentation": {}
+    },
+    {
+        "label": "UserRolesResponseDTO",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.domain.dtos.role_dto",
+        "description": "fastapi_acl.roles.domain.dtos.role_dto",
+        "peekOfCode": "class UserRolesResponseDTO(BaseModel):\n    \"\"\"DTO pour la réponse des rôles d'un utilisateur.\"\"\"\n    user_id: str\n    roles: List[RoleResponseDTO]\n    all_permissions: List[str] = Field(\n        default_factory=list,\n        description=\"Toutes les permissions de l'utilisateur (cumulées de tous ses rôles)\",\n    )\nclass AddPermissionDTO(BaseModel):\n    \"\"\"DTO pour ajouter une permission à un rôle.\"\"\"",
+        "detail": "fastapi_acl.roles.domain.dtos.role_dto",
+        "documentation": {}
+    },
+    {
+        "label": "AddPermissionDTO",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.domain.dtos.role_dto",
+        "description": "fastapi_acl.roles.domain.dtos.role_dto",
+        "peekOfCode": "class AddPermissionDTO(BaseModel):\n    \"\"\"DTO pour ajouter une permission à un rôle.\"\"\"\n    permission: str = Field(..., min_length=1, max_length=100, description=\"Permission à ajouter\")\n    model_config = {\n        \"json_schema_extra\": {\n            \"example\": {\n                \"permission\": \"users:delete\",\n            }\n        }\n    }",
+        "detail": "fastapi_acl.roles.domain.dtos.role_dto",
+        "documentation": {}
+    },
+    {
+        "label": "RemovePermissionDTO",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.domain.dtos.role_dto",
+        "description": "fastapi_acl.roles.domain.dtos.role_dto",
+        "peekOfCode": "class RemovePermissionDTO(BaseModel):\n    \"\"\"DTO pour retirer une permission d'un rôle.\"\"\"\n    permission: str = Field(..., min_length=1, max_length=100, description=\"Permission à retirer\")",
+        "detail": "fastapi_acl.roles.domain.dtos.role_dto",
+        "documentation": {}
+    },
+    {
+        "label": "Role",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.domain.entities.role",
+        "description": "fastapi_acl.roles.domain.entities.role",
+        "peekOfCode": "class Role:\n    \"\"\"\n    Entité métier représentant un rôle.\n    Un rôle permet de regrouper des permissions et de les attribuer\n    à des utilisateurs.\n    Attributes:\n        id: Identifiant unique du rôle (string)\n        name: Nom unique du rôle (ex: \"admin\", \"moderator\")\n        display_name: Nom d'affichage du rôle\n        description: Description du rôle",
+        "detail": "fastapi_acl.roles.domain.entities.role",
+        "documentation": {}
+    },
+    {
+        "label": "generate_id",
+        "kind": 2,
+        "importPath": "fastapi_acl.roles.domain.entities.role",
+        "description": "fastapi_acl.roles.domain.entities.role",
+        "peekOfCode": "def generate_id() -> str:\n    \"\"\"Génère un ID unique sous forme de string UUID.\"\"\"\n    return str(uuid4())\n@dataclass\nclass Role:\n    \"\"\"\n    Entité métier représentant un rôle.\n    Un rôle permet de regrouper des permissions et de les attribuer\n    à des utilisateurs.\n    Attributes:",
+        "detail": "fastapi_acl.roles.domain.entities.role",
+        "documentation": {}
+    },
+    {
+        "label": "RoleMapper",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.infrastructure.mappers.role_mapper",
+        "description": "fastapi_acl.roles.infrastructure.mappers.role_mapper",
+        "peekOfCode": "class RoleMapper:\n    \"\"\"\n    Mapper pour convertir entre l'entité Role et les modèles DB.\n    Assure la séparation entre la couche domaine et l'infrastructure.\n    \"\"\"\n    STANDARD_FIELDS = {\n        'id', '_id', 'name', 'display_name', 'description', 'permissions',\n        'is_active', 'is_default', 'is_system', 'priority',\n        'created_at', 'updated_at', 'metadata', 'metadata_'\n    }",
+        "detail": "fastapi_acl.roles.infrastructure.mappers.role_mapper",
+        "documentation": {}
+    },
+    {
+        "label": "to_entity",
+        "kind": 2,
+        "importPath": "fastapi_acl.roles.infrastructure.mappers.role_mapper",
+        "description": "fastapi_acl.roles.infrastructure.mappers.role_mapper",
+        "peekOfCode": "def to_entity(model: Union[SQLRoleModel, MongoRoleModel, dict]) -> Role:\n    \"\"\"Fonction de compatibilité - utilise le mapper par défaut.\"\"\"\n    return _default_mapper.to_entity(model)\ndef to_sql_model(entity: Role) -> SQLRoleModel:\n    \"\"\"Fonction de compatibilité - utilise le mapper par défaut.\"\"\"\n    return _default_mapper.to_sql_model(entity)\ndef to_mongo_model(entity: Role) -> MongoRoleModel:\n    \"\"\"Fonction de compatibilité - utilise le mapper par défaut.\"\"\"\n    return _default_mapper.to_mongo_model(entity)\ndef to_mongo_dict(entity: Role) -> dict:",
+        "detail": "fastapi_acl.roles.infrastructure.mappers.role_mapper",
+        "documentation": {}
+    },
+    {
+        "label": "to_sql_model",
+        "kind": 2,
+        "importPath": "fastapi_acl.roles.infrastructure.mappers.role_mapper",
+        "description": "fastapi_acl.roles.infrastructure.mappers.role_mapper",
+        "peekOfCode": "def to_sql_model(entity: Role) -> SQLRoleModel:\n    \"\"\"Fonction de compatibilité - utilise le mapper par défaut.\"\"\"\n    return _default_mapper.to_sql_model(entity)\ndef to_mongo_model(entity: Role) -> MongoRoleModel:\n    \"\"\"Fonction de compatibilité - utilise le mapper par défaut.\"\"\"\n    return _default_mapper.to_mongo_model(entity)\ndef to_mongo_dict(entity: Role) -> dict:\n    \"\"\"Fonction de compatibilité - utilise le mapper par défaut.\"\"\"\n    return _default_mapper.to_mongo_dict(entity)",
+        "detail": "fastapi_acl.roles.infrastructure.mappers.role_mapper",
+        "documentation": {}
+    },
+    {
+        "label": "to_mongo_model",
+        "kind": 2,
+        "importPath": "fastapi_acl.roles.infrastructure.mappers.role_mapper",
+        "description": "fastapi_acl.roles.infrastructure.mappers.role_mapper",
+        "peekOfCode": "def to_mongo_model(entity: Role) -> MongoRoleModel:\n    \"\"\"Fonction de compatibilité - utilise le mapper par défaut.\"\"\"\n    return _default_mapper.to_mongo_model(entity)\ndef to_mongo_dict(entity: Role) -> dict:\n    \"\"\"Fonction de compatibilité - utilise le mapper par défaut.\"\"\"\n    return _default_mapper.to_mongo_dict(entity)",
+        "detail": "fastapi_acl.roles.infrastructure.mappers.role_mapper",
+        "documentation": {}
+    },
+    {
+        "label": "to_mongo_dict",
+        "kind": 2,
+        "importPath": "fastapi_acl.roles.infrastructure.mappers.role_mapper",
+        "description": "fastapi_acl.roles.infrastructure.mappers.role_mapper",
+        "peekOfCode": "def to_mongo_dict(entity: Role) -> dict:\n    \"\"\"Fonction de compatibilité - utilise le mapper par défaut.\"\"\"\n    return _default_mapper.to_mongo_dict(entity)",
+        "detail": "fastapi_acl.roles.infrastructure.mappers.role_mapper",
+        "documentation": {}
+    },
+    {
+        "label": "_default_mapper",
+        "kind": 5,
+        "importPath": "fastapi_acl.roles.infrastructure.mappers.role_mapper",
+        "description": "fastapi_acl.roles.infrastructure.mappers.role_mapper",
+        "peekOfCode": "_default_mapper = RoleMapper()\ndef to_entity(model: Union[SQLRoleModel, MongoRoleModel, dict]) -> Role:\n    \"\"\"Fonction de compatibilité - utilise le mapper par défaut.\"\"\"\n    return _default_mapper.to_entity(model)\ndef to_sql_model(entity: Role) -> SQLRoleModel:\n    \"\"\"Fonction de compatibilité - utilise le mapper par défaut.\"\"\"\n    return _default_mapper.to_sql_model(entity)\ndef to_mongo_model(entity: Role) -> MongoRoleModel:\n    \"\"\"Fonction de compatibilité - utilise le mapper par défaut.\"\"\"\n    return _default_mapper.to_mongo_model(entity)",
+        "detail": "fastapi_acl.roles.infrastructure.mappers.role_mapper",
+        "documentation": {}
+    },
+    {
+        "label": "MongoRoleModel",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.infrastructure.models.mongo_model",
+        "description": "fastapi_acl.roles.infrastructure.models.mongo_model",
+        "peekOfCode": "class MongoRoleModel(BaseModel):\n    \"\"\"\n    Modèle Pydantic pour les documents rôles MongoDB.\n    Attributes:\n        id: Identifiant unique (ObjectId généré par MongoDB)\n        name: Nom unique du rôle\n        display_name: Nom d'affichage\n        description: Description du rôle\n        permissions: Liste des permissions\n        is_active: Rôle actif",
+        "detail": "fastapi_acl.roles.infrastructure.models.mongo_model",
+        "documentation": {}
+    },
+    {
+        "label": "MongoUserRoleModel",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.infrastructure.models.mongo_model",
+        "description": "fastapi_acl.roles.infrastructure.models.mongo_model",
+        "peekOfCode": "class MongoUserRoleModel(BaseModel):\n    \"\"\"\n    Modèle pour les associations user-role dans MongoDB.\n    Stocké dans une collection séparée ou embedded dans les utilisateurs.\n    \"\"\"\n    model_config = ConfigDict(\n        populate_by_name=True,\n    )\n    id: Optional[str] = Field(default=None, alias=\"_id\")\n    user_id: str",
+        "detail": "fastapi_acl.roles.infrastructure.models.mongo_model",
+        "documentation": {}
+    },
+    {
+        "label": "create_mongo_role_model",
+        "kind": 2,
+        "importPath": "fastapi_acl.roles.infrastructure.models.mongo_model",
+        "description": "fastapi_acl.roles.infrastructure.models.mongo_model",
+        "peekOfCode": "def create_mongo_role_model(\n    extra_fields: Optional[Dict[str, tuple]] = None,\n    model_name: str = \"CustomMongoRoleModel\",\n) -> Type[MongoRoleModel]:\n    \"\"\"\n    Factory pour créer un modèle MongoDB personnalisé dynamiquement.\n    Args:\n        extra_fields: Dictionnaire {nom: (type, Field())} des champs à ajouter\n        model_name: Nom de la classe générée\n    Returns:",
+        "detail": "fastapi_acl.roles.infrastructure.models.mongo_model",
+        "documentation": {}
+    },
+    {
+        "label": "SQLRoleModel",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.infrastructure.models.sql_model",
+        "description": "fastapi_acl.roles.infrastructure.models.sql_model",
+        "peekOfCode": "class SQLRoleModel(Base):\n    \"\"\"\n    Modèle SQLAlchemy pour la table des rôles.\n    Compatible PostgreSQL et MySQL.\n    Attributes:\n        id: Identifiant unique (CHAR(36) pour compatibilité MySQL)\n        name: Nom unique du rôle\n        display_name: Nom d'affichage\n        description: Description du rôle\n        permissions: Liste des permissions (JSON)",
+        "detail": "fastapi_acl.roles.infrastructure.models.sql_model",
+        "documentation": {}
+    },
+    {
+        "label": "SQLUserRoleModel",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.infrastructure.models.sql_model",
+        "description": "fastapi_acl.roles.infrastructure.models.sql_model",
+        "peekOfCode": "class SQLUserRoleModel(Base):\n    \"\"\"\n    Modèle pour la table d'association user_roles.\n    Utilisé pour les requêtes explicites sur la relation.\n    \"\"\"\n    __tablename__ = \"acl_user_roles\"\n    __table_args__ = {'extend_existing': True}\n    user_id = Column(\n        CHAR(36),\n        ForeignKey('acl_auth_users.id', ondelete='CASCADE'),",
+        "detail": "fastapi_acl.roles.infrastructure.models.sql_model",
+        "documentation": {}
+    },
+    {
+        "label": "generate_uuid_str",
+        "kind": 2,
+        "importPath": "fastapi_acl.roles.infrastructure.models.sql_model",
+        "description": "fastapi_acl.roles.infrastructure.models.sql_model",
+        "peekOfCode": "def generate_uuid_str() -> str:\n    \"\"\"Génère un UUID sous forme de string.\"\"\"\n    return str(uuid4())\n# Table d'association user_roles (many-to-many)\nuser_roles_table = Table(\n    'acl_user_roles',\n    Base.metadata,\n    Column('user_id', CHAR(36), ForeignKey('acl_auth_users.id', ondelete='CASCADE'), primary_key=True),\n    Column('role_id', CHAR(36), ForeignKey('acl_roles.id', ondelete='CASCADE'), primary_key=True),\n    Column('assigned_at', DateTime, default=datetime.utcnow, nullable=False),",
+        "detail": "fastapi_acl.roles.infrastructure.models.sql_model",
+        "documentation": {}
+    },
+    {
+        "label": "create_role_model",
+        "kind": 2,
+        "importPath": "fastapi_acl.roles.infrastructure.models.sql_model",
+        "description": "fastapi_acl.roles.infrastructure.models.sql_model",
+        "peekOfCode": "def create_role_model(\n    tablename: str = \"acl_roles\",\n    extra_columns: Optional[Dict[str, Column]] = None,\n) -> Type[SQLRoleModel]:\n    \"\"\"\n    Factory pour créer un modèle rôle personnalisé.\n    Args:\n        tablename: Nom de la table\n        extra_columns: Dictionnaire {nom: Column} des colonnes à ajouter\n    Returns:",
+        "detail": "fastapi_acl.roles.infrastructure.models.sql_model",
+        "documentation": {}
+    },
+    {
+        "label": "user_roles_table",
+        "kind": 5,
+        "importPath": "fastapi_acl.roles.infrastructure.models.sql_model",
+        "description": "fastapi_acl.roles.infrastructure.models.sql_model",
+        "peekOfCode": "user_roles_table = Table(\n    'acl_user_roles',\n    Base.metadata,\n    Column('user_id', CHAR(36), ForeignKey('acl_auth_users.id', ondelete='CASCADE'), primary_key=True),\n    Column('role_id', CHAR(36), ForeignKey('acl_roles.id', ondelete='CASCADE'), primary_key=True),\n    Column('assigned_at', DateTime, default=datetime.utcnow, nullable=False),\n)\nclass SQLRoleModel(Base):\n    \"\"\"\n    Modèle SQLAlchemy pour la table des rôles.",
+        "detail": "fastapi_acl.roles.infrastructure.models.sql_model",
+        "documentation": {}
+    },
+    {
+        "label": "MongoDBRoleRepository",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.infrastructure.repositories.mongodb_repository",
+        "description": "fastapi_acl.roles.infrastructure.repositories.mongodb_repository",
+        "peekOfCode": "class MongoDBRoleRepository(IRoleRepository):\n    \"\"\"\n    Implémentation du repository des rôles pour MongoDB.\n    Utilise motor pour les opérations asynchrones.\n    \"\"\"\n    def __init__(\n        self,\n        db: MongoDBDatabase,\n        roles_collection: str = \"acl_roles\",\n        user_roles_collection: str = \"acl_user_roles\",",
+        "detail": "fastapi_acl.roles.infrastructure.repositories.mongodb_repository",
+        "documentation": {}
+    },
+    {
+        "label": "MySQLRoleRepository",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.infrastructure.repositories.mysql_repository",
+        "description": "fastapi_acl.roles.infrastructure.repositories.mysql_repository",
+        "peekOfCode": "class MySQLRoleRepository(PostgreSQLRoleRepository):\n    \"\"\"\n    Implémentation du repository des rôles pour MySQL.\n    Hérite de PostgreSQLRoleRepository car les deux utilisent SQLAlchemy.\n    \"\"\"\n    def __init__(\n        self,\n        db: MySQLDatabase,\n        model_class: Type[SQLRoleModel] = SQLRoleModel,\n        mapper: Optional[RoleMapper] = None,",
+        "detail": "fastapi_acl.roles.infrastructure.repositories.mysql_repository",
+        "documentation": {}
+    },
+    {
+        "label": "PostgreSQLRoleRepository",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.infrastructure.repositories.postgresql_repository",
+        "description": "fastapi_acl.roles.infrastructure.repositories.postgresql_repository",
+        "peekOfCode": "class PostgreSQLRoleRepository(IRoleRepository):\n    \"\"\"\n    Implémentation du repository des rôles pour PostgreSQL.\n    Utilise SQLAlchemy 2.0 async.\n    \"\"\"\n    def __init__(\n        self,\n        db: PostgreSQLDatabase,\n        model_class: Type[SQLRoleModel] = SQLRoleModel,\n        mapper: Optional[RoleMapper] = None,",
+        "detail": "fastapi_acl.roles.infrastructure.repositories.postgresql_repository",
+        "documentation": {}
+    },
+    {
+        "label": "RequireRole",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.interface.dependencies",
+        "description": "fastapi_acl.roles.interface.dependencies",
+        "peekOfCode": "class RequireRole:\n    \"\"\"\n    Dépendance pour vérifier qu'un utilisateur a un rôle spécifique.\n    Usage:\n        @app.get(\"/admin\")\n        async def admin_route(\n            user: AuthUser = Depends(RequireRole(\"admin\"))\n        ):\n            ...\n    \"\"\"",
+        "detail": "fastapi_acl.roles.interface.dependencies",
+        "documentation": {}
+    },
+    {
+        "label": "RequireRoles",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.interface.dependencies",
+        "description": "fastapi_acl.roles.interface.dependencies",
+        "peekOfCode": "class RequireRoles:\n    \"\"\"\n    Dépendance pour vérifier qu'un utilisateur a au moins un des rôles.\n    Usage:\n        @app.get(\"/moderator\")\n        async def mod_route(\n            user: AuthUser = Depends(RequireRoles([\"admin\", \"moderator\"]))\n        ):\n            ...\n    \"\"\"",
+        "detail": "fastapi_acl.roles.interface.dependencies",
+        "documentation": {}
+    },
+    {
+        "label": "RequirePermission",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.interface.dependencies",
+        "description": "fastapi_acl.roles.interface.dependencies",
+        "peekOfCode": "class RequirePermission:\n    \"\"\"\n    Dépendance pour vérifier qu'un utilisateur a une permission spécifique.\n    Usage:\n        @app.delete(\"/posts/{id}\")\n        async def delete_post(\n            user: AuthUser = Depends(RequirePermission(\"posts:delete\"))\n        ):\n            ...\n    \"\"\"",
+        "detail": "fastapi_acl.roles.interface.dependencies",
+        "documentation": {}
+    },
+    {
+        "label": "RequirePermissions",
+        "kind": 6,
+        "importPath": "fastapi_acl.roles.interface.dependencies",
+        "description": "fastapi_acl.roles.interface.dependencies",
+        "peekOfCode": "class RequirePermissions:\n    \"\"\"\n    Dépendance pour vérifier qu'un utilisateur a les permissions spécifiées.\n    Usage:\n        @app.put(\"/posts/{id}\")\n        async def update_post(\n            user: AuthUser = Depends(RequirePermissions([\"posts:read\", \"posts:update\"]))\n        ):\n            ...\n    \"\"\"",
+        "detail": "fastapi_acl.roles.interface.dependencies",
+        "documentation": {}
+    },
+    {
+        "label": "set_role_dependencies",
+        "kind": 2,
+        "importPath": "fastapi_acl.roles.interface.dependencies",
+        "description": "fastapi_acl.roles.interface.dependencies",
+        "peekOfCode": "def set_role_dependencies(role_repository: IRoleRepository) -> None:\n    \"\"\"\n    Configure les dépendances des rôles.\n    À appeler lors de l'initialisation de l'application.\n    Args:\n        role_repository: Instance du repository des rôles\n    \"\"\"\n    global _role_repository\n    _role_repository = role_repository\ndef get_role_repository() -> IRoleRepository:",
+        "detail": "fastapi_acl.roles.interface.dependencies",
+        "documentation": {}
+    },
+    {
+        "label": "get_role_repository",
+        "kind": 2,
+        "importPath": "fastapi_acl.roles.interface.dependencies",
+        "description": "fastapi_acl.roles.interface.dependencies",
+        "peekOfCode": "def get_role_repository() -> IRoleRepository:\n    \"\"\"\n    Retourne le repository des rôles.\n    Raises:\n        RuntimeError: Si le repository n'est pas configuré\n    \"\"\"\n    if _role_repository is None:\n        raise RuntimeError(\n            \"Role repository non configuré. \"\n            \"Appelez set_role_dependencies() lors de l'initialisation.\"",
+        "detail": "fastapi_acl.roles.interface.dependencies",
+        "documentation": {}
+    },
+    {
+        "label": "require_role",
+        "kind": 2,
+        "importPath": "fastapi_acl.roles.interface.dependencies",
+        "description": "fastapi_acl.roles.interface.dependencies",
+        "peekOfCode": "def require_role(role_name: str):\n    \"\"\"\n    Décorateur pour protéger une route avec un rôle requis.\n    Usage:\n        @app.get(\"/admin\")\n        @require_role(\"admin\")\n        async def admin_route(current_user: AuthUser = Depends(get_current_active_user)):\n            ...\n    \"\"\"\n    def decorator(func):",
+        "detail": "fastapi_acl.roles.interface.dependencies",
+        "documentation": {}
+    },
+    {
+        "label": "require_permission",
+        "kind": 2,
+        "importPath": "fastapi_acl.roles.interface.dependencies",
+        "description": "fastapi_acl.roles.interface.dependencies",
+        "peekOfCode": "def require_permission(permission: str):\n    \"\"\"\n    Décorateur pour protéger une route avec une permission requise.\n    Usage:\n        @app.delete(\"/posts/{id}\")\n        @require_permission(\"posts:delete\")\n        async def delete_post(current_user: AuthUser = Depends(get_current_active_user)):\n            ...\n    \"\"\"\n    def decorator(func):",
+        "detail": "fastapi_acl.roles.interface.dependencies",
+        "documentation": {}
+    },
+    {
+        "label": "role_to_response",
+        "kind": 2,
+        "importPath": "fastapi_acl.roles.interface.routes",
+        "description": "fastapi_acl.roles.interface.routes",
+        "peekOfCode": "def role_to_response(role: Role) -> RoleResponseDTO:\n    \"\"\"Convertit une entité Role en DTO de réponse.\"\"\"\n    return RoleResponseDTO(\n        id=role.id,\n        name=role.name,\n        display_name=role.display_name or role.name,\n        description=role.description,\n        permissions=role.permissions,\n        is_active=role.is_active,\n        is_default=role.is_default,",
+        "detail": "fastapi_acl.roles.interface.routes",
+        "documentation": {}
+    },
+    {
+        "label": "router",
+        "kind": 5,
+        "importPath": "fastapi_acl.roles.interface.routes",
+        "description": "fastapi_acl.roles.interface.routes",
+        "peekOfCode": "router = APIRouter(prefix=\"/roles\", tags=[\"roles\"])\ndef role_to_response(role: Role) -> RoleResponseDTO:\n    \"\"\"Convertit une entité Role en DTO de réponse.\"\"\"\n    return RoleResponseDTO(\n        id=role.id,\n        name=role.name,\n        display_name=role.display_name or role.name,\n        description=role.description,\n        permissions=role.permissions,\n        is_active=role.is_active,",
+        "detail": "fastapi_acl.roles.interface.routes",
         "documentation": {}
     },
     {

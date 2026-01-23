@@ -154,6 +154,27 @@ class ACLConfig(BaseSettings):
         description="Niveau de logging"
     )
 
+    # Custom Model Configuration
+    users_table_name: str = Field(
+        default="acl_auth_users",
+        description="Nom de la table/collection pour les utilisateurs"
+    )
+    extra_user_indexes: Optional[str] = Field(
+        default=None,
+        description="Liste des champs personnalisés à indexer (séparés par des virgules)"
+    )
+
+    def get_extra_indexes_list(self) -> list:
+        """
+        Retourne la liste des champs personnalisés à indexer.
+
+        Returns:
+            Liste des noms de champs
+        """
+        if not self.extra_user_indexes:
+            return []
+        return [idx.strip() for idx in self.extra_user_indexes.split(",") if idx.strip()]
+
     @field_validator("jwt_secret_key")
     @classmethod
     def validate_jwt_secret(cls, v: str) -> str:

@@ -4,7 +4,6 @@ Interface du repository d'authentification.
 
 from abc import ABC, abstractmethod
 from typing import Optional, List
-from uuid import UUID
 
 from ...domain.entities.auth_user import AuthUser
 
@@ -34,12 +33,12 @@ class IAuthRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_by_id(self, user_id: UUID) -> Optional[AuthUser]:
+    async def get_by_id(self, user_id: str) -> Optional[AuthUser]:
         """
         Récupère un utilisateur par son ID.
 
         Args:
-            user_id: ID de l'utilisateur
+            user_id: ID de l'utilisateur (string)
 
         Returns:
             Utilisateur ou None si non trouvé
@@ -89,12 +88,12 @@ class IAuthRepository(ABC):
         pass
 
     @abstractmethod
-    async def delete_user(self, user_id: UUID) -> bool:
+    async def delete_user(self, user_id: str) -> bool:
         """
         Supprime un utilisateur.
 
         Args:
-            user_id: ID de l'utilisateur
+            user_id: ID de l'utilisateur (string)
 
         Returns:
             True si supprimé, False si non trouvé

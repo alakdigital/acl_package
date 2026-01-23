@@ -6,7 +6,6 @@ définis par le développeur.
 """
 
 from typing import Any, Dict, Type, Union, Optional
-from uuid import UUID
 
 from ...domain.entities.auth_user import AuthUser
 from ..models.sql_model import SQLAuthUserModel
@@ -80,7 +79,7 @@ class AuthUserMapper:
                 extra_fields.update(model["extra_data"])
 
             return AuthUser(
-                id=UUID(model["_id"]) if isinstance(model["_id"], str) else model["_id"],
+                id=str(model["_id"]),
                 username=model["username"],
                 email=model["email"],
                 hashed_password=model["hashed_password"],
@@ -102,7 +101,7 @@ class AuthUserMapper:
                 extra_fields.update(model.extra_data)
 
             return AuthUser(
-                id=model.id,
+                id=str(model.id),
                 username=model.username,
                 email=model.email,
                 hashed_password=model.hashed_password,
@@ -124,7 +123,7 @@ class AuthUserMapper:
                 extra_fields.update(model.extra_data)
 
             return AuthUser(
-                id=model.id,
+                id=str(model.id),
                 username=model.username,
                 email=model.email,
                 hashed_password=model.hashed_password,

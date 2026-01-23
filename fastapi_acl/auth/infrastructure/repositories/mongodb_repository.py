@@ -5,7 +5,6 @@ Supporte les champs personnalisés ajoutés directement aux documents.
 """
 
 from typing import Any, Optional, List, Type
-from uuid import UUID
 
 from bson import ObjectId
 
@@ -91,7 +90,7 @@ class MongoDBAuthRepository(IAuthRepository):
         Crée un nouvel utilisateur.
 
         Les champs personnalisés dans extra_fields sont automatiquement
-        ajoutés au document MongoDB.
+        ajoutés au document MongoDB. L'_id est généré automatiquement par MongoDB.
         """
         # Vérifier l'unicité
         existing = await self._collection.find_one({
@@ -106,15 +105,24 @@ class MongoDBAuthRepository(IAuthRepository):
             )
 
         doc = self._mapper.to_mongo_dict(user)
-        await self._collection.insert_one(doc)
-        logger.debug(f"Utilisateur créé: {user.username}")
+        # Ne pas inclure _id - MongoDB le génère automatiquement
+        doc.pop("_id", None)
+
+        result = await self._collection.insert_one(doc)
+        # Récupérer l'ID généré par MongoDB
+        user.id = str(result.inserted_id)
+
+        logger.debug(f"Utilisateur créé: {user.username} (id: {user.id})")
         return user
 
-    async def get_by_id(self, user_id: UUID) -> Optional[AuthUser]:
-        """Récupère un utilisateur par son ID."""
-        doc = await self._collection.find_one({"_id": str(user_id)})
-        if doc:
-            return self._mapper.to_entity(doc)
+    async def get_by_id(self, user_id: str) -> Optional[AuthUser]:
+        """Récupère un utilisateur par son ID (ObjectId string)."""
+        try:
+            doc = await self._collection.find_one({"_id": ObjectId(user_id)})
+            if doc:
+                return self._mapper.to_entity(doc)
+        except Exception:
+            pass
         return None
 
     async def get_by_username(self, username: str) -> Optional[AuthUser]:
@@ -150,12 +158,15 @@ class MongoDBAuthRepository(IAuthRepository):
         logger.debug(f"Utilisateur mis à jour: {user.username}")
         return user
 
-    async def delete_user(self, user_id: UUID) -> bool:
-        """Supprime un utilisateur."""
-        result = await self._collection.delete_one({"_id": str(user_id)})
-        if result.deleted_count > 0:
-            logger.debug(f"Utilisateur supprimé: {user_id}")
-            return True
+    async def delete_user(self, user_id: str) -> bool:
+        """Supprime un utilisateur par son ID (ObjectId string)."""
+        try:
+            result = await self._collection.delete_one({"_id": ObjectId(user_id)})
+            if result.deleted_count > 0:
+                logger.debug(f"Utilisateur supprimé: {user_id}")
+                return True
+        except Exception:
+            pass
         return False
 
     async def list_users(
@@ -267,7 +278,7 @@ class MongoDBAuthRepository(IAuthRepository):
 
     async def update_extra_field(
         self,
-        user_id: UUID,
+        user_id: str,
         field_name: str,
         value: Any,
     ) -> bool:
@@ -290,7 +301,7 @@ class MongoDBAuthRepository(IAuthRepository):
 
     async def add_to_array_field(
         self,
-        user_id: UUID,
+        user_id: str,
         field_name: str,
         value: Any,
     ) -> bool:
@@ -313,7 +324,7 @@ class MongoDBAuthRepository(IAuthRepository):
 
     async def remove_from_array_field(
         self,
-        user_id: UUID,
+        user_id: str,
         field_name: str,
         value: Any,
     ) -> bool:

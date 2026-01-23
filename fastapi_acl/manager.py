@@ -3,9 +3,12 @@ ACLManager - Point d'entrée principal du package fastapi-acl.
 
 Ce module fournit le gestionnaire principal qui initialise
 toutes les connexions et enregistre automatiquement les routes.
+
+Supporte les modèles utilisateur personnalisés pour ajouter
+des champs/colonnes supplémentaires.
 """
 
-from typing import Optional, Union
+from typing import Optional, Union, Type, List
 
 from fastapi import FastAPI
 
@@ -26,6 +29,9 @@ from .auth.infrastructure.repositories.mongodb_repository import MongoDBAuthRepo
 from .auth.infrastructure.repositories.mysql_repository import MySQLAuthRepository
 from .auth.infrastructure.services.jwt_token_service import JWTTokenService
 from .auth.infrastructure.services.bcrypt_password_hasher import BcryptPasswordHasher
+from .auth.infrastructure.models.sql_model import SQLAuthUserModel
+from .auth.infrastructure.models.mongo_model import MongoAuthUserModel
+from .auth.infrastructure.mappers.auth_user_mapper import AuthUserMapper
 from .auth.interface.dependencies import set_auth_dependencies
 from .auth.interface.api import router as auth_router
 from .auth.interface.admin.routes import router as admin_router
@@ -70,12 +76,34 @@ class ACLManager:
         async def shutdown():
             await acl.close()
         ```
+
+    Example avec modèle personnalisé:
+        ```python
+        from sqlalchemy import Column, String, Integer
+        from fastapi_acl import ACLManager, ACLConfig
+        from fastapi_acl.auth.infrastructure.models import SQLAuthUserModel
+
+        # Définir un modèle personnalisé avec des colonnes supplémentaires
+        class CustomUserModel(SQLAuthUserModel):
+            __tablename__ = "users"
+            phone = Column(String(20), nullable=True)
+            company = Column(String(100), nullable=True)
+
+        acl = ACLManager(
+            config=config,
+            app=app,
+            sql_user_model=CustomUserModel,
+        )
+        ```
     """
 
     def __init__(
         self,
         config: ACLConfig,
         app: Optional[FastAPI] = None,
+        sql_user_model: Optional[Type[SQLAuthUserModel]] = None,
+        mongo_user_model: Optional[Type[MongoAuthUserModel]] = None,
+        extra_user_indexes: Optional[List[str]] = None,
     ):
         """
         Initialise le gestionnaire ACL.
@@ -83,10 +111,18 @@ class ACLManager:
         Args:
             config: Configuration ACL
             app: Instance FastAPI pour l'auto-registration des routes
+            sql_user_model: Classe de modèle SQL personnalisée (pour PostgreSQL/MySQL)
+            mongo_user_model: Classe de modèle MongoDB personnalisée
+            extra_user_indexes: Liste des champs personnalisés à indexer (MongoDB)
         """
         self._config = config
         self._app = app
         self._initialized = False
+
+        # Modèles personnalisés
+        self._sql_user_model = sql_user_model or SQLAuthUserModel
+        self._mongo_user_model = mongo_user_model or MongoAuthUserModel
+        self._extra_user_indexes = extra_user_indexes or self._parse_extra_indexes()
 
         # Infrastructure (initialisées dans initialize())
         self._database: Optional[DatabaseType] = None
@@ -103,6 +139,16 @@ class ACLManager:
         # Auto-register des routes si app fournie
         if app and config.enable_api_routes:
             self._register_routes(app)
+
+    def _parse_extra_indexes(self) -> List[str]:
+        """Parse les index supplémentaires depuis la config."""
+        if self._config.extra_user_indexes:
+            return [
+                idx.strip()
+                for idx in self._config.extra_user_indexes.split(",")
+                if idx.strip()
+            ]
+        return []
 
     def _register_routes(self, app: FastAPI) -> None:
         """
@@ -180,22 +226,53 @@ class ACLManager:
         set_cache(self._cache)
 
     async def _init_auth_services(self) -> None:
-        """Initialise les services d'authentification."""
+        """
+        Initialise les services d'authentification.
+
+        Utilise les modèles personnalisés si fournis.
+        """
         # Password hasher
         self._password_hasher = BcryptPasswordHasher()
 
         # Token service
         self._token_service = JWTTokenService(self._config)
 
-        # Repository selon le type de DB
+        # Créer le mapper avec les modèles personnalisés
+        mapper = AuthUserMapper(
+            sql_model_class=self._sql_user_model,
+            mongo_model_class=self._mongo_user_model,
+        )
+
+        # Repository selon le type de DB avec modèle personnalisé
         if isinstance(self._database, MongoDBDatabase):
-            self._auth_repository = MongoDBAuthRepository(self._database)
-            # Créer les index MongoDB
-            await self._auth_repository.create_indexes()
+            collection_name = self._config.users_table_name or "auth_users"
+            self._auth_repository = MongoDBAuthRepository(
+                db=self._database,
+                collection_name=collection_name,
+                model_class=self._mongo_user_model,
+                mapper=mapper,
+            )
+            # Créer les index MongoDB (avec les index personnalisés)
+            await self._auth_repository.create_indexes(
+                extra_indexes=self._extra_user_indexes
+            )
+            logger.debug(f"MongoDB collection: {collection_name}")
+
         elif isinstance(self._database, PostgreSQLDatabase):
-            self._auth_repository = PostgreSQLAuthRepository(self._database)
+            self._auth_repository = PostgreSQLAuthRepository(
+                db=self._database,
+                model_class=self._sql_user_model,
+                mapper=mapper,
+            )
+            logger.debug(f"PostgreSQL model: {self._sql_user_model.__name__}")
+
         elif isinstance(self._database, MySQLDatabase):
-            self._auth_repository = MySQLAuthRepository(self._database)
+            self._auth_repository = MySQLAuthRepository(
+                db=self._database,
+                model_class=self._sql_user_model,
+                mapper=mapper,
+            )
+            logger.debug(f"MySQL model: {self._sql_user_model.__name__}")
 
         # Configurer les dépendances FastAPI
         set_auth_dependencies(

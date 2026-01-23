@@ -8,7 +8,12 @@ que le développeur peut définir selon ses besoins.
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Dict, Optional
-from uuid import UUID, uuid4
+from uuid import uuid4
+
+
+def generate_id() -> str:
+    """Génère un ID unique sous forme de string UUID."""
+    return str(uuid4())
 
 
 @dataclass
@@ -23,7 +28,7 @@ class AuthUser:
     attributs personnalisés qui seront persistés en base de données.
 
     Attributes:
-        id: Identifiant unique de l'utilisateur
+        id: Identifiant unique de l'utilisateur (string UUID)
         username: Nom d'utilisateur unique
         email: Adresse email unique
         hashed_password: Mot de passe hashé (bcrypt)
@@ -56,7 +61,7 @@ class AuthUser:
     username: str
     email: str
     hashed_password: str
-    id: UUID = field(default_factory=uuid4)
+    id: str = field(default_factory=generate_id)
     is_active: bool = True
     is_verified: bool = False
     is_superuser: bool = False

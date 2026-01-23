@@ -65,6 +65,11 @@ from .auth.domain.dtos.login_dto import LoginDTO
 from .auth.domain.dtos.register_dto import RegisterDTO
 from .auth.domain.dtos.token_dto import TokenDTO
 
+# Modèles de base extensibles (pour champs personnalisés)
+from .auth.infrastructure.models.sql_model import SQLAuthUserModel, create_user_model
+from .auth.infrastructure.models.mongo_model import MongoAuthUserModel, create_mongo_user_model
+from .auth.infrastructure.mappers.auth_user_mapper import AuthUserMapper
+
 # Dépendances FastAPI
 from .auth.interface.dependencies import (
     get_current_user,
@@ -100,6 +105,12 @@ __all__ = [
     "LoginDTO",
     "RegisterDTO",
     "TokenDTO",
+    # Modèles extensibles (pour champs personnalisés)
+    "SQLAuthUserModel",
+    "MongoAuthUserModel",
+    "create_user_model",
+    "create_mongo_user_model",
+    "AuthUserMapper",
     # Dépendances
     "get_current_user",
     "get_current_active_user",
