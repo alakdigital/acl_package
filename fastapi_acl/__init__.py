@@ -107,6 +107,11 @@ from .permissions.domain.dtos.permission_dto import (
     PermissionListResponseDTO,
 )
 
+# Base SQLAlchemy et modèles pour migrations Alembic
+from .shared.database import Base
+from .roles.infrastructure.models.sql_model import SQLRoleModel, SQLUserRoleModel
+from .permissions.infrastructure.models.sql_model import SQLPermissionModel
+
 __all__ = [
     # Version
     "__version__",
@@ -166,4 +171,9 @@ __all__ = [
     "UpdatePermissionDTO",
     "PermissionResponseDTO",
     "PermissionListResponseDTO",
+    # Base SQLAlchemy et modèles pour migrations
+    "Base",
+    "SQLRoleModel",
+    "SQLUserRoleModel",
+    "SQLPermissionModel",
 ]

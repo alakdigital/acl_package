@@ -3,14 +3,14 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "fastapi-acl"
+name = "alak-acl"
 version = "0.1.0"
 description = "Package professionnel pour gérer l'authentification et les permissions ACL dans FastAPI"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
 authors = [
-    {name = "FastAPI ACL Team", email = "contact@example.com"}
+    {name = "ALAK Team", email = "contact@example.com"}
 ]
 keywords = [
     "fastapi",
@@ -41,7 +41,7 @@ dependencies = [
     "pydantic>=2.0.0",
     "pydantic-settings>=2.0.0",
     "sqlalchemy[asyncio]>=2.0.0",
-    "asyncpg>=0.28.0",
+    "asyncpg>=0.31.0",
     "aiomysql>=0.2.0",
     "asyncmy>=0.2.10",
     "motor>=3.3.0",

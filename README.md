@@ -1,319 +1,557 @@
-# PROMPT : Création d'un package FastAPI ACL avec Architecture Modulaire par Features
+# FastAPI-ACL
 
-## CONTEXTE
-Je veux créer un package Python professionnel nommé "fastapi-acl" pour gérer l'authentification et les permissions (ACL - Access Control List) dans des applications FastAPI.
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)](https://fastapi.tiangolo.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## ORGANISATION ARCHITECTURALE
+**Package professionnel de gestion ACL (Access Control List) pour FastAPI.**
 
-### Principe : Vertical Slice Architecture (organisation par features)
-- Chaque feature est un module autonome et complet
-- Chaque feature contient ses propres couches : domain, application, infrastructure, interface
-- Le code partagé est isolé dans un dossier "shared"
-- Clean Architecture au sein de chaque feature
+Gérez l'authentification, les rôles et les permissions dans vos applications FastAPI en quelques lignes de code.
 
-### Structure exacte du projet
-```
-fastapi-acl/
-├── auth/                                # FEATURE: Authentication
-│   ├── application/
-│   │   ├── interface/                   # Interfaces (ports/abstractions)
-│   │   └── usecases/                    # Use cases métier
-│   ├── domain/
-│   │   ├── dtos/                        # Data Transfer Objects
-│   │   └── entities/                    # Entités métier
-│   ├── infrastructure/
-│   │   ├── mappers/                     # Mappers Entity ↔ Model
-│   │   ├── models/                      # Modèles DB
-│   │   └── repositories/                # Implémentations repositories
-│   └── interface/
-│       ├── admin/                       # Routes admin
-│       ├── api.py                       # Routes publiques
-│       ├── dependencies.py              # Dépendances FastAPI
-│       └── schemas.py                   # Schémas Pydantic API
-│
-├── permissions/                         # FEATURE: Permissions (à créer)
-├── roles/                               # FEATURE: Roles (à créer)
-├── users/                               # FEATURE: Users (à créer)
-│
-├── shared/                              # Code partagé
-│   ├── config.py                        # Configuration Pydantic
-│   ├── database/                        # Connexions DB
-│   │   ├── mongodb.py
-│   │   ├── postgresql.py
-│   │   ├── mysql.py
-│   │   └── factory.py
-│   ├── cache/                           # Cache Redis/Memory
-│   │   ├── base.py
-│   │   ├── redis_cache.py
-│   │   ├── memory_cache.py
-│   │   └── factory.py
-│   ├── exceptions.py
-│   └── logging.py
-│
-├── manager.py                           # ACLManager principal
-├── __init__.py                          # Point d'entrée
-├── tests/                               # Tests par feature
-├── examples/
-├── docs/
-└── setup.py
+## Caractéristiques
+
+- **Authentication JWT** complète (access + refresh tokens)
+- **Gestion des rôles** avec permissions hiérarchiques
+- **Permissions granulaires** au format `resource:action`
+- **Multi-database** : PostgreSQL, MySQL, MongoDB
+- **Cache Redis** avec fallback mémoire automatique
+- **Auto-registration** des routes dans Swagger
+- **100% asynchrone** (async/await)
+- **Modèles extensibles** pour ajouter des champs personnalisés
+
+## Installation
+
+```bash
+pip install fastapi-acl
 ```
 
-## FEATURE 1 : AUTH (Authentification)
+### Dépendances optionnelles
 
-### Responsabilité
-Gérer l'authentification des utilisateurs : inscription, connexion, gestion des tokens JWT, sessions.
+```bash
+# PostgreSQL
+pip install fastapi-acl[postgresql]
 
-### Couche Domain (auth/domain/)
+# MySQL
+pip install fastapi-acl[mysql]
 
-**Entities (entités métier pures):**
-- AuthUser : id, username, email, hashed_password, is_active, is_verified, created_at, updated_at
-  - Méthodes : verify_password(), is_authenticated()
+# MongoDB
+pip install fastapi-acl[mongodb]
 
-**DTOs (objets de transfert):**
-- LoginDTO : username, password
-- RegisterDTO : username, email, password
-- TokenDTO : access_token, refresh_token, token_type, expires_in
+# Redis (cache)
+pip install fastapi-acl[redis]
 
-### Couche Application (auth/application/)
+# Toutes les dépendances
+pip install fastapi-acl[all]
+```
 
-**Interfaces (abstractions):**
-- IAuthRepository : interface pour le repository d'authentification
-  - Méthodes : create_user(), get_by_username(), get_by_email(), get_by_id(), update_user()
-- ITokenService : interface pour la gestion des tokens
-  - Méthodes : create_access_token(), decode_token(), create_refresh_token()
-- IPasswordHasher : interface pour le hashage de mots de passe
-  - Méthodes : hash(), verify()
+## Démarrage rapide
 
-**Use Cases (logique métier):**
-- LoginUseCase : gérer la connexion d'un utilisateur
-  - Input : LoginDTO
-  - Output : TokenDTO
-  - Logique : vérifier credentials, générer tokens
-- RegisterUseCase : gérer l'inscription d'un utilisateur
-  - Input : RegisterDTO
-  - Output : AuthUser
-  - Logique : vérifier unicité, hasher password, créer user
-- RefreshTokenUseCase : rafraîchir un token
-  - Input : refresh_token string
-  - Output : TokenDTO
-  - Logique : valider refresh token, générer nouveau access token
+```python
+from fastapi import FastAPI, Depends
+from contextlib import asynccontextmanager
+from fastapi_acl import ACLManager, ACLConfig, get_current_user, RequireRole
 
-### Couche Infrastructure (auth/infrastructure/)
+# Configuration
+config = ACLConfig(
+    database_type="postgresql",
+    postgresql_uri="postgresql+asyncpg://user:pass@localhost/mydb",
+    jwt_secret_key="your-super-secret-key-min-32-chars",
+    enable_roles_feature=True,
+    enable_permissions_feature=True,
+)
 
-**Models (modèles DB):**
-- MongoAuthUserModel : modèle Pydantic pour MongoDB
-- SQLAuthUserModel : modèle SQLAlchemy pour PostgreSQL/MySQL
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await acl.initialize()
+    yield
+    await acl.close()
 
-**Mappers (conversion Entity ↔ Model):**
-- AuthUserMapper : 
-  - to_entity(model) → AuthUser
-  - to_model(entity, db_type) → Model
+app = FastAPI(title="Mon API", lifespan=lifespan)
+acl = ACLManager(config, app=app)
 
-**Repositories (implémentations):**
-- MongoDBAuthRepository : implémentation IAuthRepository pour MongoDB
-- PostgreSQLAuthRepository : implémentation IAuthRepository pour PostgreSQL
-- MySQLAuthRepository : implémentation IAuthRepository pour MySQL
+# Route protégée
+@app.get("/protected")
+async def protected(user=Depends(get_current_user)):
+    return {"message": f"Bonjour {user.username}!"}
 
-**Services:**
-- JWTTokenService : implémentation ITokenService avec python-jose
-- BcryptPasswordHasher : implémentation IPasswordHasher avec bcrypt
+# Route admin uniquement
+@app.get("/admin")
+async def admin_only(user=Depends(RequireRole("admin"))):
+    return {"message": "Bienvenue admin!"}
+```
 
-### Couche Interface (auth/interface/)
+**C'est tout !** Les routes d'authentification sont automatiquement disponibles dans Swagger.
 
-**Schemas (Pydantic pour API):**
-- LoginRequest, LoginResponse
-- RegisterRequest, UserResponse
-- RefreshTokenRequest, RefreshTokenResponse
+## Routes API générées
 
-**Dependencies (dépendances FastAPI):**
-- get_auth_repository() : récupérer le repository
-- get_token_service() : récupérer le service de tokens
-- get_login_usecase() : instancier LoginUseCase
-- get_register_usecase() : instancier RegisterUseCase
-- get_current_user() : dépendance pour récupérer l'utilisateur authentifié
+### Authentication (`/api/v1/auth`)
 
-**Routes publiques (api.py):**
-- POST /auth/register : inscription
-- POST /auth/login : connexion
-- POST /auth/refresh : rafraîchir token
-- GET /auth/me : informations utilisateur connecté
-- POST /auth/logout : déconnexion
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/register` | Inscription |
+| POST | `/login` | Connexion (retourne JWT) |
+| POST | `/refresh` | Rafraîchir le token |
+| GET | `/me` | Profil utilisateur |
+| PUT | `/me` | Modifier son profil |
+| POST | `/change-password` | Changer de mot de passe |
 
-**Routes admin (admin/):**
-- GET /admin/auth/users : lister utilisateurs
-- PUT /admin/auth/users/{id}/activate : activer un utilisateur
-- PUT /admin/auth/users/{id}/deactivate : désactiver
-- DELETE /admin/auth/users/{id} : supprimer
+### Rôles (`/api/v1/roles`)
 
-## SHARED (Code partagé entre features)
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/` | Liste des rôles |
+| POST | `/` | Créer un rôle |
+| GET | `/{id}` | Détails d'un rôle |
+| PATCH | `/{id}` | Modifier un rôle |
+| DELETE | `/{id}` | Supprimer un rôle |
+| POST | `/users/{user_id}/roles` | Assigner un rôle |
+| DELETE | `/users/{user_id}/roles/{role_id}` | Retirer un rôle |
 
-### Configuration (shared/config.py)
-**ACLConfig (Pydantic Settings):**
-- Database : database_type, mongodb_uri, postgresql_uri, mysql_uri
-- Redis : enable_cache, redis_url, cache_ttl, cache_backend
-- JWT : jwt_secret_key, jwt_algorithm, jwt_access_token_expire_minutes
-- API : enable_api_routes, api_prefix
-- Features : enable_auth_feature, enable_permissions_feature, enable_roles_feature
-- Dev : disable_auth_for_dev, create_default_admin, log_level
+### Permissions (`/api/v1/permissions`)
 
-### Database (shared/database/)
-- Connexions pour MongoDB (motor), PostgreSQL (asyncpg + SQLAlchemy), MySQL (aiomysql + SQLAlchemy)
-- DatabaseFactory : créer la connexion selon le type de DB
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/` | Liste des permissions |
+| POST | `/` | Créer une permission |
+| GET | `/search?q=` | Rechercher |
+| GET | `/resources` | Lister les ressources |
+| GET | `/categories` | Lister les catégories |
 
-### Cache (shared/cache/)
-- CacheBackend : interface abstraite
-- RedisCache : implémentation Redis avec redis.asyncio
-- MemoryCache : implémentation en mémoire (fallback)
-- CacheFactory : créer le cache selon la config
+## Configuration
 
-### Exceptions (shared/exceptions.py)
-- ACLException (base)
-- AuthenticationError, InvalidCredentialsError, InvalidTokenError
-- UserNotActiveError, UserAlreadyExistsError
-- PermissionDeniedError, RoleNotFoundError
+### Via variables d'environnement
 
-## MANAGER PRINCIPAL (manager.py)
+Créez un fichier `.env` :
 
-### ACLManager
-**Responsabilités:**
-- Point d'entrée unique du package
-- Initialiser toutes les connexions (DB, cache)
-- Initialiser toutes les features activées
-- Auto-enregistrer les routes dans FastAPI si une app est fournie
-- Fournir des getters pour accéder aux repositories et services
+```env
+# Database
+ACL_DATABASE_TYPE=postgresql
+ACL_POSTGRESQL_URI=postgresql+asyncpg://user:password@localhost:5432/mydb
 
-**Méthodes:**
-- `__init__(config, app=None)` : constructeur, auto-register routes si app fournie
-- `async initialize()` : initialiser DB, cache, features
-- `async close()` : fermer toutes les connexions
-- `get_auth_repository()` : retourner le repository d'auth
-- `get_token_service()` : retourner le service de tokens
+# JWT
+ACL_JWT_SECRET_KEY=your-super-secret-key-minimum-32-characters
+ACL_JWT_ACCESS_TOKEN_EXPIRE_MINUTES=30
+ACL_JWT_REFRESH_TOKEN_EXPIRE_DAYS=7
 
-## FONCTIONNALITÉS TECHNIQUES
+# Features
+ACL_ENABLE_AUTH_FEATURE=true
+ACL_ENABLE_ROLES_FEATURE=true
+ACL_ENABLE_PERMISSIONS_FEATURE=true
 
-### Multi-Database (async)
-- MongoDB avec motor
-- PostgreSQL avec asyncpg + SQLAlchemy 2.0 async
-- MySQL avec aiomysql + SQLAlchemy 2.0 async
-- Pattern Repository pour abstraire la DB
-- Pattern Mapper pour convertir Entity ↔ Model
+# Cache (optionnel)
+ACL_ENABLE_CACHE=true
+ACL_CACHE_BACKEND=redis
+ACL_REDIS_URL=redis://localhost:6379/0
 
-### Cache Redis (async)
-- Cache des permissions utilisateur
-- Rate limiting
-- Fallback automatique vers cache mémoire si Redis indisponible
-- TTL configurable
+# Admin par défaut
+ACL_CREATE_DEFAULT_ADMIN=true
+ACL_DEFAULT_ADMIN_USERNAME=admin
+ACL_DEFAULT_ADMIN_EMAIL=admin@example.com
+ACL_DEFAULT_ADMIN_PASSWORD=admin123
+```
 
-### JWT Authentication
-- Access token (courte durée)
-- Refresh token (longue durée)
-- Signature avec python-jose
-- Extraction et validation dans les dépendances FastAPI
+### Via code Python
 
-### Auto-registration des routes
-- Quand le dev passe l'app FastAPI à ACLManager, toutes les routes sont automatiquement enregistrées
-- Routes visibles dans Swagger sans configuration supplémentaire
-- Préfixe d'API configurable
+```python
+from fastapi_acl import ACLConfig
 
-### Rate Limiting (optionnel)
-- Service de rate limiting avec Redis
-- Middleware FastAPI
-- Headers X-RateLimit-* dans les réponses
+config = ACLConfig(
+    # Database
+    database_type="postgresql",  # ou "mysql", "mongodb"
+    postgresql_uri="postgresql+asyncpg://user:pass@localhost/db",
 
-## UTILISATION ATTENDUE PAR LE DÉVELOPPEUR
+    # JWT
+    jwt_secret_key="your-super-secret-key-min-32-chars",
+    jwt_algorithm="HS256",
+    jwt_access_token_expire_minutes=30,
+    jwt_refresh_token_expire_days=7,
 
-Le développeur doit pouvoir utiliser le package en 3 lignes :
+    # Features
+    enable_auth_feature=True,
+    enable_roles_feature=True,
+    enable_permissions_feature=True,
+
+    # API
+    enable_api_routes=True,
+    api_prefix="/api/v1",
+
+    # Cache
+    enable_cache=True,
+    cache_backend="redis",  # ou "memory"
+    redis_url="redis://localhost:6379/0",
+
+    # Développement
+    create_default_admin=True,
+    log_level="INFO",
+)
+```
+
+## Dépendances FastAPI
+
+### Protection par authentification
+
+```python
+from fastapi_acl import get_current_user, get_current_active_user, get_current_superuser
+
+@app.get("/me")
+async def my_profile(user=Depends(get_current_user)):
+    return user
+
+@app.get("/active-only")
+async def active_users(user=Depends(get_current_active_user)):
+    return {"user": user.username}
+
+@app.get("/superuser-only")
+async def superuser_only(user=Depends(get_current_superuser)):
+    return {"message": "Vous êtes superuser!"}
+```
+
+### Protection par rôle
+
+```python
+from fastapi_acl import RequireRole, RequireRoles
+
+# Un seul rôle requis
+@app.get("/admin")
+async def admin_panel(user=Depends(RequireRole("admin"))):
+    return {"message": "Panel admin"}
+
+# Un des rôles requis
+@app.get("/staff")
+async def staff_area(user=Depends(RequireRoles(["admin", "moderator"]))):
+    return {"message": "Zone staff"}
+
+# Tous les rôles requis
+@app.get("/super-staff")
+async def super_staff(user=Depends(RequireRoles(["admin", "moderator"], require_all=True))):
+    return {"message": "Zone super staff"}
+```
+
+### Protection par permission
+
+```python
+from fastapi_acl import RequirePermission, RequirePermissions
+
+# Une permission requise
+@app.post("/posts")
+async def create_post(user=Depends(RequirePermission("posts:create"))):
+    return {"message": "Post créé"}
+
+# Plusieurs permissions (toutes requises par défaut)
+@app.put("/posts/{id}")
+async def update_post(user=Depends(RequirePermissions(["posts:read", "posts:update"]))):
+    return {"message": "Post modifié"}
+
+# Au moins une permission
+@app.get("/content")
+async def view_content(user=Depends(RequirePermissions(["posts:read", "articles:read"], require_all=False))):
+    return {"message": "Contenu accessible"}
+```
+
+## Permissions avec wildcards
+
+Les permissions supportent les wildcards pour des droits globaux :
+
+```python
+# L'admin a la permission "*" (tout)
+# Vérifie posts:create → True (wildcard match)
+
+# Un modérateur a "posts:*"
+# Vérifie posts:create → True
+# Vérifie posts:delete → True
+# Vérifie users:create → False
+```
+
+## Modèles personnalisés
+
+### Utilisation de la Base SQLAlchemy
+
+**Important** : Pour que les migrations Alembic fonctionnent correctement, vous **devez** utiliser la `Base` SQLAlchemy exportée par `fastapi-acl` pour tous vos modèles SQL.
+
+#### Pourquoi ?
+
+- **Cas 1 - Extension des modèles ACL** : Si vous étendez `SQLAuthUserModel`, il hérite déjà de notre `Base`. Vos modèles personnalisés doivent donc utiliser la même `Base` pour qu'Alembic détecte toutes les tables.
+
+- **Cas 2 - Vos propres modèles** : Pour une gestion unifiée des migrations, utilisez notre `Base` pour que toutes les tables (ACL + application) soient gérées ensemble.
+
+```python
+from fastapi_acl import Base  # Utiliser cette Base pour tous vos modèles
+from sqlalchemy import Column, String, Integer, ForeignKey
+
+# Modèle propre à votre application
+class Product(Base):
+    __tablename__ = "products"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False)
+    description = Column(String(500))
+
+# Modèle avec relation vers un utilisateur ACL
+class Order(Base):
+    __tablename__ = "orders"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(String(36), ForeignKey("acl_auth_users.id"))
+    total = Column(Integer)
+```
+
+#### Base séparée (non recommandé)
+
+Si vous utilisez votre propre `Base`, vous devrez configurer Alembic pour combiner les métadonnées :
+
+```python
+# alembic/env.py
+from fastapi_acl import Base as ACLBase
+from myapp.models import Base as AppBase
+from sqlalchemy import MetaData
+
+combined_metadata = MetaData()
+for table in ACLBase.metadata.tables.values():
+    table.tometadata(combined_metadata)
+for table in AppBase.metadata.tables.values():
+    table.tometadata(combined_metadata)
+
+target_metadata = combined_metadata
+```
+
+### Ajouter des champs utilisateur (SQL)
+
+```python
+from sqlalchemy import Column, String, Integer
+from fastapi_acl import SQLAuthUserModel, ACLManager, ACLConfig
+
+class CustomUserModel(SQLAuthUserModel):
+    __tablename__ = "users"  # Optionnel: changer le nom de table
+
+    phone = Column(String(20), nullable=True)
+    company_id = Column(Integer, nullable=True)
+    department = Column(String(100), nullable=True)
+
+config = ACLConfig(...)
+acl = ACLManager(
+    config,
+    app=app,
+    sql_user_model=CustomUserModel,
+)
+```
+
+### Ajouter des champs utilisateur (MongoDB)
+
+```python
+from pydantic import Field
+from fastapi_acl import MongoAuthUserModel, ACLManager, ACLConfig
+
+class CustomUserModel(MongoAuthUserModel):
+    phone: str | None = Field(None, max_length=20)
+    company_id: str | None = None
+    preferences: dict = Field(default_factory=dict)
+
+config = ACLConfig(...)
+acl = ACLManager(
+    config,
+    app=app,
+    mongo_user_model=CustomUserModel,
+    extra_user_indexes=["phone", "company_id"],  # Index MongoDB
+)
+```
+
+## Migrations avec Alembic
+
+### 1. Configuration `alembic/env.py`
+
+```python
+import asyncio
+from sqlalchemy import pool
+from sqlalchemy.ext.asyncio import async_engine_from_config
+from alembic import context
+
+# Importer la Base et tous les modèles
+from fastapi_acl import (
+    Base,
+    SQLAuthUserModel,
+    SQLRoleModel,
+    SQLUserRoleModel,
+    SQLPermissionModel,
+)
+
+# Vos modèles personnalisés
+from app.models import CustomUserModel
+
+target_metadata = Base.metadata
+
+def do_run_migrations(connection):
+    context.configure(connection=connection, target_metadata=target_metadata)
+    with context.begin_transaction():
+        context.run_migrations()
+
+async def run_async_migrations():
+    connectable = async_engine_from_config(
+        config.get_section(config.config_ini_section, {}),
+        prefix="sqlalchemy.",
+        poolclass=pool.NullPool,
+    )
+    async with connectable.connect() as connection:
+        await connection.run_sync(do_run_migrations)
+    await connectable.dispose()
+
+def run_migrations_online():
+    asyncio.run(run_async_migrations())
+
+if context.is_offline_mode():
+    # ... mode offline
+else:
+    run_migrations_online()
+```
+
+### 2. Commandes Alembic
+
+```bash
+# Générer une migration
+alembic revision --autogenerate -m "Initial ACL tables"
+
+# Appliquer les migrations
+alembic upgrade head
+
+# Voir l'état
+alembic current
+```
+
+## Tables créées
+
+| Table | Description |
+|-------|-------------|
+| `acl_auth_users` | Utilisateurs |
+| `acl_roles` | Rôles |
+| `acl_user_roles` | Association utilisateurs-rôles |
+| `acl_permissions` | Permissions |
+
+## Rôles et permissions par défaut
+
+Au démarrage, le package crée automatiquement :
+
+**Rôles :**
+- `admin` : Tous les droits (`*`)
+- `user` : Droits basiques (`profile:read`, `profile:update`)
+
+**Permissions :**
+- `profile:read`, `profile:update`
+- `users:read`, `users:create`, `users:update`, `users:delete`
+- `roles:read`, `roles:create`, `roles:update`, `roles:delete`, `roles:assign`
+- `permissions:read`, `permissions:manage`
+
+## Architecture
+
+Le package suit une **Vertical Slice Architecture** avec Clean Architecture par feature :
+
+```
+fastapi_acl/
+├── auth/                    # Feature Authentication
+│   ├── domain/              # Entités et DTOs
+│   ├── application/         # Use cases et interfaces
+│   ├── infrastructure/      # Repositories et services
+│   └── interface/           # Routes et dépendances
+├── roles/                   # Feature Roles
+├── permissions/             # Feature Permissions
+├── shared/                  # Code partagé
+│   ├── database/            # Connexions DB
+│   ├── cache/               # Cache Redis/Memory
+│   └── exceptions.py        # Exceptions
+└── manager.py               # Point d'entrée
+```
+
+## Exemples complets
+
+### Application minimale
+
 ```python
 from fastapi import FastAPI
+from contextlib import asynccontextmanager
 from fastapi_acl import ACLManager, ACLConfig
-
-app = FastAPI()
 
 config = ACLConfig(
     database_type="postgresql",
     postgresql_uri="postgresql+asyncpg://user:pass@localhost/db",
-    enable_cache=True,
-    redis_url="redis://localhost:6379/0",
-    enable_auth_feature=True,
-    enable_api_routes=True
+    jwt_secret_key="change-me-in-production-32-chars",
 )
 
-# ✅ Passer l'app pour auto-register les routes
-acl = ACLManager(config, app=app)
-
-@app.on_event("startup")
-async def startup():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     await acl.initialize()
-
-@app.on_event("shutdown")
-async def shutdown():
+    yield
     await acl.close()
 
-# Les routes sont automatiquement dans Swagger !
-# GET /api/v1/auth/me
-# POST /api/v1/auth/login
-# etc.
+app = FastAPI(lifespan=lifespan)
+acl = ACLManager(config, app=app)
 ```
 
-## CONTRAINTES TECHNIQUES
+### Application complète avec toutes les features
 
-### Stack obligatoire
-- Python 3.10+
-- FastAPI >= 0.104.0
-- Pydantic v2 >= 2.0.0
-- SQLAlchemy 2.0 async
-- motor (MongoDB async)
-- redis.asyncio
-- python-jose (JWT)
-- passlib + bcrypt (password hashing)
+```python
+from fastapi import FastAPI, Depends
+from contextlib import asynccontextmanager
+from fastapi_acl import (
+    ACLManager,
+    ACLConfig,
+    get_current_user,
+    get_current_active_user,
+    RequireRole,
+    RequirePermission,
+    RequirePermissions,
+)
 
-### Principes
-- 100% asynchrone (async/await partout)
-- Type hints obligatoires
-- Docstrings Google Style en français
-- Clean Architecture stricte
-- SOLID principles
-- Dependency Injection
-- Tests avec pytest-asyncio
+config = ACLConfig(
+    database_type="postgresql",
+    postgresql_uri="postgresql+asyncpg://user:pass@localhost/db",
+    jwt_secret_key="your-production-secret-key-here",
+    enable_roles_feature=True,
+    enable_permissions_feature=True,
+    enable_cache=True,
+    redis_url="redis://localhost:6379/0",
+    create_default_admin=True,
+)
 
-### Organisation
-- Code (variables, fonctions, classes) en anglais
-- Commentaires et docstrings en français
-- Documentation utilisateur en français
-- Chaque feature est autonome et testable indépendamment
-- Le code partagé (shared) ne dépend d'aucune feature
-- Les features peuvent dépendre du code partagé mais pas entre elles
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await acl.initialize()
+    yield
+    await acl.close()
 
-## LIVRABLES ATTENDUS
+app = FastAPI(title="Mon API Sécurisée", lifespan=lifespan)
+acl = ACLManager(config, app=app)
 
-1. **Package complet** avec la structure exacte décrite
-2. **Feature AUTH complète** et fonctionnelle
-3. **Tests unitaires** pour la feature AUTH (coverage 80%+)
-4. **Exemples d'utilisation** (examples/)
-5. **Documentation** (README.md + docs/)
-6. **setup.py et pyproject.toml** pour distribution PyPI
-7. **.env.example** avec toutes les variables
-8. **CI/CD** (GitHub Actions) pour tests et linting
+@app.get("/")
+async def home():
+    return {"message": "Bienvenue!"}
 
-## FEATURES FUTURES (structure identique à AUTH)
+@app.get("/profile")
+async def my_profile(user=Depends(get_current_active_user)):
+    return {"username": user.username, "email": user.email}
 
-- **permissions/** : gérer les permissions (resource:action)
-- **roles/** : gérer les rôles et associations role-permissions
-- **users/** : gérer les utilisateurs et leurs rôles
+@app.get("/admin/dashboard")
+async def admin_dashboard(user=Depends(RequireRole("admin"))):
+    return {"message": "Dashboard admin", "user": user.username}
 
-Chaque feature suivra exactement la même structure que AUTH :
-- domain/ (entities, dtos)
-- application/ (interface, usecases)
-- infrastructure/ (mappers, models, repositories)
-- interface/ (admin, api.py, dependencies.py, schemas.py)
+@app.post("/articles")
+async def create_article(user=Depends(RequirePermission("articles:create"))):
+    return {"message": "Article créé"}
 
-## NOTES IMPORTANTES
+@app.put("/articles/{id}")
+async def update_article(
+    id: int,
+    user=Depends(RequirePermissions(["articles:read", "articles:update"]))
+):
+    return {"message": f"Article {id} modifié"}
+```
 
-- Le développeur ne doit JAMAIS avoir à écrire de code pour enregistrer les routes
-- Tout doit être configurable via ACLConfig
-- Le package doit fonctionner avec MongoDB OU PostgreSQL OU MySQL (pas les 3 en même temps)
-- Le cache Redis est optionnel avec fallback automatique vers mémoire
-- Les migrations Alembic doivent être gérées automatiquement (à détailler plus tard)
-- La sécurité est primordiale : hashage bcrypt, tokens JWT signés, validation stricte
+## Licence
 
-Génère ce package complet en respectant scrupuleusement cette architecture modulaire par features.
+MIT License - voir [LICENSE](LICENSE)
+
+## Contribuer
+
+Les contributions sont les bienvenues ! Voir [CONTRIBUTING.md](CONTRIBUTING.md)
+
+## Support
+
+- Issues : [GitHub Issues](https://github.com/your-repo/fastapi-acl/issues)
+- Documentation : [Documentation complète](https://fastapi-acl.readthedocs.io)
