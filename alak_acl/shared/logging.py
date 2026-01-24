@@ -9,7 +9,7 @@ import sys
 from typing import Optional
 
 
-def get_logger(name: str = "fastapi_acl", level: Optional[str] = None) -> logging.Logger:
+def get_logger(name: str = "alak_acl", level: Optional[str] = None) -> logging.Logger:
     """
     Crée et configure un logger pour le package.
 

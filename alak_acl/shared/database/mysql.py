@@ -1,5 +1,5 @@
 """
-Connexion MySQL asynchrone avec SQLAlchemy 2.0 et aiomysql.
+Connexion MySQL asynchrone avec SQLAlchemy 2.0 et asyncmy.
 """
 
 from typing import Any, Optional, AsyncGenerator
@@ -23,7 +23,7 @@ class MySQLDatabase(BaseDatabase):
     """
     Implémentation de la connexion MySQL avec SQLAlchemy async.
 
-    Utilise aiomysql comme driver asynchrone.
+    Utilise asyncmy comme driver asynchrone.
 
     Attributes:
         uri: URI de connexion MySQL

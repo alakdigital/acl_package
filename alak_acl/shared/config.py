@@ -65,7 +65,7 @@ class ACLConfig(BaseSettings):
     )
     mysql_uri: Optional[str] = Field(
         default=None,
-        description="URI de connexion MySQL (ex: mysql+aiomysql://user:pass@localhost/db)"
+        description="URI de connexion MySQL (ex: mysql+asyncmy://user:pass@localhost/db)"
     )
 
     # Cache Configuration

@@ -3193,6 +3193,14 @@
         "documentation": {}
     },
     {
+        "label": "ACLConfig",
+        "importPath": "alak_acl.shared.config",
+        "description": "alak_acl.shared.config",
+        "isExtraImport": true,
+        "detail": "alak_acl.shared.config",
+        "documentation": {}
+    },
+    {
         "label": "APIRouter",
         "importPath": "fastapi",
         "description": "fastapi",
@@ -4755,6 +4763,14 @@
         "description": "alak_acl.auth.infrastructure.repositories.mysql_repository",
         "isExtraImport": true,
         "detail": "alak_acl.auth.infrastructure.repositories.mysql_repository",
+        "documentation": {}
+    },
+    {
+        "label": "JWTTokenService",
+        "importPath": "alak_acl.auth.infrastructure.services.jwt_token_service",
+        "description": "alak_acl.auth.infrastructure.services.jwt_token_service",
+        "isExtraImport": true,
+        "detail": "alak_acl.auth.infrastructure.services.jwt_token_service",
         "documentation": {}
     },
     {
@@ -6402,7 +6418,7 @@
         "kind": 6,
         "importPath": "alak_acl.shared.database.mysql",
         "description": "alak_acl.shared.database.mysql",
-        "peekOfCode": "class MySQLDatabase(BaseDatabase):\n    \"\"\"\n    Implémentation de la connexion MySQL avec SQLAlchemy async.\n    Utilise aiomysql comme driver asynchrone.\n    Attributes:\n        uri: URI de connexion MySQL\n        engine: Moteur SQLAlchemy async\n        session_factory: Factory pour créer des sessions\n    \"\"\"\n    def __init__(self, uri: str, echo: bool = False):",
+        "peekOfCode": "class MySQLDatabase(BaseDatabase):\n    \"\"\"\n    Implémentation de la connexion MySQL avec SQLAlchemy async.\n    Utilise asyncmy comme driver asynchrone.\n    Attributes:\n        uri: URI de connexion MySQL\n        engine: Moteur SQLAlchemy async\n        session_factory: Factory pour créer des sessions\n    \"\"\"\n    def __init__(self, uri: str, echo: bool = False):",
         "detail": "alak_acl.shared.database.mysql",
         "documentation": {}
     },
@@ -6582,7 +6598,7 @@
         "kind": 2,
         "importPath": "alak_acl.shared.logging",
         "description": "alak_acl.shared.logging",
-        "peekOfCode": "def get_logger(name: str = \"fastapi_acl\", level: Optional[str] = None) -> logging.Logger:\n    \"\"\"\n    Crée et configure un logger pour le package.\n    Args:\n        name: Nom du logger\n        level: Niveau de logging (DEBUG, INFO, WARNING, ERROR, CRITICAL)\n    Returns:\n        Logger configuré\n    \"\"\"\n    logger = logging.getLogger(name)",
+        "peekOfCode": "def get_logger(name: str = \"alak_acl\", level: Optional[str] = None) -> logging.Logger:\n    \"\"\"\n    Crée et configure un logger pour le package.\n    Args:\n        name: Nom du logger\n        level: Niveau de logging (DEBUG, INFO, WARNING, ERROR, CRITICAL)\n    Returns:\n        Logger configuré\n    \"\"\"\n    logger = logging.getLogger(name)",
         "detail": "alak_acl.shared.logging",
         "documentation": {}
     },
@@ -6753,7 +6769,7 @@
         "kind": 5,
         "importPath": "test_debug",
         "description": "test_debug",
-        "peekOfCode": "os.environ[\"ACL_DATABASE_TYPE\"] = \"mysql\"\nos.environ[\"ACL_MYSQL_URI\"] = \"mysql+asyncmy://root:@localhost:3306/acls_db2\"\nos.environ[\"ACL_JWT_SECRET_KEY\"] = \"test-secret-key-for-debugging-minimum-32-chars\"\nos.environ[\"ACL_ENABLE_CACHE\"] = \"false\"\nfrom alak_acl.shared.database.mysql import MySQLDatabase\nfrom alak_acl.shared.database.declarative_base import Base\nfrom alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel\nfrom alak_acl.auth.infrastructure.repositories.mysql_repository import MySQLAuthRepository\nfrom alak_acl.auth.domain.entities.auth_user import AuthUser\nfrom alak_acl.auth.infrastructure.services.argon2_password_hasher import Argon2PasswordHasher",
+        "peekOfCode": "os.environ[\"ACL_DATABASE_TYPE\"] = \"mysql\"\nos.environ[\"ACL_MYSQL_URI\"] = \"mysql+asyncmy://root:@localhost:3306/acls_db2\"\nos.environ[\"ACL_JWT_SECRET_KEY\"] = \"test-secret-key-for-debugging-minimum-32-chars\"\nos.environ[\"ACL_ENABLE_CACHE\"] = \"false\"\nos.environ[\"ACL_CREATE_DEFAULT_ADMIN\"] = \"true\"\nfrom alak_acl.shared.database.mysql import MySQLDatabase\nfrom alak_acl.shared.database.declarative_base import Base\nfrom alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel\nfrom alak_acl.auth.infrastructure.repositories.mysql_repository import MySQLAuthRepository\nfrom alak_acl.auth.domain.entities.auth_user import AuthUser",
         "detail": "test_debug",
         "documentation": {}
     },
@@ -6762,7 +6778,7 @@
         "kind": 5,
         "importPath": "test_debug",
         "description": "test_debug",
-        "peekOfCode": "os.environ[\"ACL_MYSQL_URI\"] = \"mysql+asyncmy://root:@localhost:3306/acls_db2\"\nos.environ[\"ACL_JWT_SECRET_KEY\"] = \"test-secret-key-for-debugging-minimum-32-chars\"\nos.environ[\"ACL_ENABLE_CACHE\"] = \"false\"\nfrom alak_acl.shared.database.mysql import MySQLDatabase\nfrom alak_acl.shared.database.declarative_base import Base\nfrom alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel\nfrom alak_acl.auth.infrastructure.repositories.mysql_repository import MySQLAuthRepository\nfrom alak_acl.auth.domain.entities.auth_user import AuthUser\nfrom alak_acl.auth.infrastructure.services.argon2_password_hasher import Argon2PasswordHasher\nasync def main():",
+        "peekOfCode": "os.environ[\"ACL_MYSQL_URI\"] = \"mysql+asyncmy://root:@localhost:3306/acls_db2\"\nos.environ[\"ACL_JWT_SECRET_KEY\"] = \"test-secret-key-for-debugging-minimum-32-chars\"\nos.environ[\"ACL_ENABLE_CACHE\"] = \"false\"\nos.environ[\"ACL_CREATE_DEFAULT_ADMIN\"] = \"true\"\nfrom alak_acl.shared.database.mysql import MySQLDatabase\nfrom alak_acl.shared.database.declarative_base import Base\nfrom alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel\nfrom alak_acl.auth.infrastructure.repositories.mysql_repository import MySQLAuthRepository\nfrom alak_acl.auth.domain.entities.auth_user import AuthUser\nfrom alak_acl.auth.infrastructure.services.argon2_password_hasher import Argon2PasswordHasher",
         "detail": "test_debug",
         "documentation": {}
     },
@@ -6771,7 +6787,7 @@
         "kind": 5,
         "importPath": "test_debug",
         "description": "test_debug",
-        "peekOfCode": "os.environ[\"ACL_JWT_SECRET_KEY\"] = \"test-secret-key-for-debugging-minimum-32-chars\"\nos.environ[\"ACL_ENABLE_CACHE\"] = \"false\"\nfrom alak_acl.shared.database.mysql import MySQLDatabase\nfrom alak_acl.shared.database.declarative_base import Base\nfrom alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel\nfrom alak_acl.auth.infrastructure.repositories.mysql_repository import MySQLAuthRepository\nfrom alak_acl.auth.domain.entities.auth_user import AuthUser\nfrom alak_acl.auth.infrastructure.services.argon2_password_hasher import Argon2PasswordHasher\nasync def main():\n    # 1. Connexion à la base de données",
+        "peekOfCode": "os.environ[\"ACL_JWT_SECRET_KEY\"] = \"test-secret-key-for-debugging-minimum-32-chars\"\nos.environ[\"ACL_ENABLE_CACHE\"] = \"false\"\nos.environ[\"ACL_CREATE_DEFAULT_ADMIN\"] = \"true\"\nfrom alak_acl.shared.database.mysql import MySQLDatabase\nfrom alak_acl.shared.database.declarative_base import Base\nfrom alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel\nfrom alak_acl.auth.infrastructure.repositories.mysql_repository import MySQLAuthRepository\nfrom alak_acl.auth.domain.entities.auth_user import AuthUser\nfrom alak_acl.auth.infrastructure.services.argon2_password_hasher import Argon2PasswordHasher\nfrom alak_acl.auth.infrastructure.services.jwt_token_service import JWTTokenService",
         "detail": "test_debug",
         "documentation": {}
     },
@@ -6780,7 +6796,16 @@
         "kind": 5,
         "importPath": "test_debug",
         "description": "test_debug",
-        "peekOfCode": "os.environ[\"ACL_ENABLE_CACHE\"] = \"false\"\nfrom alak_acl.shared.database.mysql import MySQLDatabase\nfrom alak_acl.shared.database.declarative_base import Base\nfrom alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel\nfrom alak_acl.auth.infrastructure.repositories.mysql_repository import MySQLAuthRepository\nfrom alak_acl.auth.domain.entities.auth_user import AuthUser\nfrom alak_acl.auth.infrastructure.services.argon2_password_hasher import Argon2PasswordHasher\nasync def main():\n    # 1. Connexion à la base de données\n    db_uri = os.environ[\"ACL_MYSQL_URI\"]",
+        "peekOfCode": "os.environ[\"ACL_ENABLE_CACHE\"] = \"false\"\nos.environ[\"ACL_CREATE_DEFAULT_ADMIN\"] = \"true\"\nfrom alak_acl.shared.database.mysql import MySQLDatabase\nfrom alak_acl.shared.database.declarative_base import Base\nfrom alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel\nfrom alak_acl.auth.infrastructure.repositories.mysql_repository import MySQLAuthRepository\nfrom alak_acl.auth.domain.entities.auth_user import AuthUser\nfrom alak_acl.auth.infrastructure.services.argon2_password_hasher import Argon2PasswordHasher\nfrom alak_acl.auth.infrastructure.services.jwt_token_service import JWTTokenService\nfrom alak_acl.shared.config import ACLConfig",
+        "detail": "test_debug",
+        "documentation": {}
+    },
+    {
+        "label": "os.environ[\"ACL_CREATE_DEFAULT_ADMIN\"]",
+        "kind": 5,
+        "importPath": "test_debug",
+        "description": "test_debug",
+        "peekOfCode": "os.environ[\"ACL_CREATE_DEFAULT_ADMIN\"] = \"true\"\nfrom alak_acl.shared.database.mysql import MySQLDatabase\nfrom alak_acl.shared.database.declarative_base import Base\nfrom alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel\nfrom alak_acl.auth.infrastructure.repositories.mysql_repository import MySQLAuthRepository\nfrom alak_acl.auth.domain.entities.auth_user import AuthUser\nfrom alak_acl.auth.infrastructure.services.argon2_password_hasher import Argon2PasswordHasher\nfrom alak_acl.auth.infrastructure.services.jwt_token_service import JWTTokenService\nfrom alak_acl.shared.config import ACLConfig\nasync def main():",
         "detail": "test_debug",
         "documentation": {}
     }

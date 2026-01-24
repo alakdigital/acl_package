@@ -1,5 +1,5 @@
 """
-Script de debug pour tester get_by_id localement.
+Script de debug pour tester get_by_id et création admin localement.
 """
 
 import asyncio
@@ -11,6 +11,7 @@ os.environ["ACL_DATABASE_TYPE"] = "mysql"
 os.environ["ACL_MYSQL_URI"] = "mysql+asyncmy://root:@localhost:3306/acls_db2"
 os.environ["ACL_JWT_SECRET_KEY"] = "test-secret-key-for-debugging-minimum-32-chars"
 os.environ["ACL_ENABLE_CACHE"] = "false"
+os.environ["ACL_CREATE_DEFAULT_ADMIN"] = "true"
 
 from alak_acl.shared.database.mysql import MySQLDatabase
 from alak_acl.shared.database.declarative_base import Base
@@ -18,6 +19,8 @@ from alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel
 from alak_acl.auth.infrastructure.repositories.mysql_repository import MySQLAuthRepository
 from alak_acl.auth.domain.entities.auth_user import AuthUser
 from alak_acl.auth.infrastructure.services.argon2_password_hasher import Argon2PasswordHasher
+from alak_acl.auth.infrastructure.services.jwt_token_service import JWTTokenService
+from alak_acl.shared.config import ACLConfig
 
 
 async def main():

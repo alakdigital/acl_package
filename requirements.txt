@@ -1,4 +1,3 @@
-aiomysql==0.3.2
 alembic==1.16.4
 annotated-doc==0.0.4
 annotated-types==0.7.0
