@@ -6409,7 +6409,7 @@
         "kind": 6,
         "importPath": "alak_acl.shared.database.mongodb",
         "description": "alak_acl.shared.database.mongodb",
-        "peekOfCode": "class MongoDBDatabase(BaseDatabase):\n    \"\"\"\n    Implémentation de la connexion MongoDB avec motor.\n    Attributes:\n        uri: URI de connexion MongoDB\n        database_name: Nom de la base de données\n        client: Client motor\n        db: Instance de la base de données\n    \"\"\"\n    def __init__(self, uri: str, database_name: Optional[str] = None):",
+        "peekOfCode": "class MongoDBDatabase(BaseDatabase):\n    def __init__(self, uri: str, database_name: Optional[str] = None):\n        self.uri = uri\n        self._database_name = database_name or self._extract_db_name(uri)\n        self._client: Optional[AsyncIOMotorClient] = None\n        self._db: Optional[AsyncIOMotorDatabase] = None\n    def _extract_db_name(self, uri: str) -> str:\n        if \"/\" in uri.split(\"://\")[-1]:\n            parts = uri.split(\"/\")\n            db_part = parts[-1].split(\"?\")[0]",
         "detail": "alak_acl.shared.database.mongodb",
         "documentation": {}
     },

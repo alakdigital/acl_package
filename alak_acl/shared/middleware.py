@@ -1,6 +1,6 @@
 # from functools import wraps
 # import logging
-# from typing import Callable, Optional
+# from typing import Any, Callable, Optional
 # import inspect
 # import json
 
@@ -16,20 +16,30 @@
 # # Utils
 # # ============================================================
 
-# def extract_id_pressing(value) -> Optional[str]:
+# def extract_account_id(value: Any) -> Optional[str]:
 #     """
-#     Extrait id_pressing depuis :
-#     - dict (pressing, current_user)
-#     - objet
+#     Extrait account_no depuis :
+#     - modèle Pydantic
+#     - dictionnaire
+#     - objet classique
 #     - None
 #     """
-#     if not value:
+#     if value is None:
 #         return None
 
-#     if isinstance(value, dict):
-#         return value.get("id_pressing")
+#     # Cas modèle Pydantic (v1 & v2)
+#     if isinstance(value, BaseModel):
+#         # Pydantic v2
+#         if hasattr(value, "model_dump"):
+#             return value.model_dump().get("account_no")
+       
 
-#     return getattr(value, "id_pressing", None)
+#     # Cas dictionnaire
+#     if isinstance(value, dict):
+#         return value.get("account_no")
+
+#     #  Cas objet classique
+#     return getattr(value, "account_no", None)
 
 
 # def serialize_params(params: dict) -> dict:
