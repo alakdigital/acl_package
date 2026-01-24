@@ -22,26 +22,26 @@ Gérez l'authentification, les rôles et les permissions dans vos applications F
 ## Installation
 
 ```bash
-pip install fastapi-acl
+pip install alak-acl
 ```
 
 ### Dépendances optionnelles
 
 ```bash
 # PostgreSQL
-pip install fastapi-acl[postgresql]
+pip install alak-acl[postgresql]
 
 # MySQL
-pip install fastapi-acl[mysql]
+pip install alak-acl[mysql]
 
 # MongoDB
-pip install fastapi-acl[mongodb]
+pip install alak-acl[mongodb]
 
 # Redis (cache)
-pip install fastapi-acl[redis]
+pip install alak-acl[redis]
 
 # Toutes les dépendances
-pip install fastapi-acl[all]
+pip install alak-acl[all]
 ```
 
 ## Démarrage rapide

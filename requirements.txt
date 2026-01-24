@@ -10,3 +10,4 @@ asyncpg==0.31.0
 email_validator==2.1.1
 alembic==1.16.4
 twine==6.2.0
+argon2-cffi>=23.1.0

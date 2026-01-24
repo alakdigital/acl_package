@@ -8,7 +8,7 @@ avec PostgreSQL et Redis.
 from fastapi import FastAPI, Depends
 from contextlib import asynccontextmanager
 
-from fastapi_acl import (
+from alak_acl import (
     ACLManager,
     ACLConfig,
     AuthUser,

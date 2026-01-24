@@ -9,7 +9,7 @@ import os
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-from fastapi_acl import ACLManager, ACLConfig
+from alak_acl import ACLManager, ACLConfig
 
 
 # La configuration est automatiquement chargée depuis:

@@ -20,7 +20,7 @@ from contextlib import asynccontextmanager
 
 from sqlalchemy import Column, String, Integer, Boolean as SQLBoolean
 
-from fastapi_acl import (
+from alak_acl import (
     ACLManager,
     ACLConfig,
     AuthUser,
@@ -68,7 +68,7 @@ class CustomUserModel(SQLAuthUserModel):
 # OPTION 2: Champs personnalisés avec MongoDB
 # ============================================
 
-from fastapi_acl import MongoAuthUserModel, create_mongo_user_model
+from alak_acl import MongoAuthUserModel, create_mongo_user_model
 
 
 # Méthode 2A: Créer une sous-classe du modèle MongoDB

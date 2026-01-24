@@ -8,7 +8,7 @@ pour utiliser MongoDB comme base de données.
 from fastapi import FastAPI, Depends
 from contextlib import asynccontextmanager
 
-from fastapi_acl import (
+from alak_acl import (
     ACLManager,
     ACLConfig,
     AuthUser,
