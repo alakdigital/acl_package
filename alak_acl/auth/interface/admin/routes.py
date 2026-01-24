@@ -3,9 +3,8 @@ Routes d'administration pour la gestion des utilisateurs.
 """
 
 from typing import Optional
-from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query, Path
 
 from alak_acl.auth.application.interface.auth_repository import IAuthRepository
 from alak_acl.auth.domain.entities.auth_user import AuthUser
@@ -82,7 +81,7 @@ async def list_users(
     description="Récupère les détails d'un utilisateur par son ID (admin uniquement).",
 )
 async def get_user(
-    user_id: UUID,
+    user_id: str = Path(..., description="ID de l'utilisateur (UUID)"),
     current_user: AuthUser = Depends(get_current_superuser),
     auth_repository: IAuthRepository = Depends(get_auth_repository),
 ) -> UserResponse:
@@ -124,7 +123,7 @@ async def get_user(
     description="Active un compte utilisateur désactivé (admin uniquement).",
 )
 async def activate_user(
-    user_id: UUID,
+    user_id: str = Path(..., description="ID de l'utilisateur (UUID)"),
     current_user: AuthUser = Depends(get_current_superuser),
     auth_repository: IAuthRepository = Depends(get_auth_repository),
 ) -> UserResponse:
@@ -171,7 +170,7 @@ async def activate_user(
     description="Désactive un compte utilisateur (admin uniquement).",
 )
 async def deactivate_user(
-    user_id: UUID,
+    user_id: str = Path(..., description="ID de l'utilisateur (UUID)"),
     current_user: AuthUser = Depends(get_current_superuser),
     auth_repository: IAuthRepository = Depends(get_auth_repository),
 ) -> UserResponse:
@@ -225,7 +224,7 @@ async def deactivate_user(
     description="Supprime définitivement un compte utilisateur (admin uniquement).",
 )
 async def delete_user(
-    user_id: UUID,
+    user_id: str = Path(..., description="ID de l'utilisateur (UUID)"),
     current_user: AuthUser = Depends(get_current_superuser),
     auth_repository: IAuthRepository = Depends(get_auth_repository),
 ) -> MessageResponse:

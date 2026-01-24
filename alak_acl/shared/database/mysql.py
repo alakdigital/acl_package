@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import (
 from sqlalchemy import text
 
 from alak_acl.shared.database.base import BaseDatabase
-from alak_acl.shared.database.postgresql import Base  # Réutilise la même Base
+from alak_acl.shared.database.declarative_base import Base
 from alak_acl.shared.exceptions import DatabaseConnectionError
 from alak_acl.shared.logging import logger
 

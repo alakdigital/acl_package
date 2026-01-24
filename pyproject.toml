@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "alak-acl"
-version = "0.1.7"
+version = "0.1.11"
 description = "Package professionnel pour gérer l'authentification et les permissions ACL dans FastAPI"
 readme = "README.md"
 license = {text = "MIT"}

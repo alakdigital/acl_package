@@ -1176,91 +1176,11 @@
         "documentation": {}
     },
     {
-        "label": "UUID",
-        "importPath": "uuid",
-        "description": "uuid",
+        "label": "AuthUser",
+        "importPath": "alak_acl.auth.domain.entities.auth_user",
+        "description": "alak_acl.auth.domain.entities.auth_user",
         "isExtraImport": true,
-        "detail": "uuid",
-        "documentation": {}
-    },
-    {
-        "label": "uuid4",
-        "importPath": "uuid",
-        "description": "uuid",
-        "isExtraImport": true,
-        "detail": "uuid",
-        "documentation": {}
-    },
-    {
-        "label": "uuid4",
-        "importPath": "uuid",
-        "description": "uuid",
-        "isExtraImport": true,
-        "detail": "uuid",
-        "documentation": {}
-    },
-    {
-        "label": "UUID",
-        "importPath": "uuid",
-        "description": "uuid",
-        "isExtraImport": true,
-        "detail": "uuid",
-        "documentation": {}
-    },
-    {
-        "label": "UUID",
-        "importPath": "uuid",
-        "description": "uuid",
-        "isExtraImport": true,
-        "detail": "uuid",
-        "documentation": {}
-    },
-    {
-        "label": "UUID",
-        "importPath": "uuid",
-        "description": "uuid",
-        "isExtraImport": true,
-        "detail": "uuid",
-        "documentation": {}
-    },
-    {
-        "label": "UUID",
-        "importPath": "uuid",
-        "description": "uuid",
-        "isExtraImport": true,
-        "detail": "uuid",
-        "documentation": {}
-    },
-    {
-        "label": "uuid4",
-        "importPath": "uuid",
-        "description": "uuid",
-        "isExtraImport": true,
-        "detail": "uuid",
-        "documentation": {}
-    },
-    {
-        "label": "uuid4",
-        "importPath": "uuid",
-        "description": "uuid",
-        "isExtraImport": true,
-        "detail": "uuid",
-        "documentation": {}
-    },
-    {
-        "label": "uuid4",
-        "importPath": "uuid",
-        "description": "uuid",
-        "isExtraImport": true,
-        "detail": "uuid",
-        "documentation": {}
-    },
-    {
-        "label": "uuid4",
-        "importPath": "uuid",
-        "description": "uuid",
-        "isExtraImport": true,
-        "detail": "uuid",
+        "detail": "alak_acl.auth.domain.entities.auth_user",
         "documentation": {}
     },
     {
@@ -2281,11 +2201,51 @@
         "documentation": {}
     },
     {
-        "label": "MongoAuthUserModel",
-        "importPath": "alak_acl.auth.infrastructure.models.mongo_model",
-        "description": "alak_acl.auth.infrastructure.models.mongo_model",
+        "label": "uuid4",
+        "importPath": "uuid",
+        "description": "uuid",
         "isExtraImport": true,
-        "detail": "alak_acl.auth.infrastructure.models.mongo_model",
+        "detail": "uuid",
+        "documentation": {}
+    },
+    {
+        "label": "uuid4",
+        "importPath": "uuid",
+        "description": "uuid",
+        "isExtraImport": true,
+        "detail": "uuid",
+        "documentation": {}
+    },
+    {
+        "label": "uuid4",
+        "importPath": "uuid",
+        "description": "uuid",
+        "isExtraImport": true,
+        "detail": "uuid",
+        "documentation": {}
+    },
+    {
+        "label": "uuid4",
+        "importPath": "uuid",
+        "description": "uuid",
+        "isExtraImport": true,
+        "detail": "uuid",
+        "documentation": {}
+    },
+    {
+        "label": "uuid4",
+        "importPath": "uuid",
+        "description": "uuid",
+        "isExtraImport": true,
+        "detail": "uuid",
+        "documentation": {}
+    },
+    {
+        "label": "uuid4",
+        "importPath": "uuid",
+        "description": "uuid",
+        "isExtraImport": true,
+        "detail": "uuid",
         "documentation": {}
     },
     {
@@ -2302,6 +2262,22 @@
         "description": "alak_acl.auth.infrastructure.models.mongo_model",
         "isExtraImport": true,
         "detail": "alak_acl.auth.infrastructure.models.mongo_model",
+        "documentation": {}
+    },
+    {
+        "label": "MongoAuthUserModel",
+        "importPath": "alak_acl.auth.infrastructure.models.mongo_model",
+        "description": "alak_acl.auth.infrastructure.models.mongo_model",
+        "isExtraImport": true,
+        "detail": "alak_acl.auth.infrastructure.models.mongo_model",
+        "documentation": {}
+    },
+    {
+        "label": "SQLAuthUserModel",
+        "importPath": "alak_acl.auth.infrastructure.models.sql_model",
+        "description": "alak_acl.auth.infrastructure.models.sql_model",
+        "isExtraImport": true,
+        "detail": "alak_acl.auth.infrastructure.models.sql_model",
         "documentation": {}
     },
     {
@@ -2585,14 +2561,6 @@
         "documentation": {}
     },
     {
-        "label": "CHAR",
-        "importPath": "sqlalchemy",
-        "description": "sqlalchemy",
-        "isExtraImport": true,
-        "detail": "sqlalchemy",
-        "documentation": {}
-    },
-    {
         "label": "select",
         "importPath": "sqlalchemy",
         "description": "sqlalchemy",
@@ -2642,14 +2610,6 @@
     },
     {
         "label": "Text",
-        "importPath": "sqlalchemy",
-        "description": "sqlalchemy",
-        "isExtraImport": true,
-        "detail": "sqlalchemy",
-        "documentation": {}
-    },
-    {
-        "label": "CHAR",
         "importPath": "sqlalchemy",
         "description": "sqlalchemy",
         "isExtraImport": true,
@@ -2761,14 +2721,6 @@
         "documentation": {}
     },
     {
-        "label": "CHAR",
-        "importPath": "sqlalchemy",
-        "description": "sqlalchemy",
-        "isExtraImport": true,
-        "detail": "sqlalchemy",
-        "documentation": {}
-    },
-    {
         "label": "Integer",
         "importPath": "sqlalchemy",
         "description": "sqlalchemy",
@@ -2865,6 +2817,14 @@
         "documentation": {}
     },
     {
+        "label": "text",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
         "label": "declared_attr",
         "importPath": "sqlalchemy.orm",
         "description": "sqlalchemy.orm",
@@ -2905,11 +2865,27 @@
         "documentation": {}
     },
     {
-        "label": "declarative_base",
-        "importPath": "sqlalchemy.orm",
-        "description": "sqlalchemy.orm",
+        "label": "Base",
+        "importPath": "alak_acl.shared.database.declarative_base",
+        "description": "alak_acl.shared.database.declarative_base",
         "isExtraImport": true,
-        "detail": "sqlalchemy.orm",
+        "detail": "alak_acl.shared.database.declarative_base",
+        "documentation": {}
+    },
+    {
+        "label": "Base",
+        "importPath": "alak_acl.shared.database.declarative_base",
+        "description": "alak_acl.shared.database.declarative_base",
+        "isExtraImport": true,
+        "detail": "alak_acl.shared.database.declarative_base",
+        "documentation": {}
+    },
+    {
+        "label": "Base",
+        "importPath": "alak_acl.shared.database.declarative_base",
+        "description": "alak_acl.shared.database.declarative_base",
+        "isExtraImport": true,
+        "detail": "alak_acl.shared.database.declarative_base",
         "documentation": {}
     },
     {
@@ -3065,11 +3041,11 @@
         "documentation": {}
     },
     {
-        "label": "IntegrityError",
-        "importPath": "sqlalchemy.exc",
-        "description": "sqlalchemy.exc",
+        "label": "MySQLDatabase",
+        "importPath": "alak_acl.shared.database.mysql",
+        "description": "alak_acl.shared.database.mysql",
         "isExtraImport": true,
-        "detail": "sqlalchemy.exc",
+        "detail": "alak_acl.shared.database.mysql",
         "documentation": {}
     },
     {
@@ -3089,11 +3065,11 @@
         "documentation": {}
     },
     {
-        "label": "PostgreSQLDatabase",
-        "importPath": "alak_acl.shared.database.postgresql",
-        "description": "alak_acl.shared.database.postgresql",
+        "label": "IntegrityError",
+        "importPath": "sqlalchemy.exc",
+        "description": "sqlalchemy.exc",
         "isExtraImport": true,
-        "detail": "alak_acl.shared.database.postgresql",
+        "detail": "sqlalchemy.exc",
         "documentation": {}
     },
     {
@@ -3121,7 +3097,7 @@
         "documentation": {}
     },
     {
-        "label": "Base",
+        "label": "PostgreSQLDatabase",
         "importPath": "alak_acl.shared.database.postgresql",
         "description": "alak_acl.shared.database.postgresql",
         "isExtraImport": true,
@@ -3250,6 +3226,14 @@
     },
     {
         "label": "Query",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "Path",
         "importPath": "fastapi",
         "description": "fastapi",
         "isExtraImport": true,
@@ -4766,11 +4750,27 @@
         "documentation": {}
     },
     {
+        "label": "MySQLAuthRepository",
+        "importPath": "alak_acl.auth.infrastructure.repositories.mysql_repository",
+        "description": "alak_acl.auth.infrastructure.repositories.mysql_repository",
+        "isExtraImport": true,
+        "detail": "alak_acl.auth.infrastructure.repositories.mysql_repository",
+        "documentation": {}
+    },
+    {
         "label": "JWTTokenService",
         "importPath": "alak_acl.auth.infrastructure.services.jwt_token_service",
         "description": "alak_acl.auth.infrastructure.services.jwt_token_service",
         "isExtraImport": true,
         "detail": "alak_acl.auth.infrastructure.services.jwt_token_service",
+        "documentation": {}
+    },
+    {
+        "label": "Argon2PasswordHasher",
+        "importPath": "alak_acl.auth.infrastructure.services.argon2_password_hasher",
+        "description": "alak_acl.auth.infrastructure.services.argon2_password_hasher",
+        "isExtraImport": true,
+        "detail": "alak_acl.auth.infrastructure.services.argon2_password_hasher",
         "documentation": {}
     },
     {
@@ -5061,7 +5061,7 @@
         "kind": 6,
         "importPath": "alak_acl.auth.application.interface.token_service",
         "description": "alak_acl.auth.application.interface.token_service",
-        "peekOfCode": "class ITokenService(ABC):\n    \"\"\"\n    Interface abstraite pour le service de tokens JWT.\n    Définit le contrat pour la création et validation des tokens.\n    \"\"\"\n    @abstractmethod\n    def create_access_token(\n        self,\n        user_id: UUID,\n        username: str,",
+        "peekOfCode": "class ITokenService(ABC):\n    \"\"\"\n    Interface abstraite pour le service de tokens JWT.\n    Définit le contrat pour la création et validation des tokens.\n    \"\"\"\n    @abstractmethod\n    def create_access_token(\n        self,\n        user_id: str,\n        username: str,",
         "detail": "alak_acl.auth.application.interface.token_service",
         "documentation": {}
     },
@@ -5223,7 +5223,7 @@
         "kind": 6,
         "importPath": "alak_acl.auth.infrastructure.models.sql_model",
         "description": "alak_acl.auth.infrastructure.models.sql_model",
-        "peekOfCode": "class SQLAuthUserModel(Base):\n    \"\"\"\n    Modèle SQLAlchemy de base pour la table des utilisateurs.\n    Compatible PostgreSQL et MySQL.\n    Ce modèle peut être étendu par le développeur pour ajouter\n    des colonnes personnalisées.\n    Attributes:\n        id: Identifiant unique UUID (stocké en CHAR(36) pour compatibilité MySQL)\n        username: Nom d'utilisateur unique\n        email: Email unique",
+        "peekOfCode": "class SQLAuthUserModel(Base):\n    \"\"\"\n    Modèle SQLAlchemy de base pour la table des utilisateurs.\n    Compatible PostgreSQL et MySQL.\n    Ce modèle peut être étendu par le développeur pour ajouter\n    des colonnes personnalisées.\n    Attributes:\n        id: Identifiant unique UUID (stocké en VARCHAR(36))\n        username: Nom d'utilisateur unique\n        email: Email unique",
         "detail": "alak_acl.auth.infrastructure.models.sql_model",
         "documentation": {}
     },
@@ -5421,7 +5421,7 @@
         "kind": 6,
         "importPath": "alak_acl.auth.interface.schemas",
         "description": "alak_acl.auth.interface.schemas",
-        "peekOfCode": "class RefreshTokenResponse(BaseModel):\n    \"\"\"Schéma de réponse pour le rafraîchissement de token.\"\"\"\n    access_token: str = Field(..., description=\"Nouveau token d'accès JWT\")\n    token_type: str = Field(default=\"Bearer\", description=\"Type de token\")\n    expires_in: int = Field(..., description=\"Durée de validité en secondes\")\nclass UserResponse(BaseModel):\n    \"\"\"Schéma de réponse pour les informations utilisateur.\"\"\"\n    id: UUID = Field(..., description=\"Identifiant unique\")\n    username: str = Field(..., description=\"Nom d'utilisateur\")\n    email: EmailStr = Field(..., description=\"Adresse email\")",
+        "peekOfCode": "class RefreshTokenResponse(BaseModel):\n    \"\"\"Schéma de réponse pour le rafraîchissement de token.\"\"\"\n    access_token: str = Field(..., description=\"Nouveau token d'accès JWT\")\n    token_type: str = Field(default=\"Bearer\", description=\"Type de token\")\n    expires_in: int = Field(..., description=\"Durée de validité en secondes\")\nclass UserResponse(BaseModel):\n    \"\"\"Schéma de réponse pour les informations utilisateur.\"\"\"\n    id: str = Field(..., description=\"Identifiant unique (UUID)\")\n    username: str = Field(..., description=\"Nom d'utilisateur\")\n    email: EmailStr = Field(..., description=\"Adresse email\")",
         "detail": "alak_acl.auth.interface.schemas",
         "documentation": {}
     },
@@ -5430,7 +5430,7 @@
         "kind": 6,
         "importPath": "alak_acl.auth.interface.schemas",
         "description": "alak_acl.auth.interface.schemas",
-        "peekOfCode": "class UserResponse(BaseModel):\n    \"\"\"Schéma de réponse pour les informations utilisateur.\"\"\"\n    id: UUID = Field(..., description=\"Identifiant unique\")\n    username: str = Field(..., description=\"Nom d'utilisateur\")\n    email: EmailStr = Field(..., description=\"Adresse email\")\n    is_active: bool = Field(..., description=\"Compte actif\")\n    is_verified: bool = Field(..., description=\"Email vérifié\")\n    is_superuser: bool = Field(..., description=\"Administrateur\")\n    created_at: datetime = Field(..., description=\"Date de création\")\n    last_login: Optional[datetime] = Field(None, description=\"Dernière connexion\")",
+        "peekOfCode": "class UserResponse(BaseModel):\n    \"\"\"Schéma de réponse pour les informations utilisateur.\"\"\"\n    id: str = Field(..., description=\"Identifiant unique (UUID)\")\n    username: str = Field(..., description=\"Nom d'utilisateur\")\n    email: EmailStr = Field(..., description=\"Adresse email\")\n    is_active: bool = Field(..., description=\"Compte actif\")\n    is_verified: bool = Field(..., description=\"Email vérifié\")\n    is_superuser: bool = Field(..., description=\"Administrateur\")\n    created_at: datetime = Field(..., description=\"Date de création\")\n    last_login: Optional[datetime] = Field(None, description=\"Dernière connexion\")",
         "detail": "alak_acl.auth.interface.schemas",
         "documentation": {}
     },
@@ -5727,7 +5727,7 @@
         "kind": 6,
         "importPath": "alak_acl.permissions.infrastructure.models.sql_model",
         "description": "alak_acl.permissions.infrastructure.models.sql_model",
-        "peekOfCode": "class SQLPermissionModel(Base):\n    \"\"\"\n    Modèle SQLAlchemy pour les permissions.\n    Représente une permission dans PostgreSQL ou MySQL.\n    Attributes:\n        id: UUID sous forme de CHAR(36)\n        resource: Ressource concernée\n        action: Action autorisée\n        name: Nom complet (resource:action) - indexé, unique\n        display_name: Nom d'affichage",
+        "peekOfCode": "class SQLPermissionModel(Base):\n    \"\"\"\n    Modèle SQLAlchemy pour les permissions.\n    Représente une permission dans PostgreSQL ou MySQL.\n    Attributes:\n        id: UUID sous forme de VARCHAR(36)\n        resource: Ressource concernée\n        action: Action autorisée\n        name: Nom complet (resource:action) - indexé, unique\n        display_name: Nom d'affichage",
         "detail": "alak_acl.permissions.infrastructure.models.sql_model",
         "documentation": {}
     },
@@ -5736,7 +5736,7 @@
         "kind": 2,
         "importPath": "alak_acl.permissions.infrastructure.models.sql_model",
         "description": "alak_acl.permissions.infrastructure.models.sql_model",
-        "peekOfCode": "def generate_uuid_str() -> str:\n    \"\"\"Génère un UUID sous forme de string.\"\"\"\n    return str(uuid4())\nclass SQLPermissionModel(Base):\n    \"\"\"\n    Modèle SQLAlchemy pour les permissions.\n    Représente une permission dans PostgreSQL ou MySQL.\n    Attributes:\n        id: UUID sous forme de CHAR(36)\n        resource: Ressource concernée",
+        "peekOfCode": "def generate_uuid_str() -> str:\n    \"\"\"Génère un UUID sous forme de string.\"\"\"\n    return str(uuid4())\nclass SQLPermissionModel(Base):\n    \"\"\"\n    Modèle SQLAlchemy pour les permissions.\n    Représente une permission dans PostgreSQL ou MySQL.\n    Attributes:\n        id: UUID sous forme de VARCHAR(36)\n        resource: Ressource concernée",
         "detail": "alak_acl.permissions.infrastructure.models.sql_model",
         "documentation": {}
     },
@@ -6105,7 +6105,7 @@
         "kind": 6,
         "importPath": "alak_acl.roles.infrastructure.models.sql_model",
         "description": "alak_acl.roles.infrastructure.models.sql_model",
-        "peekOfCode": "class SQLRoleModel(Base):\n    \"\"\"\n    Modèle SQLAlchemy pour la table des rôles.\n    Compatible PostgreSQL et MySQL.\n    Attributes:\n        id: Identifiant unique (CHAR(36) pour compatibilité MySQL)\n        name: Nom unique du rôle\n        display_name: Nom d'affichage\n        description: Description du rôle\n        permissions: Liste des permissions (JSON)",
+        "peekOfCode": "class SQLRoleModel(Base):\n    \"\"\"\n    Modèle SQLAlchemy pour la table des rôles.\n    Compatible PostgreSQL et MySQL.\n    Attributes:\n        id: Identifiant unique (VARCHAR(36))\n        name: Nom unique du rôle\n        display_name: Nom d'affichage\n        description: Description du rôle\n        permissions: Liste des permissions (JSON)",
         "detail": "alak_acl.roles.infrastructure.models.sql_model",
         "documentation": {}
     },
@@ -6114,7 +6114,7 @@
         "kind": 6,
         "importPath": "alak_acl.roles.infrastructure.models.sql_model",
         "description": "alak_acl.roles.infrastructure.models.sql_model",
-        "peekOfCode": "class SQLUserRoleModel(Base):\n    \"\"\"\n    Modèle pour la table d'association user_roles.\n    Utilisé pour les requêtes explicites sur la relation.\n    \"\"\"\n    __tablename__ = \"acl_user_roles\"\n    __table_args__ = {'extend_existing': True}\n    user_id = Column(\n        CHAR(36),\n        ForeignKey('acl_auth_users.id', ondelete='CASCADE'),",
+        "peekOfCode": "class SQLUserRoleModel(Base):\n    \"\"\"\n    Modèle pour la table d'association user_roles.\n    Utilisé pour les requêtes explicites sur la relation.\n    \"\"\"\n    __tablename__ = \"acl_user_roles\"\n    __table_args__ = {'extend_existing': True}\n    user_id = Column(\n        String(36),\n        ForeignKey('acl_auth_users.id', ondelete='CASCADE'),",
         "detail": "alak_acl.roles.infrastructure.models.sql_model",
         "documentation": {}
     },
@@ -6123,7 +6123,7 @@
         "kind": 2,
         "importPath": "alak_acl.roles.infrastructure.models.sql_model",
         "description": "alak_acl.roles.infrastructure.models.sql_model",
-        "peekOfCode": "def generate_uuid_str() -> str:\n    \"\"\"Génère un UUID sous forme de string.\"\"\"\n    return str(uuid4())\n# Table d'association user_roles (many-to-many)\nuser_roles_table = Table(\n    'acl_user_roles',\n    Base.metadata,\n    Column('user_id', CHAR(36), ForeignKey('acl_auth_users.id', ondelete='CASCADE'), primary_key=True),\n    Column('role_id', CHAR(36), ForeignKey('acl_roles.id', ondelete='CASCADE'), primary_key=True),\n    Column('assigned_at', DateTime, default=datetime.utcnow, nullable=False),",
+        "peekOfCode": "def generate_uuid_str() -> str:\n    \"\"\"Génère un UUID sous forme de string.\"\"\"\n    return str(uuid4())\n# Table d'association user_roles (many-to-many)\nuser_roles_table = Table(\n    'acl_user_roles',\n    Base.metadata,\n    Column('user_id', String(36), ForeignKey('acl_auth_users.id', ondelete='CASCADE'), primary_key=True),\n    Column('role_id', String(36), ForeignKey('acl_roles.id', ondelete='CASCADE'), primary_key=True),\n    Column('assigned_at', DateTime, default=datetime.utcnow, nullable=False),",
         "detail": "alak_acl.roles.infrastructure.models.sql_model",
         "documentation": {}
     },
@@ -6141,7 +6141,7 @@
         "kind": 5,
         "importPath": "alak_acl.roles.infrastructure.models.sql_model",
         "description": "alak_acl.roles.infrastructure.models.sql_model",
-        "peekOfCode": "user_roles_table = Table(\n    'acl_user_roles',\n    Base.metadata,\n    Column('user_id', CHAR(36), ForeignKey('acl_auth_users.id', ondelete='CASCADE'), primary_key=True),\n    Column('role_id', CHAR(36), ForeignKey('acl_roles.id', ondelete='CASCADE'), primary_key=True),\n    Column('assigned_at', DateTime, default=datetime.utcnow, nullable=False),\n)\nclass SQLRoleModel(Base):\n    \"\"\"\n    Modèle SQLAlchemy pour la table des rôles.",
+        "peekOfCode": "user_roles_table = Table(\n    'acl_user_roles',\n    Base.metadata,\n    Column('user_id', String(36), ForeignKey('acl_auth_users.id', ondelete='CASCADE'), primary_key=True),\n    Column('role_id', String(36), ForeignKey('acl_roles.id', ondelete='CASCADE'), primary_key=True),\n    Column('assigned_at', DateTime, default=datetime.utcnow, nullable=False),\n)\nclass SQLRoleModel(Base):\n    \"\"\"\n    Modèle SQLAlchemy pour la table des rôles.",
         "detail": "alak_acl.roles.infrastructure.models.sql_model",
         "documentation": {}
     },
@@ -6412,15 +6412,6 @@
         "importPath": "alak_acl.shared.database.postgresql",
         "description": "alak_acl.shared.database.postgresql",
         "peekOfCode": "class PostgreSQLDatabase(BaseDatabase):\n    \"\"\"\n    Implémentation de la connexion PostgreSQL avec SQLAlchemy async.\n    Utilise asyncpg comme driver asynchrone.\n    Attributes:\n        uri: URI de connexion PostgreSQL\n        engine: Moteur SQLAlchemy async\n        session_factory: Factory pour créer des sessions\n    \"\"\"\n    def __init__(self, uri: str, echo: bool = False):",
-        "detail": "alak_acl.shared.database.postgresql",
-        "documentation": {}
-    },
-    {
-        "label": "Base",
-        "kind": 5,
-        "importPath": "alak_acl.shared.database.postgresql",
-        "description": "alak_acl.shared.database.postgresql",
-        "peekOfCode": "Base = declarative_base()\nclass PostgreSQLDatabase(BaseDatabase):\n    \"\"\"\n    Implémentation de la connexion PostgreSQL avec SQLAlchemy async.\n    Utilise asyncpg comme driver asynchrone.\n    Attributes:\n        uri: URI de connexion PostgreSQL\n        engine: Moteur SQLAlchemy async\n        session_factory: Factory pour créer des sessions\n    \"\"\"",
         "detail": "alak_acl.shared.database.postgresql",
         "documentation": {}
     },
@@ -6755,6 +6746,42 @@
         "description": "examples.mongodb_usage",
         "peekOfCode": "acl = ACLManager(config, app=app)\n# ============================================\n# Routes d'exemple\n# ============================================\n@app.get(\"/admin/dashboard\")\nasync def admin_dashboard(admin: AuthUser = Depends(get_current_superuser)):\n    \"\"\"\n    Tableau de bord administrateur.\n    Nécessite d'être connecté en tant que superuser.\n    \"\"\"",
         "detail": "examples.mongodb_usage",
+        "documentation": {}
+    },
+    {
+        "label": "os.environ[\"ACL_DATABASE_TYPE\"]",
+        "kind": 5,
+        "importPath": "test_debug",
+        "description": "test_debug",
+        "peekOfCode": "os.environ[\"ACL_DATABASE_TYPE\"] = \"mysql\"\nos.environ[\"ACL_MYSQL_URI\"] = \"mysql+asyncmy://root:@localhost:3306/acls_db2\"\nos.environ[\"ACL_JWT_SECRET_KEY\"] = \"test-secret-key-for-debugging-minimum-32-chars\"\nos.environ[\"ACL_ENABLE_CACHE\"] = \"false\"\nfrom alak_acl.shared.database.mysql import MySQLDatabase\nfrom alak_acl.shared.database.declarative_base import Base\nfrom alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel\nfrom alak_acl.auth.infrastructure.repositories.mysql_repository import MySQLAuthRepository\nfrom alak_acl.auth.domain.entities.auth_user import AuthUser\nfrom alak_acl.auth.infrastructure.services.argon2_password_hasher import Argon2PasswordHasher",
+        "detail": "test_debug",
+        "documentation": {}
+    },
+    {
+        "label": "os.environ[\"ACL_MYSQL_URI\"]",
+        "kind": 5,
+        "importPath": "test_debug",
+        "description": "test_debug",
+        "peekOfCode": "os.environ[\"ACL_MYSQL_URI\"] = \"mysql+asyncmy://root:@localhost:3306/acls_db2\"\nos.environ[\"ACL_JWT_SECRET_KEY\"] = \"test-secret-key-for-debugging-minimum-32-chars\"\nos.environ[\"ACL_ENABLE_CACHE\"] = \"false\"\nfrom alak_acl.shared.database.mysql import MySQLDatabase\nfrom alak_acl.shared.database.declarative_base import Base\nfrom alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel\nfrom alak_acl.auth.infrastructure.repositories.mysql_repository import MySQLAuthRepository\nfrom alak_acl.auth.domain.entities.auth_user import AuthUser\nfrom alak_acl.auth.infrastructure.services.argon2_password_hasher import Argon2PasswordHasher\nasync def main():",
+        "detail": "test_debug",
+        "documentation": {}
+    },
+    {
+        "label": "os.environ[\"ACL_JWT_SECRET_KEY\"]",
+        "kind": 5,
+        "importPath": "test_debug",
+        "description": "test_debug",
+        "peekOfCode": "os.environ[\"ACL_JWT_SECRET_KEY\"] = \"test-secret-key-for-debugging-minimum-32-chars\"\nos.environ[\"ACL_ENABLE_CACHE\"] = \"false\"\nfrom alak_acl.shared.database.mysql import MySQLDatabase\nfrom alak_acl.shared.database.declarative_base import Base\nfrom alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel\nfrom alak_acl.auth.infrastructure.repositories.mysql_repository import MySQLAuthRepository\nfrom alak_acl.auth.domain.entities.auth_user import AuthUser\nfrom alak_acl.auth.infrastructure.services.argon2_password_hasher import Argon2PasswordHasher\nasync def main():\n    # 1. Connexion à la base de données",
+        "detail": "test_debug",
+        "documentation": {}
+    },
+    {
+        "label": "os.environ[\"ACL_ENABLE_CACHE\"]",
+        "kind": 5,
+        "importPath": "test_debug",
+        "description": "test_debug",
+        "peekOfCode": "os.environ[\"ACL_ENABLE_CACHE\"] = \"false\"\nfrom alak_acl.shared.database.mysql import MySQLDatabase\nfrom alak_acl.shared.database.declarative_base import Base\nfrom alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel\nfrom alak_acl.auth.infrastructure.repositories.mysql_repository import MySQLAuthRepository\nfrom alak_acl.auth.domain.entities.auth_user import AuthUser\nfrom alak_acl.auth.infrastructure.services.argon2_password_hasher import Argon2PasswordHasher\nasync def main():\n    # 1. Connexion à la base de données\n    db_uri = os.environ[\"ACL_MYSQL_URI\"]",
+        "detail": "test_debug",
         "documentation": {}
     }
 ]

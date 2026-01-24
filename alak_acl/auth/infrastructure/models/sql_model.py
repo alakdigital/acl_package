@@ -9,7 +9,7 @@ from datetime import datetime
 from typing import Any, Dict, Type, Optional
 from uuid import uuid4
 
-from sqlalchemy import Column, String, Boolean, DateTime, JSON, CHAR
+from sqlalchemy import Column, String, Boolean, DateTime, JSON
 from sqlalchemy.orm import declared_attr
 
 from alak_acl.shared.database.declarative_base import Base
@@ -32,7 +32,7 @@ class SQLAuthUserModel(Base):
     des colonnes personnalisées.
 
     Attributes:
-        id: Identifiant unique UUID (stocké en CHAR(36) pour compatibilité MySQL)
+        id: Identifiant unique UUID (stocké en VARCHAR(36))
         username: Nom d'utilisateur unique
         email: Email unique
         hashed_password: Mot de passe hashé
@@ -68,9 +68,9 @@ class SQLAuthUserModel(Base):
     def __tablename__(cls) -> str:
         return getattr(cls, '_custom_tablename', 'acl_auth_users')
 
-    # UUID stocké en CHAR(36) pour compatibilité PostgreSQL et MySQL
+    # UUID stocké en VARCHAR(36) pour compatibilité PostgreSQL et MySQL
     id = Column(
-        CHAR(36),
+        String(36),
         primary_key=True,
         default=generate_uuid_str,
         index=True,

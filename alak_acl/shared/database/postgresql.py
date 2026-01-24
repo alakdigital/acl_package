@@ -11,16 +11,12 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     AsyncEngine,
 )
-from sqlalchemy.orm import declarative_base
 from sqlalchemy import text
 
 from alak_acl.shared.database.base import BaseDatabase
+from alak_acl.shared.database.declarative_base import Base
 from alak_acl.shared.exceptions import DatabaseConnectionError
 from alak_acl.shared.logging import logger
-
-
-# Base pour les modèles SQLAlchemy
-Base = declarative_base()
 
 
 class PostgreSQLDatabase(BaseDatabase):

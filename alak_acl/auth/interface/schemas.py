@@ -4,7 +4,6 @@ Schémas Pydantic pour l'API d'authentification.
 
 from datetime import datetime
 from typing import Optional
-from uuid import UUID
 
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
@@ -103,7 +102,7 @@ class RefreshTokenResponse(BaseModel):
 class UserResponse(BaseModel):
     """Schéma de réponse pour les informations utilisateur."""
 
-    id: UUID = Field(..., description="Identifiant unique")
+    id: str = Field(..., description="Identifiant unique (UUID)")
     username: str = Field(..., description="Nom d'utilisateur")
     email: EmailStr = Field(..., description="Adresse email")
     is_active: bool = Field(..., description="Compte actif")

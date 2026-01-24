@@ -1,7 +1,7 @@
 """
 Modèle SQLAlchemy pour les permissions.
 
-Compatible PostgreSQL et MySQL avec CHAR(36) pour les UUIDs.
+Compatible PostgreSQL et MySQL avec VARCHAR(36) pour les UUIDs.
 """
 
 from datetime import datetime
@@ -13,7 +13,6 @@ from sqlalchemy import (
     Boolean,
     DateTime,
     Text,
-    CHAR,
     Index,
 )
 from sqlalchemy.orm import Mapped
@@ -34,7 +33,7 @@ class SQLPermissionModel(Base):
     Représente une permission dans PostgreSQL ou MySQL.
 
     Attributes:
-        id: UUID sous forme de CHAR(36)
+        id: UUID sous forme de VARCHAR(36)
         resource: Ressource concernée
         action: Action autorisée
         name: Nom complet (resource:action) - indexé, unique
@@ -50,7 +49,7 @@ class SQLPermissionModel(Base):
     __tablename__ = "acl_permissions"
 
     id: Mapped[str] = Column(
-        CHAR(36),
+        String(36),
         primary_key=True,
         default=generate_uuid_str,
         index=True,

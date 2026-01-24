@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Type, Optional
 from uuid import uuid4
 
-from sqlalchemy import Column, String, Boolean, DateTime, JSON, CHAR, Integer, Table, ForeignKey
+from sqlalchemy import Column, String, Boolean, DateTime, JSON, Integer, Table, ForeignKey
 from sqlalchemy.orm import declared_attr, relationship
 
 from alak_acl.shared.database.declarative_base import Base
@@ -21,8 +21,8 @@ def generate_uuid_str() -> str:
 user_roles_table = Table(
     'acl_user_roles',
     Base.metadata,
-    Column('user_id', CHAR(36), ForeignKey('acl_auth_users.id', ondelete='CASCADE'), primary_key=True),
-    Column('role_id', CHAR(36), ForeignKey('acl_roles.id', ondelete='CASCADE'), primary_key=True),
+    Column('user_id', String(36), ForeignKey('acl_auth_users.id', ondelete='CASCADE'), primary_key=True),
+    Column('role_id', String(36), ForeignKey('acl_roles.id', ondelete='CASCADE'), primary_key=True),
     Column('assigned_at', DateTime, default=datetime.utcnow, nullable=False),
 )
 
@@ -34,7 +34,7 @@ class SQLRoleModel(Base):
     Compatible PostgreSQL et MySQL.
 
     Attributes:
-        id: Identifiant unique (CHAR(36) pour compatibilité MySQL)
+        id: Identifiant unique (VARCHAR(36))
         name: Nom unique du rôle
         display_name: Nom d'affichage
         description: Description du rôle
@@ -65,7 +65,7 @@ class SQLRoleModel(Base):
         return getattr(cls, '_custom_tablename', 'acl_roles')
 
     id = Column(
-        CHAR(36),
+        String(36),
         primary_key=True,
         default=generate_uuid_str,
         index=True,
@@ -170,12 +170,12 @@ class SQLUserRoleModel(Base):
     __table_args__ = {'extend_existing': True}
 
     user_id = Column(
-        CHAR(36),
+        String(36),
         ForeignKey('acl_auth_users.id', ondelete='CASCADE'),
         primary_key=True,
     )
     role_id = Column(
-        CHAR(36),
+        String(36),
         ForeignKey('acl_roles.id', ondelete='CASCADE'),
         primary_key=True,
     )

@@ -4,7 +4,6 @@ Interface du service de gestion des tokens JWT.
 
 from abc import ABC, abstractmethod
 from typing import Optional, Dict, Any
-from uuid import UUID
 
 
 class ITokenService(ABC):
@@ -17,7 +16,7 @@ class ITokenService(ABC):
     @abstractmethod
     def create_access_token(
         self,
-        user_id: UUID,
+        user_id: str,
         username: str,
         extra_data: Optional[Dict[str, Any]] = None,
     ) -> str:
@@ -25,7 +24,7 @@ class ITokenService(ABC):
         Crée un token d'accès JWT.
 
         Args:
-            user_id: ID de l'utilisateur
+            user_id: ID de l'utilisateur (string UUID)
             username: Nom d'utilisateur
             extra_data: Données supplémentaires à inclure dans le token
 
@@ -37,7 +36,7 @@ class ITokenService(ABC):
     @abstractmethod
     def create_refresh_token(
         self,
-        user_id: UUID,
+        user_id: str,
         username: str,
     ) -> str:
         """
@@ -83,7 +82,7 @@ class ITokenService(ABC):
         pass
 
     @abstractmethod
-    def get_user_id_from_token(self, token: str) -> UUID:
+    def get_user_id_from_token(self, token: str) -> str:
         """
         Extrait l'ID utilisateur d'un token.
 
@@ -91,7 +90,7 @@ class ITokenService(ABC):
             token: Token JWT
 
         Returns:
-            ID de l'utilisateur
+            ID de l'utilisateur (string UUID)
 
         Raises:
             InvalidTokenError: Si le token est invalide

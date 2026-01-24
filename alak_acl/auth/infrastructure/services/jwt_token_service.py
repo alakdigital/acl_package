@@ -4,7 +4,6 @@ Service de gestion des tokens JWT.
 
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
-from uuid import UUID
 
 from jose import jwt, JWTError, ExpiredSignatureError
 
@@ -41,7 +40,7 @@ class JWTTokenService(ITokenService):
 
     def create_access_token(
         self,
-        user_id: UUID,
+        user_id: str,
         username: str,
         extra_data: Optional[Dict[str, Any]] = None,
     ) -> str:
@@ -49,7 +48,7 @@ class JWTTokenService(ITokenService):
         expire = datetime.utcnow() + timedelta(minutes=self._access_expire_minutes)
 
         payload = {
-            "sub": str(user_id),
+            "sub": user_id,
             "username": username,
             "type": self.TOKEN_TYPE_ACCESS,
             "exp": expire,
@@ -65,14 +64,14 @@ class JWTTokenService(ITokenService):
 
     def create_refresh_token(
         self,
-        user_id: UUID,
+        user_id: str,
         username: str,
     ) -> str:
         """Crée un token de rafraîchissement JWT."""
         expire = datetime.utcnow() + timedelta(days=self._refresh_expire_days)
 
         payload = {
-            "sub": str(user_id),
+            "sub": user_id,
             "username": username,
             "type": self.TOKEN_TYPE_REFRESH,
             "exp": expire,
@@ -109,18 +108,15 @@ class JWTTokenService(ITokenService):
         except (InvalidTokenError, TokenExpiredError):
             return False
 
-    def get_user_id_from_token(self, token: str) -> UUID:
+    def get_user_id_from_token(self, token: str) -> str:
         """Extrait l'ID utilisateur d'un token."""
         payload = self.decode_token(token)
-        user_id_str = payload.get("sub")
+        user_id = payload.get("sub")
 
-        if not user_id_str:
+        if not user_id:
             raise InvalidTokenError("Token invalide: ID utilisateur manquant")
 
-        try:
-            return UUID(user_id_str)
-        except ValueError:
-            raise InvalidTokenError("Token invalide: format ID incorrect")
+        return user_id
 
     def is_refresh_token(self, token: str) -> bool:
         """Vérifie si le token est un refresh token."""
