@@ -155,6 +155,17 @@ class PermissionNotFoundError(ACLException):
         )
 
 
+class PermissionAlreadyExistsError(ACLException):
+    """Permission déjà existante."""
+
+    def __init__(self, message: str = "Cette permission existe déjà"):
+        super().__init__(
+            message=message,
+            status_code=409,
+            error_code="PERMISSION_ALREADY_EXISTS",
+        )
+
+
 # ============================================
 # Exceptions de rôles
 # ============================================

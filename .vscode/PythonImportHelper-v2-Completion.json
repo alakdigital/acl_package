@@ -192,6 +192,118 @@
         "documentation": {}
     },
     {
+        "label": "Text",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "CHAR",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "Index",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "select",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "func",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "or_",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "select",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "func",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "or_",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "delete",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "Column",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "String",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "Boolean",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "DateTime",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
         "label": "JSON",
         "importPath": "sqlalchemy",
         "description": "sqlalchemy",
@@ -844,6 +956,174 @@
     },
     {
         "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Tuple",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Union",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
         "importPath": "typing",
         "description": "typing",
         "isExtraImport": true,
@@ -1651,6 +1931,70 @@
         "documentation": {}
     },
     {
+        "label": "Depends",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "HTTPException",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "status",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "APIRouter",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "Depends",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "HTTPException",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "status",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "Query",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
         "label": "FastAPI",
         "importPath": "fastapi",
         "description": "fastapi",
@@ -1780,6 +2124,14 @@
     },
     {
         "label": "declared_attr",
+        "importPath": "sqlalchemy.orm",
+        "description": "sqlalchemy.orm",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.orm",
+        "documentation": {}
+    },
+    {
+        "label": "Mapped",
         "importPath": "sqlalchemy.orm",
         "description": "sqlalchemy.orm",
         "isExtraImport": true,
@@ -2050,6 +2402,46 @@
     },
     {
         "label": "field_validator",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "BaseModel",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "Field",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "field_validator",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "BaseModel",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "Field",
         "importPath": "pydantic",
         "description": "pydantic",
         "isExtraImport": true,
@@ -2417,6 +2809,70 @@
         "documentation": {}
     },
     {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
         "label": "timedelta",
         "importPath": "datetime",
         "description": "datetime",
@@ -2486,6 +2942,22 @@
         "description": "passlib.context",
         "isExtraImport": true,
         "detail": "passlib.context",
+        "documentation": {}
+    },
+    {
+        "label": "ABC",
+        "importPath": "abc",
+        "description": "abc",
+        "isExtraImport": true,
+        "detail": "abc",
+        "documentation": {}
+    },
+    {
+        "label": "abstractmethod",
+        "importPath": "abc",
+        "description": "abc",
+        "isExtraImport": true,
+        "detail": "abc",
         "documentation": {}
     },
     {
@@ -2962,6 +3434,30 @@
         "documentation": {}
     },
     {
+        "label": "uuid4",
+        "importPath": "uuid",
+        "description": "uuid",
+        "isExtraImport": true,
+        "detail": "uuid",
+        "documentation": {}
+    },
+    {
+        "label": "uuid4",
+        "importPath": "uuid",
+        "description": "uuid",
+        "isExtraImport": true,
+        "detail": "uuid",
+        "documentation": {}
+    },
+    {
+        "label": "dataclass",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
         "label": "dataclass",
         "importPath": "dataclasses",
         "description": "dataclasses",
@@ -2979,6 +3475,14 @@
     },
     {
         "label": "dataclass",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
+        "label": "field",
         "importPath": "dataclasses",
         "description": "dataclasses",
         "isExtraImport": true,
@@ -3056,6 +3560,22 @@
         "description": "bson",
         "isExtraImport": true,
         "detail": "bson",
+        "documentation": {}
+    },
+    {
+        "label": "ObjectId",
+        "importPath": "bson",
+        "description": "bson",
+        "isExtraImport": true,
+        "detail": "bson",
+        "documentation": {}
+    },
+    {
+        "label": "IntegrityError",
+        "importPath": "sqlalchemy.exc",
+        "description": "sqlalchemy.exc",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.exc",
         "documentation": {}
     },
     {
@@ -4389,6 +4909,339 @@
         "documentation": {}
     },
     {
+        "label": "IPermissionRepository",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.application.interface.permission_repository",
+        "description": "fastapi_acl.permissions.application.interface.permission_repository",
+        "peekOfCode": "class IPermissionRepository(ABC):\n    \"\"\"\n    Interface abstraite pour le repository des permissions.\n    Définit les opérations CRUD et de recherche sur les permissions.\n    \"\"\"\n    # ============================================\n    # CRUD Operations\n    # ============================================\n    @abstractmethod\n    async def create_permission(self, permission: Permission) -> Permission:",
+        "detail": "fastapi_acl.permissions.application.interface.permission_repository",
+        "documentation": {}
+    },
+    {
+        "label": "CreatePermissionUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "description": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "peekOfCode": "class CreatePermissionUseCase:\n    \"\"\"\n    Use case pour créer une nouvelle permission.\n    \"\"\"\n    def __init__(self, permission_repository: IPermissionRepository):\n        self._repository = permission_repository\n    async def execute(self, dto: CreatePermissionDTO) -> Permission:\n        \"\"\"\n        Crée une nouvelle permission.\n        Args:",
+        "detail": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "UpdatePermissionUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "description": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "peekOfCode": "class UpdatePermissionUseCase:\n    \"\"\"\n    Use case pour mettre à jour une permission.\n    \"\"\"\n    def __init__(self, permission_repository: IPermissionRepository):\n        self._repository = permission_repository\n    async def execute(\n        self,\n        permission_id: str,\n        dto: UpdatePermissionDTO,",
+        "detail": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "DeletePermissionUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "description": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "peekOfCode": "class DeletePermissionUseCase:\n    \"\"\"\n    Use case pour supprimer une permission.\n    \"\"\"\n    def __init__(self, permission_repository: IPermissionRepository):\n        self._repository = permission_repository\n    async def execute(self, permission_id: str) -> bool:\n        \"\"\"\n        Supprime une permission.\n        Args:",
+        "detail": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "GetPermissionUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "description": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "peekOfCode": "class GetPermissionUseCase:\n    \"\"\"\n    Use case pour récupérer une permission.\n    \"\"\"\n    def __init__(self, permission_repository: IPermissionRepository):\n        self._repository = permission_repository\n    async def execute(\n        self,\n        permission_id: Optional[str] = None,\n        name: Optional[str] = None,",
+        "detail": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "ListPermissionsUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "description": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "peekOfCode": "class ListPermissionsUseCase:\n    \"\"\"\n    Use case pour lister les permissions avec pagination.\n    \"\"\"\n    def __init__(self, permission_repository: IPermissionRepository):\n        self._repository = permission_repository\n    async def execute(\n        self,\n        skip: int = 0,\n        limit: int = 100,",
+        "detail": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "SearchPermissionsUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "description": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "peekOfCode": "class SearchPermissionsUseCase:\n    \"\"\"\n    Use case pour rechercher des permissions.\n    \"\"\"\n    def __init__(self, permission_repository: IPermissionRepository):\n        self._repository = permission_repository\n    async def execute(\n        self,\n        query: str,\n        skip: int = 0,",
+        "detail": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "GetPermissionsByResourceUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "description": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "peekOfCode": "class GetPermissionsByResourceUseCase:\n    \"\"\"\n    Use case pour récupérer les permissions par ressource.\n    \"\"\"\n    def __init__(self, permission_repository: IPermissionRepository):\n        self._repository = permission_repository\n    async def execute(self, resource: str) -> List[Permission]:\n        \"\"\"\n        Récupère toutes les permissions d'une ressource.\n        Args:",
+        "detail": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "GetPermissionsByCategoryUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "description": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "peekOfCode": "class GetPermissionsByCategoryUseCase:\n    \"\"\"\n    Use case pour récupérer les permissions par catégorie.\n    \"\"\"\n    def __init__(self, permission_repository: IPermissionRepository):\n        self._repository = permission_repository\n    async def execute(self, category: str) -> List[Permission]:\n        \"\"\"\n        Récupère toutes les permissions d'une catégorie.\n        Args:",
+        "detail": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "CreateBulkPermissionsUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "description": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "peekOfCode": "class CreateBulkPermissionsUseCase:\n    \"\"\"\n    Use case pour créer plusieurs permissions en une fois.\n    \"\"\"\n    def __init__(self, permission_repository: IPermissionRepository):\n        self._repository = permission_repository\n    async def execute(\n        self,\n        permissions_data: List[CreatePermissionDTO],\n    ) -> List[Permission]:",
+        "detail": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "GetAllResourcesUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "description": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "peekOfCode": "class GetAllResourcesUseCase:\n    \"\"\"\n    Use case pour récupérer toutes les ressources distinctes.\n    \"\"\"\n    def __init__(self, permission_repository: IPermissionRepository):\n        self._repository = permission_repository\n    async def execute(self) -> List[str]:\n        \"\"\"\n        Récupère la liste de toutes les ressources.\n        Returns:",
+        "detail": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "GetAllCategoriesUseCase",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "description": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "peekOfCode": "class GetAllCategoriesUseCase:\n    \"\"\"\n    Use case pour récupérer toutes les catégories distinctes.\n    \"\"\"\n    def __init__(self, permission_repository: IPermissionRepository):\n        self._repository = permission_repository\n    async def execute(self) -> List[str]:\n        \"\"\"\n        Récupère la liste de toutes les catégories.\n        Returns:",
+        "detail": "fastapi_acl.permissions.application.usecases.permission_usecases",
+        "documentation": {}
+    },
+    {
+        "label": "CreatePermissionDTO",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "description": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "peekOfCode": "class CreatePermissionDTO(BaseModel):\n    \"\"\"\n    DTO pour la création d'une permission.\n    Attributes:\n        resource: Ressource concernée (ex: \"posts\", \"users\")\n        action: Action autorisée (ex: \"read\", \"create\", \"update\", \"delete\")\n        display_name: Nom d'affichage lisible (optionnel)\n        description: Description de la permission (optionnel)\n        category: Catégorie pour regroupement (optionnel)\n    \"\"\"",
+        "detail": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "documentation": {}
+    },
+    {
+        "label": "CreatePermissionFromNameDTO",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "description": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "peekOfCode": "class CreatePermissionFromNameDTO(BaseModel):\n    \"\"\"\n    DTO pour créer une permission depuis un nom complet.\n    Attributes:\n        name: Nom au format \"resource:action\"\n        display_name: Nom d'affichage lisible (optionnel)\n        description: Description (optionnel)\n        category: Catégorie (optionnel)\n    \"\"\"\n    name: str = Field(",
+        "detail": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "documentation": {}
+    },
+    {
+        "label": "UpdatePermissionDTO",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "description": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "peekOfCode": "class UpdatePermissionDTO(BaseModel):\n    \"\"\"\n    DTO pour la mise à jour d'une permission.\n    Tous les champs sont optionnels - seuls les champs fournis seront mis à jour.\n    \"\"\"\n    display_name: Optional[str] = Field(\n        None,\n        max_length=100,\n        description=\"Nouveau nom d'affichage\",\n    )",
+        "detail": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "documentation": {}
+    },
+    {
+        "label": "PermissionResponseDTO",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "description": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "peekOfCode": "class PermissionResponseDTO(BaseModel):\n    \"\"\"\n    DTO pour la réponse d'une permission.\n    Utilisé pour retourner les détails d'une permission.\n    \"\"\"\n    id: str = Field(..., description=\"Identifiant unique\")\n    resource: str = Field(..., description=\"Ressource concernée\")\n    action: str = Field(..., description=\"Action autorisée\")\n    name: str = Field(..., description=\"Nom complet (resource:action)\")\n    display_name: Optional[str] = Field(None, description=\"Nom d'affichage\")",
+        "detail": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "documentation": {}
+    },
+    {
+        "label": "PermissionListResponseDTO",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "description": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "peekOfCode": "class PermissionListResponseDTO(BaseModel):\n    \"\"\"\n    DTO pour la liste paginée des permissions.\n    \"\"\"\n    permissions: List[PermissionResponseDTO] = Field(\n        ...,\n        description=\"Liste des permissions\",\n    )\n    total: int = Field(..., description=\"Nombre total de permissions\")\n    skip: int = Field(..., description=\"Offset de pagination\")",
+        "detail": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "documentation": {}
+    },
+    {
+        "label": "AssignPermissionToRoleDTO",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "description": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "peekOfCode": "class AssignPermissionToRoleDTO(BaseModel):\n    \"\"\"\n    DTO pour assigner une permission à un rôle.\n    Attributes:\n        permission_id: ID de la permission à assigner\n    \"\"\"\n    permission_id: str = Field(\n        ...,\n        min_length=1,\n        description=\"ID de la permission à assigner\",",
+        "detail": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "documentation": {}
+    },
+    {
+        "label": "AssignPermissionsToRoleDTO",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "description": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "peekOfCode": "class AssignPermissionsToRoleDTO(BaseModel):\n    \"\"\"\n    DTO pour assigner plusieurs permissions à un rôle.\n    Attributes:\n        permission_ids: Liste des IDs de permissions à assigner\n    \"\"\"\n    permission_ids: List[str] = Field(\n        ...,\n        min_length=1,\n        description=\"Liste des IDs de permissions à assigner\",",
+        "detail": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "documentation": {}
+    },
+    {
+        "label": "PermissionsByResourceDTO",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "description": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "peekOfCode": "class PermissionsByResourceDTO(BaseModel):\n    \"\"\"\n    DTO pour grouper les permissions par ressource.\n    \"\"\"\n    resource: str = Field(..., description=\"Nom de la ressource\")\n    permissions: List[PermissionResponseDTO] = Field(\n        ...,\n        description=\"Permissions de cette ressource\",\n    )\nclass PermissionsByCategoryDTO(BaseModel):",
+        "detail": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "documentation": {}
+    },
+    {
+        "label": "PermissionsByCategoryDTO",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "description": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "peekOfCode": "class PermissionsByCategoryDTO(BaseModel):\n    \"\"\"\n    DTO pour grouper les permissions par catégorie.\n    \"\"\"\n    category: str = Field(..., description=\"Nom de la catégorie\")\n    permissions: List[PermissionResponseDTO] = Field(\n        ...,\n        description=\"Permissions de cette catégorie\",\n    )",
+        "detail": "fastapi_acl.permissions.domain.dtos.permission_dto",
+        "documentation": {}
+    },
+    {
+        "label": "Permission",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.domain.entities.permission",
+        "description": "fastapi_acl.permissions.domain.entities.permission",
+        "peekOfCode": "class Permission:\n    \"\"\"\n    Entité Permission du domaine.\n    Une permission définit un droit d'accès sous forme resource:action.\n    Attributes:\n        id: Identifiant unique\n        resource: Ressource concernée (ex: \"posts\", \"users\", \"comments\")\n        action: Action autorisée (ex: \"read\", \"create\", \"update\", \"delete\", \"*\")\n        name: Nom complet généré (resource:action)\n        display_name: Nom d'affichage lisible",
+        "detail": "fastapi_acl.permissions.domain.entities.permission",
+        "documentation": {}
+    },
+    {
+        "label": "generate_id",
+        "kind": 2,
+        "importPath": "fastapi_acl.permissions.domain.entities.permission",
+        "description": "fastapi_acl.permissions.domain.entities.permission",
+        "peekOfCode": "def generate_id() -> str:\n    \"\"\"Génère un ID unique sous forme de string UUID.\"\"\"\n    return str(uuid4())\n@dataclass\nclass Permission:\n    \"\"\"\n    Entité Permission du domaine.\n    Une permission définit un droit d'accès sous forme resource:action.\n    Attributes:\n        id: Identifiant unique",
+        "detail": "fastapi_acl.permissions.domain.entities.permission",
+        "documentation": {}
+    },
+    {
+        "label": "PermissionMapper",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.infrastructure.mappers.permission_mapper",
+        "description": "fastapi_acl.permissions.infrastructure.mappers.permission_mapper",
+        "peekOfCode": "class PermissionMapper:\n    \"\"\"\n    Mapper pour la conversion entre Permission entity et modèles de persistance.\n    Gère les conversions bidirectionnelles entre:\n    - Permission (entité domaine)\n    - SQLPermissionModel (PostgreSQL/MySQL)\n    - MongoPermissionModel (MongoDB)\n    - dict (documents MongoDB bruts)\n    \"\"\"\n    @staticmethod",
+        "detail": "fastapi_acl.permissions.infrastructure.mappers.permission_mapper",
+        "documentation": {}
+    },
+    {
+        "label": "to_entity",
+        "kind": 2,
+        "importPath": "fastapi_acl.permissions.infrastructure.mappers.permission_mapper",
+        "description": "fastapi_acl.permissions.infrastructure.mappers.permission_mapper",
+        "peekOfCode": "def to_entity(model) -> Permission:\n    \"\"\"Alias pour PermissionMapper.to_entity.\"\"\"\n    return PermissionMapper.to_entity(model)\ndef to_sql_model(entity: Permission) -> SQLPermissionModel:\n    \"\"\"Alias pour PermissionMapper.to_sql_model.\"\"\"\n    return PermissionMapper.to_sql_model(entity)\ndef to_mongo_model(entity: Permission) -> MongoPermissionModel:\n    \"\"\"Alias pour PermissionMapper.to_mongo_model.\"\"\"\n    return PermissionMapper.to_mongo_model(entity)\ndef to_mongo_dict(entity: Permission) -> Dict[str, Any]:",
+        "detail": "fastapi_acl.permissions.infrastructure.mappers.permission_mapper",
+        "documentation": {}
+    },
+    {
+        "label": "to_sql_model",
+        "kind": 2,
+        "importPath": "fastapi_acl.permissions.infrastructure.mappers.permission_mapper",
+        "description": "fastapi_acl.permissions.infrastructure.mappers.permission_mapper",
+        "peekOfCode": "def to_sql_model(entity: Permission) -> SQLPermissionModel:\n    \"\"\"Alias pour PermissionMapper.to_sql_model.\"\"\"\n    return PermissionMapper.to_sql_model(entity)\ndef to_mongo_model(entity: Permission) -> MongoPermissionModel:\n    \"\"\"Alias pour PermissionMapper.to_mongo_model.\"\"\"\n    return PermissionMapper.to_mongo_model(entity)\ndef to_mongo_dict(entity: Permission) -> Dict[str, Any]:\n    \"\"\"Alias pour PermissionMapper.to_mongo_dict.\"\"\"\n    return PermissionMapper.to_mongo_dict(entity)",
+        "detail": "fastapi_acl.permissions.infrastructure.mappers.permission_mapper",
+        "documentation": {}
+    },
+    {
+        "label": "to_mongo_model",
+        "kind": 2,
+        "importPath": "fastapi_acl.permissions.infrastructure.mappers.permission_mapper",
+        "description": "fastapi_acl.permissions.infrastructure.mappers.permission_mapper",
+        "peekOfCode": "def to_mongo_model(entity: Permission) -> MongoPermissionModel:\n    \"\"\"Alias pour PermissionMapper.to_mongo_model.\"\"\"\n    return PermissionMapper.to_mongo_model(entity)\ndef to_mongo_dict(entity: Permission) -> Dict[str, Any]:\n    \"\"\"Alias pour PermissionMapper.to_mongo_dict.\"\"\"\n    return PermissionMapper.to_mongo_dict(entity)",
+        "detail": "fastapi_acl.permissions.infrastructure.mappers.permission_mapper",
+        "documentation": {}
+    },
+    {
+        "label": "to_mongo_dict",
+        "kind": 2,
+        "importPath": "fastapi_acl.permissions.infrastructure.mappers.permission_mapper",
+        "description": "fastapi_acl.permissions.infrastructure.mappers.permission_mapper",
+        "peekOfCode": "def to_mongo_dict(entity: Permission) -> Dict[str, Any]:\n    \"\"\"Alias pour PermissionMapper.to_mongo_dict.\"\"\"\n    return PermissionMapper.to_mongo_dict(entity)",
+        "detail": "fastapi_acl.permissions.infrastructure.mappers.permission_mapper",
+        "documentation": {}
+    },
+    {
+        "label": "MongoPermissionModel",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.infrastructure.models.mongo_model",
+        "description": "fastapi_acl.permissions.infrastructure.models.mongo_model",
+        "peekOfCode": "class MongoPermissionModel(BaseModel):\n    \"\"\"\n    Modèle Pydantic pour les permissions MongoDB.\n    Attributes:\n        id: ID du document (alias pour _id MongoDB)\n        resource: Ressource concernée\n        action: Action autorisée\n        name: Nom complet (resource:action)\n        display_name: Nom d'affichage\n        description: Description",
+        "detail": "fastapi_acl.permissions.infrastructure.models.mongo_model",
+        "documentation": {}
+    },
+    {
+        "label": "SQLPermissionModel",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.infrastructure.models.sql_model",
+        "description": "fastapi_acl.permissions.infrastructure.models.sql_model",
+        "peekOfCode": "class SQLPermissionModel(Base):\n    \"\"\"\n    Modèle SQLAlchemy pour les permissions.\n    Représente une permission dans PostgreSQL ou MySQL.\n    Attributes:\n        id: UUID sous forme de CHAR(36)\n        resource: Ressource concernée\n        action: Action autorisée\n        name: Nom complet (resource:action) - indexé, unique\n        display_name: Nom d'affichage",
+        "detail": "fastapi_acl.permissions.infrastructure.models.sql_model",
+        "documentation": {}
+    },
+    {
+        "label": "generate_uuid_str",
+        "kind": 2,
+        "importPath": "fastapi_acl.permissions.infrastructure.models.sql_model",
+        "description": "fastapi_acl.permissions.infrastructure.models.sql_model",
+        "peekOfCode": "def generate_uuid_str() -> str:\n    \"\"\"Génère un UUID sous forme de string.\"\"\"\n    return str(uuid4())\nclass SQLPermissionModel(Base):\n    \"\"\"\n    Modèle SQLAlchemy pour les permissions.\n    Représente une permission dans PostgreSQL ou MySQL.\n    Attributes:\n        id: UUID sous forme de CHAR(36)\n        resource: Ressource concernée",
+        "detail": "fastapi_acl.permissions.infrastructure.models.sql_model",
+        "documentation": {}
+    },
+    {
+        "label": "MongoDBPermissionRepository",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.infrastructure.repositories.mongodb_repository",
+        "description": "fastapi_acl.permissions.infrastructure.repositories.mongodb_repository",
+        "peekOfCode": "class MongoDBPermissionRepository(IPermissionRepository):\n    \"\"\"\n    Implémentation du repository des permissions pour MongoDB.\n    Utilise Motor pour les opérations asynchrones.\n    \"\"\"\n    def __init__(\n        self,\n        db: MongoDBDatabase,\n        collection_name: str = \"acl_permissions\",\n    ):",
+        "detail": "fastapi_acl.permissions.infrastructure.repositories.mongodb_repository",
+        "documentation": {}
+    },
+    {
+        "label": "MySQLPermissionRepository",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.infrastructure.repositories.mysql_repository",
+        "description": "fastapi_acl.permissions.infrastructure.repositories.mysql_repository",
+        "peekOfCode": "class MySQLPermissionRepository(IPermissionRepository):\n    \"\"\"\n    Implémentation du repository des permissions pour MySQL.\n    Utilise SQLAlchemy 2.0 async pour les opérations de base de données.\n    \"\"\"\n    def __init__(self, db: MySQLDatabase):\n        \"\"\"\n        Initialise le repository.\n        Args:\n            db: Instance de MySQLDatabase",
+        "detail": "fastapi_acl.permissions.infrastructure.repositories.mysql_repository",
+        "documentation": {}
+    },
+    {
+        "label": "PostgreSQLPermissionRepository",
+        "kind": 6,
+        "importPath": "fastapi_acl.permissions.infrastructure.repositories.postgresql_repository",
+        "description": "fastapi_acl.permissions.infrastructure.repositories.postgresql_repository",
+        "peekOfCode": "class PostgreSQLPermissionRepository(IPermissionRepository):\n    \"\"\"\n    Implémentation du repository des permissions pour PostgreSQL.\n    Utilise SQLAlchemy 2.0 async pour les opérations de base de données.\n    \"\"\"\n    def __init__(self, db: PostgreSQLDatabase):\n        \"\"\"\n        Initialise le repository.\n        Args:\n            db: Instance de PostgreSQLDatabase",
+        "detail": "fastapi_acl.permissions.infrastructure.repositories.postgresql_repository",
+        "documentation": {}
+    },
+    {
+        "label": "set_permission_dependencies",
+        "kind": 2,
+        "importPath": "fastapi_acl.permissions.interface.dependencies",
+        "description": "fastapi_acl.permissions.interface.dependencies",
+        "peekOfCode": "def set_permission_dependencies(\n    permission_repository: IPermissionRepository,\n) -> None:\n    \"\"\"\n    Configure les dépendances pour les permissions.\n    Cette fonction doit être appelée au démarrage de l'application\n    par l'ACLManager.\n    Args:\n        permission_repository: Repository des permissions\n    \"\"\"",
+        "detail": "fastapi_acl.permissions.interface.dependencies",
+        "documentation": {}
+    },
+    {
+        "label": "get_permission_repository",
+        "kind": 2,
+        "importPath": "fastapi_acl.permissions.interface.dependencies",
+        "description": "fastapi_acl.permissions.interface.dependencies",
+        "peekOfCode": "def get_permission_repository() -> IPermissionRepository:\n    \"\"\"\n    Dépendance FastAPI pour obtenir le repository des permissions.\n    Returns:\n        Repository des permissions\n    Raises:\n        HTTPException: Si le repository n'est pas configuré\n    \"\"\"\n    if _permission_repository is None:\n        raise HTTPException(",
+        "detail": "fastapi_acl.permissions.interface.dependencies",
+        "documentation": {}
+    },
+    {
+        "label": "router",
+        "kind": 5,
+        "importPath": "fastapi_acl.permissions.interface.routes",
+        "description": "fastapi_acl.permissions.interface.routes",
+        "peekOfCode": "router = APIRouter(prefix=\"/permissions\", tags=[\"Permissions\"])\ndef _to_response_dto(permission: Permission) -> PermissionResponseDTO:\n    \"\"\"Convertit une entité Permission en DTO de réponse.\"\"\"\n    return PermissionResponseDTO(\n        id=permission.id,\n        resource=permission.resource,\n        action=permission.action,\n        name=permission.name,\n        display_name=permission.display_name,\n        description=permission.description,",
+        "detail": "fastapi_acl.permissions.interface.routes",
+        "documentation": {}
+    },
+    {
         "label": "IRoleRepository",
         "kind": 6,
         "importPath": "fastapi_acl.roles.application.interface.role_repository",
@@ -5113,7 +5966,16 @@
         "kind": 6,
         "importPath": "fastapi_acl.shared.exceptions",
         "description": "fastapi_acl.shared.exceptions",
-        "peekOfCode": "class PermissionNotFoundError(ACLException):\n    \"\"\"Permission non trouvée.\"\"\"\n    def __init__(self, message: str = \"Permission non trouvée\"):\n        super().__init__(\n            message=message,\n            status_code=404,\n            error_code=\"PERMISSION_NOT_FOUND\",\n        )\n# ============================================\n# Exceptions de rôles",
+        "peekOfCode": "class PermissionNotFoundError(ACLException):\n    \"\"\"Permission non trouvée.\"\"\"\n    def __init__(self, message: str = \"Permission non trouvée\"):\n        super().__init__(\n            message=message,\n            status_code=404,\n            error_code=\"PERMISSION_NOT_FOUND\",\n        )\nclass PermissionAlreadyExistsError(ACLException):\n    \"\"\"Permission déjà existante.\"\"\"",
+        "detail": "fastapi_acl.shared.exceptions",
+        "documentation": {}
+    },
+    {
+        "label": "PermissionAlreadyExistsError",
+        "kind": 6,
+        "importPath": "fastapi_acl.shared.exceptions",
+        "description": "fastapi_acl.shared.exceptions",
+        "peekOfCode": "class PermissionAlreadyExistsError(ACLException):\n    \"\"\"Permission déjà existante.\"\"\"\n    def __init__(self, message: str = \"Cette permission existe déjà\"):\n        super().__init__(\n            message=message,\n            status_code=409,\n            error_code=\"PERMISSION_ALREADY_EXISTS\",\n        )\n# ============================================\n# Exceptions de rôles",
         "detail": "fastapi_acl.shared.exceptions",
         "documentation": {}
     },

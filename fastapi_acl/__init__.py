@@ -52,6 +52,7 @@ from .shared.exceptions import (
     UserNotVerifiedError,
     PermissionDeniedError,
     PermissionNotFoundError,
+    PermissionAlreadyExistsError,
     RoleNotFoundError,
     RoleAlreadyExistsError,
     DatabaseConnectionError,
@@ -70,11 +71,40 @@ from .auth.infrastructure.models.sql_model import SQLAuthUserModel, create_user_
 from .auth.infrastructure.models.mongo_model import MongoAuthUserModel, create_mongo_user_model
 from .auth.infrastructure.mappers.auth_user_mapper import AuthUserMapper
 
-# Dépendances FastAPI
+# Dépendances FastAPI Auth
 from .auth.interface.dependencies import (
     get_current_user,
     get_current_active_user,
     get_current_superuser,
+)
+
+# Entités et DTOs Roles
+from .roles.domain.entities.role import Role
+from .roles.domain.dtos.role_dto import (
+    CreateRoleDTO,
+    UpdateRoleDTO,
+    RoleResponseDTO,
+    AssignRoleDTO,
+    UserRolesResponseDTO,
+)
+
+# Dépendances FastAPI Roles
+from .roles.interface.dependencies import (
+    RequireRole,
+    RequireRoles,
+    RequirePermission,
+    RequirePermissions,
+    get_current_user_roles,
+    get_current_user_permissions,
+)
+
+# Entités et DTOs Permissions
+from .permissions.domain.entities.permission import Permission
+from .permissions.domain.dtos.permission_dto import (
+    CreatePermissionDTO,
+    UpdatePermissionDTO,
+    PermissionResponseDTO,
+    PermissionListResponseDTO,
 )
 
 __all__ = [
@@ -95,6 +125,7 @@ __all__ = [
     "UserNotVerifiedError",
     "PermissionDeniedError",
     "PermissionNotFoundError",
+    "PermissionAlreadyExistsError",
     "RoleNotFoundError",
     "RoleAlreadyExistsError",
     "DatabaseConnectionError",
@@ -111,8 +142,28 @@ __all__ = [
     "create_user_model",
     "create_mongo_user_model",
     "AuthUserMapper",
-    # Dépendances
+    # Dépendances Auth
     "get_current_user",
     "get_current_active_user",
     "get_current_superuser",
+    # Entités et DTOs Roles
+    "Role",
+    "CreateRoleDTO",
+    "UpdateRoleDTO",
+    "RoleResponseDTO",
+    "AssignRoleDTO",
+    "UserRolesResponseDTO",
+    # Dépendances Roles
+    "RequireRole",
+    "RequireRoles",
+    "RequirePermission",
+    "RequirePermissions",
+    "get_current_user_roles",
+    "get_current_user_permissions",
+    # Entités et DTOs Permissions
+    "Permission",
+    "CreatePermissionDTO",
+    "UpdatePermissionDTO",
+    "PermissionResponseDTO",
+    "PermissionListResponseDTO",
 ]

@@ -38,6 +38,24 @@ from .auth.interface.admin.routes import router as admin_router
 from .auth.domain.dtos.register_dto import RegisterDTO
 from .auth.application.usecases.register_usecase import RegisterUseCase
 
+# Roles imports
+from .roles.application.interface.role_repository import IRoleRepository
+from .roles.infrastructure.repositories.postgresql_repository import PostgreSQLRoleRepository
+from .roles.infrastructure.repositories.mongodb_repository import MongoDBRoleRepository
+from .roles.infrastructure.repositories.mysql_repository import MySQLRoleRepository
+from .roles.interface.dependencies import set_role_dependencies
+from .roles.interface.routes import router as roles_router
+from .roles.domain.entities.role import Role
+
+# Permissions imports
+from .permissions.application.interface.permission_repository import IPermissionRepository
+from .permissions.infrastructure.repositories.postgresql_repository import PostgreSQLPermissionRepository
+from .permissions.infrastructure.repositories.mongodb_repository import MongoDBPermissionRepository
+from .permissions.infrastructure.repositories.mysql_repository import MySQLPermissionRepository
+from .permissions.interface.dependencies import set_permission_dependencies
+from .permissions.interface.routes import router as permissions_router
+from .permissions.domain.entities.permission import Permission
+
 
 class ACLManager:
     """
@@ -133,6 +151,12 @@ class ACLManager:
         self._token_service: Optional[ITokenService] = None
         self._password_hasher: Optional[IPasswordHasher] = None
 
+        # Services Roles (initialisés dans initialize())
+        self._role_repository: Optional[IRoleRepository] = None
+
+        # Services Permissions (initialisés dans initialize())
+        self._permission_repository: Optional[IPermissionRepository] = None
+
         # Configurer le logger
         get_logger(level=config.log_level)
 
@@ -164,12 +188,15 @@ class ACLManager:
             app.include_router(admin_router, prefix=prefix)
             logger.info(f"Routes auth enregistrées avec préfixe: {prefix}")
 
-        # Futures features
-        if self._config.enable_permissions_feature:
-            logger.warning("Feature permissions non encore implémentée")
-
+        # Feature roles
         if self._config.enable_roles_feature:
-            logger.warning("Feature roles non encore implémentée")
+            app.include_router(roles_router, prefix=prefix)
+            logger.info(f"Routes roles enregistrées avec préfixe: {prefix}")
+
+        # Feature permissions
+        if self._config.enable_permissions_feature:
+            app.include_router(permissions_router, prefix=prefix)
+            logger.info(f"Routes permissions enregistrées avec préfixe: {prefix}")
 
     async def initialize(self) -> None:
         """
@@ -198,9 +225,25 @@ class ACLManager:
             if self._config.enable_auth_feature:
                 await self._init_auth_services()
 
-            # 4. Créer l'admin par défaut si configuré
+            # 4. Initialiser les services Roles
+            if self._config.enable_roles_feature:
+                await self._init_role_services()
+
+            # 5. Créer l'admin par défaut si configuré
             if self._config.create_default_admin:
                 await self._create_default_admin()
+
+            # 6. Créer les rôles par défaut si configurés
+            if self._config.enable_roles_feature:
+                await self._create_default_roles()
+
+            # 7. Initialiser les services Permissions
+            if self._config.enable_permissions_feature:
+                await self._init_permission_services()
+
+            # 8. Créer les permissions par défaut
+            if self._config.enable_permissions_feature:
+                await self._create_default_permissions()
 
             self._initialized = True
             logger.info("ACLManager initialisé avec succès")
@@ -283,6 +326,245 @@ class ACLManager:
 
         logger.info("Services d'authentification initialisés")
 
+    async def _init_role_services(self) -> None:
+        """
+        Initialise les services de gestion des rôles.
+        """
+        # Repository selon le type de DB
+        if isinstance(self._database, MongoDBDatabase):
+            self._role_repository = MongoDBRoleRepository(
+                db=self._database,
+                roles_collection="acl_roles",
+                user_roles_collection="acl_user_roles",
+            )
+            # Créer les index MongoDB
+            await self._role_repository.create_indexes()
+            logger.debug("MongoDB role repository initialisé")
+
+        elif isinstance(self._database, PostgreSQLDatabase):
+            self._role_repository = PostgreSQLRoleRepository(
+                db=self._database,
+            )
+            logger.debug("PostgreSQL role repository initialisé")
+
+        elif isinstance(self._database, MySQLDatabase):
+            self._role_repository = MySQLRoleRepository(
+                db=self._database,
+            )
+            logger.debug("MySQL role repository initialisé")
+
+        # Configurer les dépendances FastAPI
+        set_role_dependencies(
+            role_repository=self._role_repository,
+        )
+
+        logger.info("Services de rôles initialisés")
+
+    async def _init_permission_services(self) -> None:
+        """
+        Initialise les services de gestion des permissions.
+        """
+        # Repository selon le type de DB
+        if isinstance(self._database, MongoDBDatabase):
+            self._permission_repository = MongoDBPermissionRepository(
+                db=self._database,
+                collection_name="acl_permissions",
+            )
+            # Créer les index MongoDB
+            await self._permission_repository.create_indexes()
+            logger.debug("MongoDB permission repository initialisé")
+
+        elif isinstance(self._database, PostgreSQLDatabase):
+            self._permission_repository = PostgreSQLPermissionRepository(
+                db=self._database,
+            )
+            logger.debug("PostgreSQL permission repository initialisé")
+
+        elif isinstance(self._database, MySQLDatabase):
+            self._permission_repository = MySQLPermissionRepository(
+                db=self._database,
+            )
+            logger.debug("MySQL permission repository initialisé")
+
+        # Configurer les dépendances FastAPI
+        set_permission_dependencies(
+            permission_repository=self._permission_repository,
+        )
+
+        logger.info("Services de permissions initialisés")
+
+    async def _create_default_permissions(self) -> None:
+        """
+        Crée les permissions par défaut si elles n'existent pas.
+        """
+        if not self._permission_repository:
+            return
+
+        default_permissions = [
+            # Permissions profile
+            Permission(
+                resource="profile",
+                action="read",
+                display_name="Voir son profil",
+                description="Permet de consulter son propre profil",
+                category="User",
+                is_system=True,
+            ),
+            Permission(
+                resource="profile",
+                action="update",
+                display_name="Modifier son profil",
+                description="Permet de modifier son propre profil",
+                category="User",
+                is_system=True,
+            ),
+            # Permissions users (admin)
+            Permission(
+                resource="users",
+                action="read",
+                display_name="Voir les utilisateurs",
+                description="Permet de consulter la liste des utilisateurs",
+                category="Admin",
+                is_system=True,
+            ),
+            Permission(
+                resource="users",
+                action="create",
+                display_name="Créer des utilisateurs",
+                description="Permet de créer de nouveaux utilisateurs",
+                category="Admin",
+                is_system=True,
+            ),
+            Permission(
+                resource="users",
+                action="update",
+                display_name="Modifier les utilisateurs",
+                description="Permet de modifier les utilisateurs",
+                category="Admin",
+                is_system=True,
+            ),
+            Permission(
+                resource="users",
+                action="delete",
+                display_name="Supprimer des utilisateurs",
+                description="Permet de supprimer des utilisateurs",
+                category="Admin",
+                is_system=True,
+            ),
+            # Permissions roles (admin)
+            Permission(
+                resource="roles",
+                action="read",
+                display_name="Voir les rôles",
+                description="Permet de consulter les rôles",
+                category="Admin",
+                is_system=True,
+            ),
+            Permission(
+                resource="roles",
+                action="create",
+                display_name="Créer des rôles",
+                description="Permet de créer de nouveaux rôles",
+                category="Admin",
+                is_system=True,
+            ),
+            Permission(
+                resource="roles",
+                action="update",
+                display_name="Modifier les rôles",
+                description="Permet de modifier les rôles",
+                category="Admin",
+                is_system=True,
+            ),
+            Permission(
+                resource="roles",
+                action="delete",
+                display_name="Supprimer des rôles",
+                description="Permet de supprimer des rôles",
+                category="Admin",
+                is_system=True,
+            ),
+            Permission(
+                resource="roles",
+                action="assign",
+                display_name="Assigner des rôles",
+                description="Permet d'assigner des rôles aux utilisateurs",
+                category="Admin",
+                is_system=True,
+            ),
+            # Permissions système
+            Permission(
+                resource="permissions",
+                action="read",
+                display_name="Voir les permissions",
+                description="Permet de consulter les permissions",
+                category="Admin",
+                is_system=True,
+            ),
+            Permission(
+                resource="permissions",
+                action="manage",
+                display_name="Gérer les permissions",
+                description="Permet de créer/modifier/supprimer les permissions",
+                category="Admin",
+                is_system=True,
+            ),
+        ]
+
+        created_count = 0
+        for permission in default_permissions:
+            exists = await self._permission_repository.permission_exists(permission.name)
+            if not exists:
+                try:
+                    await self._permission_repository.create_permission(permission)
+                    created_count += 1
+                except Exception as e:
+                    logger.warning(
+                        f"Impossible de créer la permission {permission.name}: {e}"
+                    )
+
+        if created_count > 0:
+            logger.info(f"{created_count} permissions par défaut créées")
+
+    async def _create_default_roles(self) -> None:
+        """
+        Crée les rôles par défaut (admin, user) si ils n'existent pas.
+        """
+        if not self._role_repository:
+            return
+
+        default_roles = [
+            Role(
+                name="admin",
+                display_name="Administrateur",
+                description="Rôle administrateur avec tous les droits",
+                permissions=["*"],
+                is_system=True,
+                is_default=False,
+                priority=100,
+            ),
+            Role(
+                name="user",
+                display_name="Utilisateur",
+                description="Rôle utilisateur standard",
+                permissions=["profile:read", "profile:update"],
+                is_system=True,
+                is_default=True,
+                priority=1,
+            ),
+        ]
+
+        for role in default_roles:
+            existing = await self._role_repository.get_by_name(role.name)
+            if not existing:
+                try:
+                    await self._role_repository.create_role(role)
+                    logger.info(f"Rôle par défaut créé: {role.name}")
+                except Exception as e:
+                    logger.warning(f"Impossible de créer le rôle {role.name}: {e}")
+            else:
+                logger.debug(f"Rôle {role.name} existe déjà")
+
     async def _create_default_admin(self) -> None:
         """Crée l'administrateur par défaut si configuré."""
         if not self._auth_repository or not self._password_hasher:
@@ -316,6 +598,16 @@ class ACLManager:
             await self._auth_repository.update_user(user)
 
             logger.info(f"Admin par défaut créé: {self._config.default_admin_username}")
+
+            # Assigner le rôle admin si la feature roles est activée
+            if self._role_repository and self._config.enable_roles_feature:
+                admin_role = await self._role_repository.get_by_name("admin")
+                if admin_role:
+                    await self._role_repository.assign_role_to_user(
+                        user_id=user.id,
+                        role_id=admin_role.id,
+                    )
+                    logger.debug(f"Rôle admin assigné à {user.username}")
 
         except Exception as e:
             logger.warning(f"Impossible de créer l'admin par défaut: {e}")
@@ -421,3 +713,37 @@ class ACLManager:
         if not self._cache:
             raise ConfigurationError("Cache non initialisé")
         return self._cache
+
+    def get_role_repository(self) -> IRoleRepository:
+        """
+        Retourne le repository des rôles.
+
+        Returns:
+            Repository des rôles
+
+        Raises:
+            ConfigurationError: Si non initialisé ou feature désactivée
+        """
+        if not self._role_repository:
+            raise ConfigurationError(
+                "Role repository non initialisé. "
+                "Vérifiez que enable_roles_feature=True"
+            )
+        return self._role_repository
+
+    def get_permission_repository(self) -> IPermissionRepository:
+        """
+        Retourne le repository des permissions.
+
+        Returns:
+            Repository des permissions
+
+        Raises:
+            ConfigurationError: Si non initialisé ou feature désactivée
+        """
+        if not self._permission_repository:
+            raise ConfigurationError(
+                "Permission repository non initialisé. "
+                "Vérifiez que enable_permissions_feature=True"
+            )
+        return self._permission_repository
