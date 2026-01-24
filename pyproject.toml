@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "alak-acl"
-version = "0.1.14"
+version = "0.1.16"
 description = "Package professionnel pour gérer l'authentification et les permissions ACL dans FastAPI"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
 authors = [
-    {name = "ALAK Team", email = "contact@example.com"}
+    {name = "ALAK Digital", email = "info@alakdigital.com"}
 ]
 keywords = [
     "fastapi",
@@ -26,22 +26,30 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
+
+    "Programming Language :: Python",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+
     "Framework :: FastAPI",
+
+    "Topic :: Internet :: WWW/HTTP",
     "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
     "Topic :: Security",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+
     "Typing :: Typed",
 ]
 
 dependencies = [
     "fastapi>=0.111.0,<1.0.0",
-    "pydantic>=2.0.0",
-    "uvicorn==0.24.0",
-    "pydantic-settings>=2.0.0",
-    "cryptography>=43.0.1",
+    "pydantic>=2.0.0,<3.0.0",
+    "pydantic-settings>=2.0.0,<3.0.0",
+
     "python-jose[cryptography]>=3.3.0",
     "argon2-cffi>=23.1.0",
     "python-multipart>=0.0.6",
@@ -49,12 +57,34 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-postgres = ["sqlalchemy[asyncio]>=2,<3", "asyncpg>=0.31.0"]
-mysql    = ["sqlalchemy[asyncio]>=2,<3", "asyncmy>=0.2.10"]
-mongo    = ["motor>=3.3.0"]
-redis    = ["redis>=5.0.0"]
-all      = ["sqlalchemy[asyncio]>=2,<3", "asyncpg>=0.31.0", "asyncmy>=0.2.10", "motor>=3.3.0", "redis>=5.0.0"]
+postgres = [
+    "sqlalchemy[asyncio]>=2,<3",
+    "asyncpg>=0.31.0"
+]
+
+mysql = [
+    "sqlalchemy[asyncio]>=2,<3",
+    "asyncmy>=0.2.10"
+]
+
+mongo = [
+    "motor>=3.3.0"
+]
+
+redis = [
+    "redis>=5.0.0"
+]
+
+all = [
+    "sqlalchemy[asyncio]>=2,<3",
+    "asyncpg>=0.31.0",
+    "asyncmy>=0.2.10",
+    "motor>=3.3.0",
+    "redis>=5.0.0"
+]
+
 dev = [
+    "uvicorn[standard]>=0.24.0",
     "pytest>=7.4.0",
     "pytest-asyncio>=0.21.0",
     "pytest-cov>=4.1.0",
@@ -64,16 +94,18 @@ dev = [
     "mypy>=1.5.0",
     "pre-commit>=3.4.0",
 ]
+
 docs = [
     "mkdocs>=1.5.0",
     "mkdocs-material>=9.4.0",
     "mkdocstrings[python]>=0.23.0",
 ]
 
+
 [project.urls]
-Homepage = "https://github.com/example/fastapi-acl"
-Documentation = "https://github.com/example/fastapi-acl#readme"
-Repository = "https://github.com/example/fastapi-acl.git"
+Homepage = "https://github.com/alakdigital/acl_package"
+Documentation = "https://github.com/alakdigital/acl_package?tab=readme-ov-file"
+Repository = "https://github.com/alakdigital/acl_package.git"
 Issues = "https://github.com/example/fastapi-acl/issues"
 
 [tool.setuptools.packages.find]

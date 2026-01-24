@@ -150,7 +150,7 @@ class MongoDBAuthRepository(IAuthRepository):
         doc = self._mapper.to_mongo_dict(user)
         result = await self._collection.update_one(
             {"_id": ObjectId(user.id)},
-            doc
+            {'$set': doc}
         )
 
         if result.matched_count == 0:
