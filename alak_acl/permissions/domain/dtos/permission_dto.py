@@ -21,42 +21,58 @@ class CreatePermissionDTO(BaseModel):
         category: Catégorie pour regroupement (optionnel)
     """
 
-    resource: str = Field(
-        ...,
-        min_length=1,
-        max_length=50,
-        description="Ressource concernée (ex: posts, users)",
-        examples=["posts", "users", "comments"],
-    )
-    action: str = Field(
-        ...,
-        min_length=1,
-        max_length=50,
-        description="Action autorisée (ex: read, create, update, delete)",
-        examples=["read", "create", "update", "delete", "*"],
-    )
-    display_name: Optional[str] = Field(
-        None,
-        max_length=100,
-        description="Nom d'affichage lisible",
-    )
-    description: Optional[str] = Field(
-        None,
-        max_length=500,
-        description="Description de la permission",
-    )
-    category: Optional[str] = Field(
-        None,
-        max_length=50,
-        description="Catégorie pour regroupement",
-        examples=["Content", "Admin", "User"],
-    )
+    resource: str
+    action: str 
+    display_name: Optional[str] = None
+    description: Optional[str] = None
+    category: Optional[str] = None
 
     @field_validator("resource", "action")
     @classmethod
     def normalize_lowercase(cls, v: str) -> str:
         """Normalise en minuscules."""
         return v.lower().strip()
+    
+    
+    @field_validator("resource")
+    @classmethod
+    def val_resource(cls, v: str) -> str:
+        """Ressource concernée (ex: "posts", "users")."""
+        if not v.strip():
+            raise ValueError("Veuillez saisir la ressource")
+        return v.lower().strip()
+    
+
+    @field_validator("action")
+    @classmethod
+    def val_action(cls, v: str) -> str:
+        """Action autorisée (ex: "read", "create", "update", "delete", "*")"""
+        if not v.strip():
+            raise ValueError("Veuillez saisir l'action")
+        if v.strip() == "*":
+            return v
+        return v.lower()
+    
+
+    @field_validator("display_name")
+    @classmethod
+    def val_display_name(cls, v: str) -> str:
+        """Nom d'affichage (Ex: Créer des articles)"""
+        if not v.strip():
+            raise ValueError("Veuillez saisir le nom d'affichage")
+        return v.strip()
+    
+    
+
+    @field_validator("description")
+    @classmethod
+    def val_description(cls, v: str) -> str:
+        """Description de la permission (Ex: "Permet de créer de nouveaux articles")"""
+        if not v.strip():
+            raise ValueError("Veuillez saisir l'action")
+        return v.strip()
+    
+
 
     model_config = {
         "json_schema_extra": {

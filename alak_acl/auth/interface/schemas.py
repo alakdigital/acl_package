@@ -3,6 +3,7 @@ Schémas Pydantic pour l'API d'authentification.
 """
 
 from datetime import datetime
+import re
 from typing import Optional
 
 from pydantic import BaseModel, EmailStr, Field, field_validator
@@ -16,66 +17,111 @@ from pydantic import BaseModel, EmailStr, Field, field_validator
 class LoginRequest(BaseModel):
     """Schéma de requête pour la connexion."""
 
-    username: str = Field(
-        ...,
-        min_length=1,
-        max_length=255,
-        description="Nom d'utilisateur ou email",
-        examples=["john_doe", "john@example.com"],
-    )
-    password: str = Field(
-        ...,
-        min_length=1,
-        max_length=128,
-        description="Mot de passe",
-        examples=["mypassword123"],
-    )
+    username: str = Field(..., description="Nom d'utilisateur")
+    password: str
+    
+    
+    @field_validator("username")
+    @classmethod
+    def validate_username(cls, v: str) -> str:
+        if not v or not v.strip():
+            raise ValueError("Veuillez saisir le username")
+        return v
+
+    
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, v: str) -> str:
+        if not v or not v.strip():
+            raise ValueError("Veuillez saisir le mot de passe")
+        return v
+    
+    model_config = {
+        "json_schema_extra": {
+           "example": {
+                'username': "alakacl",
+                'password': "mypassword"
+           }
+        }
+    }
+
 
 
 class RegisterRequest(BaseModel):
     """Schéma de requête pour l'inscription."""
 
-    username: str = Field(
-        ...,
-        min_length=3,
-        max_length=50,
-        description="Nom d'utilisateur unique",
-        examples=["john_doe"],
-    )
-    email: EmailStr = Field(
-        ...,
-        description="Adresse email unique",
-        examples=["john@example.com"],
-    )
-    password: str = Field(
-        ...,
-        min_length=8,
-        max_length=128,
-        description="Mot de passe (min 8 caractères)",
-        examples=["MySecurePassword123"],
-    )
+    username: str
+    email: EmailStr
+    password: str
 
+    
+    
     @field_validator("username")
     @classmethod
     def validate_username(cls, v: str) -> str:
-        """Valide le format du nom d'utilisateur."""
-        import re
+        if not v or not v.strip():
+            raise ValueError("Le nom d'utilisateur ne peut pas être vide")
+        v = v.strip()
         if not re.match(r"^[a-zA-Z0-9_-]+$", v):
             raise ValueError(
-                "Le nom d'utilisateur ne peut contenir que des lettres, "
-                "chiffres, tirets et underscores"
+                "Le nom d'utilisateur ne peut contenir que des lettres, chiffres, tirets et underscores"
             )
+        if len(v) < 3 or len(v) > 30:
+            raise ValueError("Le nom d'utilisateur doit contenir entre 3 et 30 caractères")
+        return v
+    
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, v: str) -> str:
+        if not v or not v.strip():
+            raise ValueError("Le mot de passe ne peut pas être vide")
+        v = v.strip()
+        if len(v) < 8:
+            raise ValueError("Le mot de passe doit contenir au moins 8 caractères")
+        # if not re.search(r"[A-Z]", v):
+        #     raise ValueError("Le mot de passe doit contenir au moins une lettre majuscule")
+        # if not re.search(r"[a-z]", v):
+        #     raise ValueError("Le mot de passe doit contenir au moins une lettre minuscule")
+        # if not re.search(r"[0-9]", v):
+        #     raise ValueError("Le mot de passe doit contenir au moins un chiffre")
+        # if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", v):
+        #     raise ValueError("Le mot de passe doit contenir au moins un symbole spécial")
         return v
 
+    @field_validator("email")
+    @classmethod
+    def validate_email(cls, v: str) -> str:
+        """
+        Non vide et format email valide (EmailStr s'en occupe)
+        """
+        if not v or not v.strip():
+            raise ValueError("L'email ne peut pas être vide")
+        v = v.strip()
+        return v
+    
+    
+    model_config = {
+        "json_schema_extra": {
+           "example": {
+                'username': "alakacl",
+                'email': "alakacl@gmail.com",
+                'password': "mypassword"
+           }
+        }
+    }
 
 class RefreshTokenRequest(BaseModel):
     """Schéma de requête pour rafraîchir un token."""
 
-    refresh_token: str = Field(
-        ...,
-        description="Token de rafraîchissement",
-    )
+    refresh_token: str
 
+    @field_validator("refresh_token")
+    @classmethod
+    def validate_refresh_token(cls, v: str) -> str:
+        if not v or not v.strip():
+            raise ValueError("L'email ne peut pas être vide")
+        v = v.strip()
+        return v
 
 # ============================================
 # Response Schemas
@@ -131,7 +177,7 @@ class MessageResponse(BaseModel):
 class UserListResponse(BaseModel):
     """Schéma de réponse pour la liste des utilisateurs."""
 
-    users: list[UserResponse] = Field(..., description="Liste des utilisateurs")
+    items: list[UserResponse] = Field(..., description="Liste des utilisateurs")
     total: int = Field(..., description="Nombre total d'utilisateurs")
     skip: int = Field(..., description="Offset")
     limit: int = Field(..., description="Limite")

@@ -2,12 +2,14 @@
 Mapper pour convertir entre l'entité Permission et les modèles de persistance.
 """
 
-from typing import Union, Dict, Any
+from typing import Union, Dict, Any, TYPE_CHECKING
 
 from alak_acl.permissions.domain.entities.permission import Permission
 from alak_acl.permissions.infrastructure.models.mongo_model import MongoPermissionModel
-from alak_acl.permissions.infrastructure.models.sql_model import SQLPermissionModel
 
+# Import conditionnel pour éviter de charger SQLAlchemy si non utilisé
+if TYPE_CHECKING:
+    from alak_acl.permissions.infrastructure.models.sql_model import SQLPermissionModel
 
 
 class PermissionMapper:
@@ -23,7 +25,7 @@ class PermissionMapper:
 
     @staticmethod
     def to_entity(
-        model: Union[SQLPermissionModel, MongoPermissionModel, Dict[str, Any]]
+        model: Union["SQLPermissionModel", MongoPermissionModel, Dict[str, Any], Any]
     ) -> Permission:
         """
         Convertit un modèle de persistance en entité Permission.
@@ -49,9 +51,9 @@ class PermissionMapper:
                 updated_at=model.get("updated_at"),
             )
 
-        elif isinstance(model, SQLPermissionModel):
+        elif isinstance(model, MongoPermissionModel):
             return Permission(
-                id=model.id,
+                id=model.id or "",
                 resource=model.resource,
                 action=model.action,
                 display_name=model.display_name,
@@ -63,9 +65,10 @@ class PermissionMapper:
                 updated_at=model.updated_at,
             )
 
-        elif isinstance(model, MongoPermissionModel):
+        # Modèle SQL (SQLAlchemy) - vérifie par duck typing
+        elif hasattr(model, 'resource') and hasattr(model, 'action') and hasattr(model, 'is_system'):
             return Permission(
-                id=model.id or "",
+                id=model.id,
                 resource=model.resource,
                 action=model.action,
                 display_name=model.display_name,
@@ -81,7 +84,7 @@ class PermissionMapper:
             raise TypeError(f"Type non supporté: {type(model)}")
 
     @staticmethod
-    def to_sql_model(entity: Permission) -> SQLPermissionModel:
+    def to_sql_model(entity: Permission) -> "SQLPermissionModel":
         """
         Convertit une entité Permission en modèle SQL.
 
@@ -91,6 +94,7 @@ class PermissionMapper:
         Returns:
             Modèle SQLPermissionModel
         """
+        from alak_acl.permissions.infrastructure.models.sql_model import SQLPermissionModel
         return SQLPermissionModel(
             id=entity.id,
             resource=entity.resource,
@@ -156,9 +160,9 @@ class PermissionMapper:
 
     @staticmethod
     def update_sql_model(
-        model: SQLPermissionModel,
+        model: "SQLPermissionModel",
         entity: Permission,
-    ) -> SQLPermissionModel:
+    ) -> "SQLPermissionModel":
         """
         Met à jour un modèle SQL avec les valeurs d'une entité.
 
@@ -183,7 +187,7 @@ def to_entity(model) -> Permission:
     return PermissionMapper.to_entity(model)
 
 
-def to_sql_model(entity: Permission) -> SQLPermissionModel:
+def to_sql_model(entity: Permission) -> "SQLPermissionModel":
     """Alias pour PermissionMapper.to_sql_model."""
     return PermissionMapper.to_sql_model(entity)
 

@@ -2,13 +2,14 @@
 Mapper pour convertir Role Entity <-> Models.
 """
 
-from typing import Any, Dict, Type, Union, Optional
+from typing import Any, Dict, Type, Union, Optional, TYPE_CHECKING
 
 from alak_acl.roles.domain.entities.role import Role
 from alak_acl.roles.infrastructure.models.mongo_model import MongoRoleModel
-from alak_acl.roles.infrastructure.models.sql_model import SQLRoleModel
 
-
+# Import conditionnel pour éviter de charger SQLAlchemy si non utilisé
+if TYPE_CHECKING:
+    from alak_acl.roles.infrastructure.models.sql_model import SQLRoleModel
 
 
 class RoleMapper:
@@ -26,7 +27,7 @@ class RoleMapper:
 
     def __init__(
         self,
-        sql_model_class: Type[SQLRoleModel] = SQLRoleModel,
+        sql_model_class: Optional[Type["SQLRoleModel"]] = None,
         mongo_model_class: Type[MongoRoleModel] = MongoRoleModel,
     ):
         """
@@ -39,9 +40,16 @@ class RoleMapper:
         self._sql_model_class = sql_model_class
         self._mongo_model_class = mongo_model_class
 
+    def _get_sql_model_class(self) -> Type["SQLRoleModel"]:
+        """Retourne la classe SQL, avec import lazy si nécessaire."""
+        if self._sql_model_class is None:
+            from alak_acl.roles.infrastructure.models.sql_model import SQLRoleModel
+            self._sql_model_class = SQLRoleModel
+        return self._sql_model_class
+
     def to_entity(
         self,
-        model: Union[SQLRoleModel, MongoRoleModel, dict],
+        model: Union["SQLRoleModel", MongoRoleModel, dict, Any],
     ) -> Role:
         """
         Convertit un modèle DB en entité domaine.
@@ -69,22 +77,6 @@ class RoleMapper:
                 metadata=model.get("metadata", {}),
             )
 
-        if isinstance(model, SQLRoleModel):
-            return Role(
-                id=str(model.id),
-                name=model.name,
-                display_name=model.display_name,
-                description=model.description,
-                permissions=model.permissions or [],
-                is_active=model.is_active,
-                is_default=model.is_default,
-                is_system=model.is_system,
-                priority=model.priority,
-                created_at=model.created_at,
-                updated_at=model.updated_at,
-                metadata=model.metadata_ or {},
-            )
-
         if isinstance(model, MongoRoleModel):
             return Role(
                 id=str(model.id) if model.id else None,
@@ -101,13 +93,30 @@ class RoleMapper:
                 metadata=model.metadata or {},
             )
 
+        # Modèle SQL (SQLAlchemy) - vérifie par duck typing
+        if hasattr(model, 'metadata_') and hasattr(model, 'permissions'):
+            return Role(
+                id=str(model.id),
+                name=model.name,
+                display_name=model.display_name,
+                description=model.description,
+                permissions=model.permissions or [],
+                is_active=model.is_active,
+                is_default=model.is_default,
+                is_system=model.is_system,
+                priority=model.priority,
+                created_at=model.created_at,
+                updated_at=model.updated_at,
+                metadata=model.metadata_ or {},
+            )
+
         raise ValueError(f"Type de modèle non supporté: {type(model)}")
 
     def to_sql_model(
         self,
         entity: Role,
-        model_class: Optional[Type[SQLRoleModel]] = None,
-    ) -> SQLRoleModel:
+        model_class: Optional[Type["SQLRoleModel"]] = None,
+    ) -> "SQLRoleModel":
         """
         Convertit une entité en modèle SQLAlchemy.
 
@@ -118,7 +127,7 @@ class RoleMapper:
         Returns:
             Modèle SQLAlchemy
         """
-        cls = model_class or self._sql_model_class
+        cls = model_class or self._get_sql_model_class()
 
         model_data = {
             "id": entity.id,
@@ -199,9 +208,9 @@ class RoleMapper:
 
     def update_sql_model(
         self,
-        model: SQLRoleModel,
+        model: "SQLRoleModel",
         entity: Role,
-    ) -> SQLRoleModel:
+    ) -> "SQLRoleModel":
         """
         Met à jour un modèle SQL avec les données d'une entité.
 
@@ -230,12 +239,12 @@ class RoleMapper:
 _default_mapper = RoleMapper()
 
 
-def to_entity(model: Union[SQLRoleModel, MongoRoleModel, dict]) -> Role:
+def to_entity(model: Union["SQLRoleModel", MongoRoleModel, dict, Any]) -> Role:
     """Fonction de compatibilité - utilise le mapper par défaut."""
     return _default_mapper.to_entity(model)
 
 
-def to_sql_model(entity: Role) -> SQLRoleModel:
+def to_sql_model(entity: Role) -> "SQLRoleModel":
     """Fonction de compatibilité - utilise le mapper par défaut."""
     return _default_mapper.to_sql_model(entity)
 

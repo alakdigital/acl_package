@@ -5,11 +5,14 @@ Ce mapper gère automatiquement les champs personnalisés
 définis par le développeur.
 """
 
-from typing import Type, Union, Optional
+from typing import Type, Union, Optional, TYPE_CHECKING, Any
 
 from alak_acl.auth.domain.entities.auth_user import AuthUser
 from alak_acl.auth.infrastructure.models.mongo_model import MongoAuthUserModel
-from alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel
+
+# Import conditionnel pour éviter de charger SQLAlchemy si non utilisé
+if TYPE_CHECKING:
+    from alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel
 
 
 
@@ -36,7 +39,7 @@ class AuthUserMapper:
 
     def __init__(
         self,
-        sql_model_class: Type[SQLAuthUserModel] = SQLAuthUserModel,
+        sql_model_class: Optional[Type["SQLAuthUserModel"]] = None,
         mongo_model_class: Type[MongoAuthUserModel] = MongoAuthUserModel,
         custom_field_names: Optional[list] = None,
     ):
@@ -52,9 +55,16 @@ class AuthUserMapper:
         self._mongo_model_class = mongo_model_class
         self._custom_field_names = custom_field_names or []
 
+    def _get_sql_model_class(self) -> Type["SQLAuthUserModel"]:
+        """Retourne la classe SQL, avec import lazy si nécessaire."""
+        if self._sql_model_class is None:
+            from alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel
+            self._sql_model_class = SQLAuthUserModel
+        return self._sql_model_class
+
     def to_entity(
         self,
-        model: Union[SQLAuthUserModel, MongoAuthUserModel, dict],
+        model: Union["SQLAuthUserModel", MongoAuthUserModel, dict, Any],
     ) -> AuthUser:
         """
         Convertit un modèle DB en entité domaine.
@@ -94,28 +104,6 @@ class AuthUserMapper:
                 extra_fields=extra_fields,
             )
 
-        if isinstance(model, SQLAuthUserModel):
-            # Extraire les colonnes personnalisées du modèle SQL
-            extra_fields = model.get_extra_columns()
-
-            # Combiner avec extra_data JSON si présent
-            if model.extra_data:
-                extra_fields.update(model.extra_data)
-
-            return AuthUser(
-                id=str(model.id),
-                username=model.username,
-                email=model.email,
-                hashed_password=model.hashed_password,
-                is_active=model.is_active,
-                is_verified=model.is_verified,
-                is_superuser=model.is_superuser,
-                created_at=model.created_at,
-                updated_at=model.updated_at,
-                last_login=model.last_login,
-                extra_fields=extra_fields,
-            )
-
         if isinstance(model, MongoAuthUserModel):
             # Extraire les champs personnalisés du modèle Pydantic
             extra_fields = model.get_extra_fields()
@@ -138,13 +126,37 @@ class AuthUserMapper:
                 extra_fields=extra_fields,
             )
 
+        # Modèle SQL (SQLAlchemy) - vérifie par duck typing au lieu de isinstance
+        # pour éviter d'importer SQLAlchemy si non utilisé
+        if hasattr(model, 'get_extra_columns') and hasattr(model, 'hashed_password'):
+            # Extraire les colonnes personnalisées du modèle SQL
+            extra_fields = model.get_extra_columns()
+
+            # Combiner avec extra_data JSON si présent
+            if model.extra_data:
+                extra_fields.update(model.extra_data)
+
+            return AuthUser(
+                id=str(model.id),
+                username=model.username,
+                email=model.email,
+                hashed_password=model.hashed_password,
+                is_active=model.is_active,
+                is_verified=model.is_verified,
+                is_superuser=model.is_superuser,
+                created_at=model.created_at,
+                updated_at=model.updated_at,
+                last_login=model.last_login,
+                extra_fields=extra_fields,
+            )
+
         raise ValueError(f"Type de modèle non supporté: {type(model)}")
 
     def to_sql_model(
         self,
         entity: AuthUser,
-        model_class: Optional[Type[SQLAuthUserModel]] = None,
-    ) -> SQLAuthUserModel:
+        model_class: Optional[Type["SQLAuthUserModel"]] = None,
+    ) -> "SQLAuthUserModel":
         """
         Convertit une entité en modèle SQLAlchemy.
 
@@ -158,7 +170,7 @@ class AuthUserMapper:
         Returns:
             Modèle SQLAlchemy
         """
-        cls = model_class or self._sql_model_class
+        cls = model_class or self._get_sql_model_class()
 
         # Champs de base
         model_data = {
@@ -272,9 +284,9 @@ class AuthUserMapper:
 
     def update_sql_model(
         self,
-        model: SQLAuthUserModel,
+        model: "SQLAuthUserModel",
         entity: AuthUser,
-    ) -> SQLAuthUserModel:
+    ) -> "SQLAuthUserModel":
         """
         Met à jour un modèle SQL avec les données d'une entité.
 
@@ -314,12 +326,12 @@ _default_mapper = AuthUserMapper()
 
 
 # Fonctions statiques pour compatibilité avec l'ancien code
-def to_entity(model: Union[SQLAuthUserModel, MongoAuthUserModel, dict]) -> AuthUser:
+def to_entity(model: Union["SQLAuthUserModel", MongoAuthUserModel, dict, Any]) -> AuthUser:
     """Fonction de compatibilité - utilise le mapper par défaut."""
     return _default_mapper.to_entity(model)
 
 
-def to_sql_model(entity: AuthUser) -> SQLAuthUserModel:
+def to_sql_model(entity: AuthUser) -> "SQLAuthUserModel":
     """Fonction de compatibilité - utilise le mapper par défaut."""
     return _default_mapper.to_sql_model(entity)
 
@@ -334,6 +346,6 @@ def to_mongo_dict(entity: AuthUser) -> dict:
     return _default_mapper.to_mongo_dict(entity)
 
 
-def update_sql_model(model: SQLAuthUserModel, entity: AuthUser) -> SQLAuthUserModel:
+def update_sql_model(model: "SQLAuthUserModel", entity: AuthUser) -> "SQLAuthUserModel":
     """Fonction de compatibilité - utilise le mapper par défaut."""
     return _default_mapper.update_sql_model(model, entity)

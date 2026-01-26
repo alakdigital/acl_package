@@ -55,7 +55,7 @@ async def list_users(
     total = await auth_repository.count_users(is_active=is_active)
 
     return UserListResponse(
-        users=[
+        items=[
             UserResponse(
                 id=user.id,
                 username=user.username,

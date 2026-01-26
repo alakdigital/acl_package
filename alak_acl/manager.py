@@ -8,15 +8,12 @@ Supporte les modèles utilisateur personnalisés pour ajouter
 des champs/colonnes supplémentaires.
 """
 
-from typing import Optional, Union, Type, List
+from typing import Optional, Union, Type, List, TYPE_CHECKING
 
 from fastapi import FastAPI
 
 from alak_acl.shared.config import ACLConfig
 from alak_acl.shared.database.factory import DatabaseFactory, set_database, DatabaseType
-from alak_acl.shared.database.mongodb import MongoDBDatabase
-from alak_acl.shared.database.postgresql import PostgreSQLDatabase
-from alak_acl.shared.database.mysql import MySQLDatabase
 from alak_acl.shared.cache.factory import CacheFactory, set_cache, CacheType
 from alak_acl.shared.exceptions import ConfigurationError
 from alak_acl.shared.logging import logger, get_logger
@@ -24,12 +21,8 @@ from alak_acl.shared.logging import logger, get_logger
 from alak_acl.auth.application.interface.auth_repository import IAuthRepository
 from alak_acl.auth.application.interface.token_service import ITokenService
 from alak_acl.auth.application.interface.password_hasher import IPasswordHasher
-from alak_acl.auth.infrastructure.repositories.postgresql_repository import PostgreSQLAuthRepository
-from alak_acl.auth.infrastructure.repositories.mongodb_repository import MongoDBAuthRepository
-from alak_acl.auth.infrastructure.repositories.mysql_repository import MySQLAuthRepository
 from alak_acl.auth.infrastructure.services.jwt_token_service import JWTTokenService
 from alak_acl.auth.infrastructure.services.argon2_password_hasher import Argon2PasswordHasher
-from alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel
 from alak_acl.auth.infrastructure.models.mongo_model import MongoAuthUserModel
 from alak_acl.auth.infrastructure.mappers.auth_user_mapper import AuthUserMapper
 from alak_acl.auth.interface.dependencies import set_auth_dependencies
@@ -38,23 +31,24 @@ from alak_acl.auth.interface.admin.routes import router as admin_router
 from alak_acl.auth.domain.dtos.register_dto import RegisterDTO
 from alak_acl.auth.application.usecases.register_usecase import RegisterUseCase
 
-# Roles imports
+# Roles imports (interfaces uniquement - pas de dépendance DB)
 from alak_acl.roles.application.interface.role_repository import IRoleRepository
-from alak_acl.roles.infrastructure.repositories.postgresql_repository import PostgreSQLRoleRepository
-from alak_acl.roles.infrastructure.repositories.mongodb_repository import MongoDBRoleRepository
-from alak_acl.roles.infrastructure.repositories.mysql_repository import MySQLRoleRepository
 from alak_acl.roles.interface.dependencies import set_role_dependencies
 from alak_acl.roles.interface.routes import router as roles_router
 from alak_acl.roles.domain.entities.role import Role
 
-# Permissions imports
+# Permissions imports (interfaces uniquement - pas de dépendance DB)
 from alak_acl.permissions.application.interface.permission_repository import IPermissionRepository
-from alak_acl.permissions.infrastructure.repositories.postgresql_repository import PostgreSQLPermissionRepository
-from alak_acl.permissions.infrastructure.repositories.mongodb_repository import MongoDBPermissionRepository
-from alak_acl.permissions.infrastructure.repositories.mysql_repository import MySQLPermissionRepository
 from alak_acl.permissions.interface.dependencies import set_permission_dependencies
 from alak_acl.permissions.interface.routes import router as permissions_router
 from alak_acl.permissions.domain.entities.permission import Permission
+
+# Type hints uniquement (pas chargés au runtime)
+if TYPE_CHECKING:
+    from alak_acl.shared.database.mongodb import MongoDBDatabase
+    from alak_acl.shared.database.postgresql import PostgreSQLDatabase
+    from alak_acl.shared.database.mysql import MySQLDatabase
+    from alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel
 
 
 class ACLManager:
@@ -119,7 +113,7 @@ class ACLManager:
         self,
         config: ACLConfig,
         app: Optional[FastAPI] = None,
-        sql_user_model: Optional[Type[SQLAuthUserModel]] = None,
+        sql_user_model: Optional[Type["SQLAuthUserModel"]] = None,
         mongo_user_model: Optional[Type[MongoAuthUserModel]] = None,
         extra_user_indexes: Optional[List[str]] = None,
     ):
@@ -137,8 +131,11 @@ class ACLManager:
         self._app = app
         self._initialized = False
 
-        # Modèles personnalisés
-        self._sql_user_model = sql_user_model or SQLAuthUserModel
+        # Modèles personnalisés (SQL chargé uniquement si nécessaire)
+        self._sql_user_model = sql_user_model
+        if self._sql_user_model is None and config.database_type in ("postgresql", "mysql"):
+            from alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel
+            self._sql_user_model = SQLAuthUserModel
         self._mongo_user_model = mongo_user_model or MongoAuthUserModel
         self._extra_user_indexes = extra_user_indexes or self._parse_extra_indexes()
 
@@ -287,7 +284,10 @@ class ACLManager:
         )
 
         # Repository selon le type de DB avec modèle personnalisé
-        if isinstance(self._database, MongoDBDatabase):
+        db_type = self._config.database_type
+
+        if db_type == "mongodb":
+            from alak_acl.auth.infrastructure.repositories.mongodb_repository import MongoDBAuthRepository
             collection_name = self._config.users_table_name or "auth_users"
             self._auth_repository = MongoDBAuthRepository(
                 db=self._database,
@@ -301,7 +301,8 @@ class ACLManager:
             )
             logger.debug(f"MongoDB collection: {collection_name}")
 
-        elif isinstance(self._database, PostgreSQLDatabase):
+        elif db_type == "postgresql":
+            from alak_acl.auth.infrastructure.repositories.postgresql_repository import PostgreSQLAuthRepository
             self._auth_repository = PostgreSQLAuthRepository(
                 db=self._database,
                 model_class=self._sql_user_model,
@@ -309,7 +310,8 @@ class ACLManager:
             )
             logger.debug(f"PostgreSQL model: {self._sql_user_model.__name__}")
 
-        elif isinstance(self._database, MySQLDatabase):
+        elif db_type == "mysql":
+            from alak_acl.auth.infrastructure.repositories.mysql_repository import MySQLAuthRepository
             self._auth_repository = MySQLAuthRepository(
                 db=self._database,
                 model_class=self._sql_user_model,
@@ -331,7 +333,10 @@ class ACLManager:
         Initialise les services de gestion des rôles.
         """
         # Repository selon le type de DB
-        if isinstance(self._database, MongoDBDatabase):
+        db_type = self._config.database_type
+
+        if db_type == "mongodb":
+            from alak_acl.roles.infrastructure.repositories.mongodb_repository import MongoDBRoleRepository
             self._role_repository = MongoDBRoleRepository(
                 db=self._database,
                 roles_collection="acl_roles",
@@ -341,13 +346,15 @@ class ACLManager:
             await self._role_repository.create_indexes()
             logger.debug("MongoDB role repository initialisé")
 
-        elif isinstance(self._database, PostgreSQLDatabase):
+        elif db_type == "postgresql":
+            from alak_acl.roles.infrastructure.repositories.postgresql_repository import PostgreSQLRoleRepository
             self._role_repository = PostgreSQLRoleRepository(
                 db=self._database,
             )
             logger.debug("PostgreSQL role repository initialisé")
 
-        elif isinstance(self._database, MySQLDatabase):
+        elif db_type == "mysql":
+            from alak_acl.roles.infrastructure.repositories.mysql_repository import MySQLRoleRepository
             self._role_repository = MySQLRoleRepository(
                 db=self._database,
             )
@@ -365,7 +372,10 @@ class ACLManager:
         Initialise les services de gestion des permissions.
         """
         # Repository selon le type de DB
-        if isinstance(self._database, MongoDBDatabase):
+        db_type = self._config.database_type
+
+        if db_type == "mongodb":
+            from alak_acl.permissions.infrastructure.repositories.mongodb_repository import MongoDBPermissionRepository
             self._permission_repository = MongoDBPermissionRepository(
                 db=self._database,
                 collection_name="acl_permissions",
@@ -374,13 +384,15 @@ class ACLManager:
             await self._permission_repository.create_indexes()
             logger.debug("MongoDB permission repository initialisé")
 
-        elif isinstance(self._database, PostgreSQLDatabase):
+        elif db_type == "postgresql":
+            from alak_acl.permissions.infrastructure.repositories.postgresql_repository import PostgreSQLPermissionRepository
             self._permission_repository = PostgreSQLPermissionRepository(
                 db=self._database,
             )
             logger.debug("PostgreSQL permission repository initialisé")
 
-        elif isinstance(self._database, MySQLDatabase):
+        elif db_type == "mysql":
+            from alak_acl.permissions.infrastructure.repositories.mysql_repository import MySQLPermissionRepository
             self._permission_repository = MySQLPermissionRepository(
                 db=self._database,
             )

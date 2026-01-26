@@ -66,8 +66,7 @@ from alak_acl.auth.domain.dtos.login_dto import LoginDTO
 from alak_acl.auth.domain.dtos.register_dto import RegisterDTO
 from alak_acl.auth.domain.dtos.token_dto import TokenDTO
 
-# Modèles de base extensibles (pour champs personnalisés)
-from alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel, create_user_model
+# Modèle MongoDB (pas de dépendance SQL)
 from alak_acl.auth.infrastructure.models.mongo_model import MongoAuthUserModel, create_mongo_user_model
 from alak_acl.auth.infrastructure.mappers.auth_user_mapper import AuthUserMapper
 
@@ -107,10 +106,33 @@ from alak_acl.permissions.domain.dtos.permission_dto import (
     PermissionListResponseDTO,
 )
 
-# Base SQLAlchemy et modèles pour migrations Alembic
-from alak_acl.shared.database.declarative_base import Base
-from alak_acl.roles.infrastructure.models.sql_model import SQLRoleModel, SQLUserRoleModel
-from alak_acl.permissions.infrastructure.models.sql_model import SQLPermissionModel
+
+# Lazy imports pour les modèles SQL (évite de charger SQLAlchemy si non utilisé)
+def __getattr__(name: str):
+    """Lazy loading des classes SQL pour éviter les dépendances manquantes."""
+    # Modèles SQL Auth
+    if name == "SQLAuthUserModel":
+        from alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel
+        return SQLAuthUserModel
+    elif name == "create_user_model":
+        from alak_acl.auth.infrastructure.models.sql_model import create_user_model
+        return create_user_model
+    # Base SQLAlchemy
+    elif name == "Base":
+        from alak_acl.shared.database.declarative_base import Base
+        return Base
+    # Modèles SQL Roles
+    elif name == "SQLRoleModel":
+        from alak_acl.roles.infrastructure.models.sql_model import SQLRoleModel
+        return SQLRoleModel
+    elif name == "SQLUserRoleModel":
+        from alak_acl.roles.infrastructure.models.sql_model import SQLUserRoleModel
+        return SQLUserRoleModel
+    # Modèles SQL Permissions
+    elif name == "SQLPermissionModel":
+        from alak_acl.permissions.infrastructure.models.sql_model import SQLPermissionModel
+        return SQLPermissionModel
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 __all__ = [
     # Version
