@@ -59,6 +59,7 @@ class RegisterUseCase:
         if await self._auth_repository.username_exists(register_dto.username):
             logger.warning(f"Username déjà utilisé: {register_dto.username}")
             raise UserAlreadyExistsError(
+                "username",
                 f"Le nom d'utilisateur '{register_dto.username}' est déjà utilisé"
             )
 
@@ -66,6 +67,7 @@ class RegisterUseCase:
         if await self._auth_repository.email_exists(register_dto.email):
             logger.warning(f"Email déjà utilisé: {register_dto.email}")
             raise UserAlreadyExistsError(
+                "email",
                 f"L'adresse email '{register_dto.email}' est déjà utilisée"
             )
 
@@ -79,6 +81,7 @@ class RegisterUseCase:
             hashed_password=hashed_password,
             is_active=True,
             is_verified=False,  # Nécessite vérification email
+            tenant_id=register_dto.tenant_id,
         )
 
         # Persister l'utilisateur

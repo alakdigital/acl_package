@@ -28,6 +28,7 @@ class MongoRoleModel(BaseModel):
         is_default: Rôle par défaut
         is_system: Rôle système
         priority: Priorité du rôle
+        tenant_id: Identifiant du tenant (optionnel)
         created_at: Date de création
         updated_at: Date de mise à jour
 
@@ -58,6 +59,7 @@ class MongoRoleModel(BaseModel):
     is_default: bool = False
     is_system: bool = False
     priority: int = Field(default=0, ge=0)
+    tenant_id: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 

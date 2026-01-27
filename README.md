@@ -13,11 +13,13 @@ Gérez l'authentification, les rôles et les permissions dans vos applications F
 - **Authentication JWT** complète (access + refresh tokens)
 - **Gestion des rôles** avec permissions hiérarchiques
 - **Permissions granulaires** au format `resource:action`
+- **Multi-tenant** : Isolation des données par tenant 
 - **Multi-database** : PostgreSQL, MySQL, MongoDB
 - **Cache Redis** avec fallback mémoire automatique
 - **Auto-registration** des routes dans Swagger
 - **100% asynchrone** (async/await)
 - **Modèles extensibles** pour ajouter des champs personnalisés
+- **Protection des données** : Empêche la suppression de rôles/permissions en cours d'utilisation
 
 ## Installation
 
@@ -262,11 +264,151 @@ Les permissions supportent les wildcards pour des droits globaux :
 # Vérifie users:create → False
 ```
 
+## Support Multi-Tenant
+
+ALAK-ACL supporte nativement l'architecture multi-tenant avec le champ `tenant_id` sur les utilisateurs et les rôles.
+
+### Configuration
+
+Le `tenant_id` est **optionnel** par défaut. Vous pouvez l'utiliser pour isoler les données par client/organisation.
+
+### Inscription avec tenant
+
+```python
+# Via l'API - POST /api/v1/auth/register
+{
+    "username": "john_doe",
+    "email": "john@company-a.com",
+    "password": "securepassword123",
+    "tenant_id": "company-a-uuid"  # Optionnel
+}
+```
+
+### Création de rôles par tenant
+
+```python
+# Via l'API - POST /api/v1/roles
+{
+    "name": "manager",
+    "display_name": "Manager",
+    "description": "Gestionnaire de l'équipe",
+    "permissions": ["team:read", "team:update"],
+    "tenant_id": "company-a-uuid"  # Optionnel
+}
+```
+
+### Contraintes d'unicité
+
+Les contraintes d'unicité sont **composites** avec le `tenant_id` :
+
+| Table | Contrainte unique |
+|-------|-------------------|
+| `acl_auth_users` | (`tenant_id`, `username`) |
+| `acl_auth_users` | (`tenant_id`, `email`) |
+| `acl_roles` | (`tenant_id`, `name`) |
+
+Cela signifie que :
+- Deux tenants différents peuvent avoir un utilisateur avec le même `username`
+- Deux tenants différents peuvent avoir un rôle avec le même `name`
+- Au sein d'un même tenant, les usernames, emails et noms de rôles restent uniques
+
+### Filtrage manuel
+
+Le filtrage par `tenant_id` est **manuel** - vous devez filtrer vos requêtes selon vos besoins métier :
+
+```python
+from fastapi import Depends, Header, HTTPException
+from fastapi_acl import get_current_user
+
+@app.get("/my-data")
+async def get_tenant_data(
+    user=Depends(get_current_user),
+    x_tenant_id: str = Header(None)
+):
+    # Vérifier que l'utilisateur appartient au tenant
+    if user.tenant_id != x_tenant_id:
+        raise HTTPException(403, "Accès refusé")
+
+    # Filtrer les données par tenant
+    return await fetch_data_for_tenant(x_tenant_id)
+```
+
+### Middleware de tenant (exemple)
+
+```python
+from fastapi import Request
+from starlette.middleware.base import BaseHTTPMiddleware
+
+class TenantMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        # Extraire le tenant_id du header, subdomain, ou path
+        tenant_id = request.headers.get("X-Tenant-ID")
+
+        # Ou depuis le subdomain
+        # host = request.headers.get("host", "")
+        # tenant_id = host.split(".")[0]
+
+        request.state.tenant_id = tenant_id
+        return await call_next(request)
+
+app.add_middleware(TenantMiddleware)
+```
+
+## Protection contre la suppression
+
+ALAK-ACL protège l'intégrité de vos données en empêchant la suppression d'entités en cours d'utilisation.
+
+### Rôles
+
+Un rôle **ne peut pas être supprimé** s'il :
+- Est assigné à au moins un utilisateur
+- Contient des permissions
+
+```python
+# Tentative de suppression d'un rôle utilisé
+# DELETE /api/v1/roles/{role_id}
+
+# Réponse 409 Conflict
+{
+    "detail": "Impossible de supprimer le rôle: il est assigné à 5 utilisateur(s)"
+}
+
+# Ou
+{
+    "detail": "Impossible de supprimer le rôle: il possède des permissions"
+}
+```
+
+### Permissions
+
+Une permission **ne peut pas être supprimée** si elle est assignée à au moins un rôle.
+
+```python
+# Tentative de suppression d'une permission utilisée
+# DELETE /api/v1/permissions/{permission_id}
+
+# Réponse 409 Conflict
+{
+    "detail": "Impossible de supprimer la permission: elle est utilisée par 3 rôle(s)"
+}
+```
+
+### Workflow recommandé
+
+1. **Pour supprimer un rôle** :
+   - D'abord retirer le rôle de tous les utilisateurs
+   - Puis vider les permissions du rôle (ou les conserver si ce sont des permissions réutilisables)
+   - Enfin supprimer le rôle
+
+2. **Pour supprimer une permission** :
+   - D'abord retirer la permission de tous les rôles qui l'utilisent
+   - Enfin supprimer la permission
+
 ## Modèles personnalisés
 
 ### Utilisation de la Base SQLAlchemy
 
-**Important** : Pour que les migrations Alembic fonctionnent correctement, vous **devez** utiliser la `Base` SQLAlchemy exportée par `fastapi-acl` pour tous vos modèles SQL.
+**Important** : Pour que les migrations Alembic fonctionnent correctement, vous **devez** utiliser la `Base` SQLAlchemy exportée par `alak-acl` pour tous vos modèles SQL.
 
 #### Pourquoi ?
 
@@ -275,7 +417,7 @@ Les permissions supportent les wildcards pour des droits globaux :
 - **Cas 2 - Vos propres modèles** : Pour une gestion unifiée des migrations, utilisez notre `Base` pour que toutes les tables (ACL + application) soient gérées ensemble.
 
 ```python
-from fastapi_acl import Base  # Utiliser cette Base pour tous vos modèles
+from alak_acl import Base  # Utiliser cette Base pour tous vos modèles
 from sqlalchemy import Column, String, Integer, ForeignKey
 
 # Modèle propre à votre application
@@ -425,6 +567,56 @@ alembic current
 | `acl_user_roles` | Association utilisateurs-rôles |
 | `acl_permissions` | Permissions |
 
+### Structure des tables
+
+#### `acl_auth_users`
+
+| Colonne | Type | Description |
+|---------|------|-------------|
+| `id` | VARCHAR(36) | UUID primary key |
+| `username` | VARCHAR(50) | Nom d'utilisateur |
+| `email` | VARCHAR(255) | Email |
+| `hashed_password` | VARCHAR(255) | Mot de passe hashé |
+| `is_active` | BOOLEAN | Compte actif |
+| `is_verified` | BOOLEAN | Email vérifié |
+| `is_superuser` | BOOLEAN | Administrateur |
+| `tenant_id` | VARCHAR(36) | ID du tenant (optionnel) |
+| `created_at` | DATETIME | Date de création |
+| `updated_at` | DATETIME | Date de mise à jour |
+| `last_login` | DATETIME | Dernière connexion |
+
+**Index uniques composites** :
+- `(tenant_id, username)` - Un username unique par tenant
+- `(tenant_id, email)` - Un email unique par tenant
+
+#### `acl_roles`
+
+| Colonne | Type | Description |
+|---------|------|-------------|
+| `id` | VARCHAR(36) | UUID primary key |
+| `name` | VARCHAR(50) | Nom du rôle |
+| `display_name` | VARCHAR(100) | Nom d'affichage |
+| `description` | VARCHAR(500) | Description |
+| `permissions` | JSON | Liste des permissions |
+| `is_active` | BOOLEAN | Rôle actif |
+| `is_default` | BOOLEAN | Rôle par défaut |
+| `is_system` | BOOLEAN | Rôle système (non supprimable) |
+| `priority` | INTEGER | Priorité |
+| `tenant_id` | VARCHAR(36) | ID du tenant (optionnel) |
+| `created_at` | DATETIME | Date de création |
+| `updated_at` | DATETIME | Date de mise à jour |
+
+**Index unique composite** :
+- `(tenant_id, name)` - Un nom de rôle unique par tenant
+
+#### `acl_user_roles`
+
+| Colonne | Type | Description |
+|---------|------|-------------|
+| `user_id` | VARCHAR(36) | FK vers acl_auth_users |
+| `role_id` | VARCHAR(36) | FK vers acl_roles |
+| `assigned_at` | DATETIME | Date d'assignation |
+
 ## Rôles et permissions par défaut
 
 Au démarrage, le package crée automatiquement :
@@ -541,6 +733,75 @@ async def update_article(
     user=Depends(RequirePermissions(["articles:read", "articles:update"]))
 ):
     return {"message": f"Article {id} modifié"}
+```
+
+### Application multi-tenant
+
+```python
+from fastapi import FastAPI, Depends, Header, HTTPException, Request
+from contextlib import asynccontextmanager
+from starlette.middleware.base import BaseHTTPMiddleware
+from fastapi_acl import (
+    ACLManager,
+    ACLConfig,
+    get_current_user,
+    RequireRole,
+)
+
+# Middleware pour extraire le tenant_id
+class TenantMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        # Extraction depuis le header X-Tenant-ID
+        tenant_id = request.headers.get("X-Tenant-ID")
+        request.state.tenant_id = tenant_id
+        return await call_next(request)
+
+config = ACLConfig(
+    database_type="postgresql",
+    postgresql_uri="postgresql+asyncpg://user:pass@localhost/db",
+    jwt_secret_key="your-production-secret-key-here",
+    enable_roles_feature=True,
+)
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await acl.initialize()
+    yield
+    await acl.close()
+
+app = FastAPI(title="API Multi-Tenant", lifespan=lifespan)
+app.add_middleware(TenantMiddleware)
+acl = ACLManager(config, app=app)
+
+# Dépendance pour vérifier l'appartenance au tenant
+async def verify_tenant(
+    user=Depends(get_current_user),
+    x_tenant_id: str = Header(None, alias="X-Tenant-ID")
+):
+    if user.tenant_id and user.tenant_id != x_tenant_id:
+        raise HTTPException(
+            status_code=403,
+            detail="Accès refusé: vous n'appartenez pas à ce tenant"
+        )
+    return user
+
+@app.get("/tenant/data")
+async def get_tenant_data(user=Depends(verify_tenant)):
+    # L'utilisateur appartient au bon tenant
+    return {
+        "message": f"Données du tenant {user.tenant_id}",
+        "user": user.username
+    }
+
+@app.get("/tenant/admin")
+async def tenant_admin(
+    user=Depends(RequireRole("admin")),
+    x_tenant_id: str = Header(None, alias="X-Tenant-ID")
+):
+    # Vérification admin + tenant
+    if user.tenant_id != x_tenant_id:
+        raise HTTPException(403, "Accès refusé")
+    return {"message": "Admin du tenant", "tenant": user.tenant_id}
 ```
 
 ## Licence

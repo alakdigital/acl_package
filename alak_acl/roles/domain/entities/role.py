@@ -31,6 +31,7 @@ class Role:
         is_default: Rôle attribué par défaut aux nouveaux utilisateurs
         is_system: Rôle système (ne peut pas être supprimé)
         priority: Priorité du rôle (plus haute = plus importante)
+        tenant_id: Identifiant du tenant (optionnel, pour le multi-tenant)
         created_at: Date de création
         updated_at: Date de dernière mise à jour
         extra_fields: Champs personnalisés ajoutés par héritage du modèle
@@ -55,6 +56,7 @@ class Role:
     is_default: bool = False
     is_system: bool = False
     priority: int = 0
+    tenant_id: Optional[str] = None
     created_at: datetime = field(default_factory=datetime.utcnow)
     updated_at: datetime = field(default_factory=datetime.utcnow)
     extra_fields: Dict[str, Any] = field(default_factory=dict)
@@ -192,6 +194,7 @@ class Role:
             "is_default": self.is_default,
             "is_system": self.is_system,
             "priority": self.priority,
+            "tenant_id": self.tenant_id,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
         }

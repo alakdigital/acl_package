@@ -102,6 +102,7 @@ class MongoDBAuthRepository(IAuthRepository):
         })
         if existing:
             raise UserAlreadyExistsError(
+                "__all__",
                 "Un utilisateur avec ce username ou email existe déjà"
             )
 
@@ -154,7 +155,7 @@ class MongoDBAuthRepository(IAuthRepository):
         )
 
         if result.matched_count == 0:
-            raise UserNotFoundError(f"Utilisateur non trouvé: {user.id}")
+            raise UserNotFoundError("id", f"Utilisateur non trouvé: {user.id}")
 
         logger.debug(f"Utilisateur mis à jour: {user.username}")
         return user
@@ -263,9 +264,21 @@ class MongoDBAuthRepository(IAuthRepository):
 
         À appeler lors de l'initialisation.
         """
-        # Index standards
-        await self._collection.create_index("username", unique=True)
-        await self._collection.create_index("email", unique=True)
+        # Index composites uniques : username et email uniques par tenant
+        await self._collection.create_index(
+            [("tenant_id", 1), ("username", 1)],
+            unique=True,
+            name="uq_user_tenant_username"
+        )
+        await self._collection.create_index(
+            [("tenant_id", 1), ("email", 1)],
+            unique=True,
+            name="uq_user_tenant_email"
+        )
+        # Index simples pour les recherches
+        await self._collection.create_index("username")
+        await self._collection.create_index("email")
+        await self._collection.create_index("tenant_id")
         await self._collection.create_index("is_active")
         await self._collection.create_index("created_at")
 

@@ -207,11 +207,7 @@ async def get_current_user(
         user_id = token_service.get_user_id_from_token(token)
     except (InvalidTokenError, TokenExpiredError) as e:
         logger.warning(f"Token invalide: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=str(e),
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        raise e
 
     user = await auth_repository.get_by_id(user_id)
 

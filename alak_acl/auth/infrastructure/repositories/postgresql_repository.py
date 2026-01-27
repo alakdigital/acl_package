@@ -90,6 +90,7 @@ class PostgreSQLAuthRepository(IAuthRepository):
             except IntegrityError as e:
                 logger.warning(f"Erreur d'intégrité lors de la création: {e}")
                 raise UserAlreadyExistsError(
+                    "__all__",
                     "Un utilisateur avec ce username ou email existe déjà"
                 )
 
@@ -143,7 +144,7 @@ class PostgreSQLAuthRepository(IAuthRepository):
             model = result.scalar_one_or_none()
 
             if not model:
-                raise UserNotFoundError(f"Utilisateur non trouvé: {user.id}")
+                raise UserNotFoundError("id", f"Utilisateur non trouvé: {user.id}")
 
             self._mapper.update_sql_model(model, user)
             await session.flush()

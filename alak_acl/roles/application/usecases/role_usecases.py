@@ -33,7 +33,7 @@ class CreateRoleUseCase:
         """
         # Vérifier si le nom existe déjà
         if await self._role_repository.role_exists(dto.name):
-            raise RoleAlreadyExistsError(f"Un rôle avec le nom '{dto.name}' existe déjà")
+            raise RoleAlreadyExistsError("name",f"Un rôle avec le nom '{dto.name}' existe déjà")
 
         role = Role(
             name=dto.name,
@@ -42,6 +42,7 @@ class CreateRoleUseCase:
             permissions=dto.permissions,
             is_default=dto.is_default,
             priority=dto.priority,
+            tenant_id=dto.tenant_id,
         )
 
         return await self._role_repository.create_role(role)
@@ -69,7 +70,7 @@ class UpdateRoleUseCase:
         """
         role = await self._role_repository.get_by_id(role_id)
         if not role:
-            raise RoleNotFoundError(f"Rôle non trouvé: {role_id}")
+            raise RoleNotFoundError("id", f"Rôle non trouvé: {role_id}")
 
         # Mettre à jour les champs fournis
         if dto.display_name is not None:
@@ -84,6 +85,8 @@ class UpdateRoleUseCase:
             role.is_default = dto.is_default
         if dto.priority is not None:
             role.priority = dto.priority
+        if dto.tenant_id is not None:
+            role.tenant_id = dto.tenant_id
 
         role.updated_at = datetime.utcnow()
 
@@ -193,7 +196,7 @@ class AssignRoleUseCase:
         """
         role = await self._role_repository.get_by_name(role_name)
         if not role:
-            raise RoleNotFoundError(f"Rôle non trouvé: {role_name}")
+            raise RoleNotFoundError("name", f"Rôle non trouvé: {role_name}")
         return await self._role_repository.assign_role_to_user(user_id, role.id)
 
 

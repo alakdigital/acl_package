@@ -68,6 +68,7 @@ async def register(
             username=request.username,
             email=request.email,
             password=request.password,
+            tenant_id=request.tenant_id,
         )
         user = await register_usecase.execute(register_dto)
 
@@ -78,6 +79,7 @@ async def register(
             is_active=user.is_active,
             is_verified=user.is_verified,
             is_superuser=user.is_superuser,
+            tenant_id=user.tenant_id,
             created_at=user.created_at,
             last_login=user.last_login,
         )
@@ -88,10 +90,7 @@ async def register(
             detail=str(e),
         )
     except UserAlreadyExistsError as e:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=str(e),
-        )
+        raise e
 
 
 @router.post(
@@ -129,11 +128,7 @@ async def login(
         )
 
     except (InvalidCredentialsError, UserNotActiveError) as e:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=str(e),
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        raise e
 
 
 @router.post(
@@ -166,16 +161,9 @@ async def refresh_token(
         )
 
     except (InvalidTokenError, UserNotActiveError) as e:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=str(e),
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        raise e
     except ACLException as e:
-        raise HTTPException(
-            status_code=e.status_code,
-            detail=str(e),
-        )
+        raise e
 
 
 @router.get(

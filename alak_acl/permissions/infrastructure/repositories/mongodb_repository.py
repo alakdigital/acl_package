@@ -74,6 +74,7 @@ class MongoDBPermissionRepository(IPermissionRepository):
         existing = await self._collection.find_one({"name": permission.name})
         if existing:
             raise PermissionAlreadyExistsError(
+                "name",
                 f"Permission '{permission.name}' existe déjà"
             )
 
@@ -118,6 +119,7 @@ class MongoDBPermissionRepository(IPermissionRepository):
 
         if result.matched_count == 0:
             raise PermissionNotFoundError(
+                "id",
                 f"Permission non trouvée: {permission.id}"
             )
 
@@ -131,6 +133,7 @@ class MongoDBPermissionRepository(IPermissionRepository):
             doc = await self._collection.find_one({"_id": ObjectId(permission_id)})
             if doc and doc.get("is_system"):
                 raise PermissionNotFoundError(
+                    "id",
                     "Impossible de supprimer une permission système"
                 )
 

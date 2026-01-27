@@ -53,6 +53,7 @@ class RegisterRequest(BaseModel):
     username: str
     email: EmailStr
     password: str
+    tenant_id: Optional[str] = Field(None, description="Identifiant du tenant (optionnel)")
 
     
     
@@ -135,6 +136,7 @@ class RoleResponse(BaseModel):
     name: str = Field(..., description="Nom du rôle")
     display_name: Optional[str] = Field(None, description="Nom d'affichage")
     permissions: list[str] = Field(default_factory=list, description="Liste des permissions")
+    tenant_id: Optional[str] = Field(None, description="Identifiant du tenant")
 
     class Config:
         """Configuration Pydantic."""
@@ -167,6 +169,7 @@ class UserResponse(BaseModel):
     is_active: bool = Field(..., description="Compte actif")
     is_verified: bool = Field(..., description="Email vérifié")
     is_superuser: bool = Field(..., description="Administrateur")
+    tenant_id: Optional[str] = Field(None, description="Identifiant du tenant")
     created_at: datetime = Field(..., description="Date de création")
     last_login: Optional[datetime] = Field(None, description="Dernière connexion")
 
@@ -184,6 +187,7 @@ class UserMeResponse(BaseModel):
     is_active: bool = Field(..., description="Compte actif")
     is_verified: bool = Field(..., description="Email vérifié")
     is_superuser: bool = Field(..., description="Administrateur")
+    tenant_id: Optional[str] = Field(None, description="Identifiant du tenant")
     created_at: datetime = Field(..., description="Date de création")
     last_login: Optional[datetime] = Field(None, description="Dernière connexion")
     roles: list[RoleResponse] = Field(default_factory=list, description="Rôles de l'utilisateur")
@@ -239,4 +243,8 @@ class UpdateUserRequest(BaseModel):
     is_superuser: Optional[bool] = Field(
         None,
         description="Statut administrateur",
+    )
+    tenant_id: Optional[str] = Field(
+        None,
+        description="Identifiant du tenant",
     )

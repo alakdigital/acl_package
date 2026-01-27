@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 # Champs standards du modèle de base (ne sont pas des champs personnalisés)
 STANDARD_ROLE_FIELDS: Set[str] = {
     'id', '_id', 'name', 'display_name', 'description', 'permissions',
-    'is_active', 'is_default', 'is_system', 'priority',
+    'is_active', 'is_default', 'is_system', 'priority', 'tenant_id',
     'created_at', 'updated_at',
     # Champs techniques SQLAlchemy
     'users', '_sa_instance_state',
@@ -142,6 +142,7 @@ class RoleMapper:
                 is_default=model.get("is_default", False),
                 is_system=model.get("is_system", False),
                 priority=model.get("priority", 0),
+                tenant_id=model.get("tenant_id"),
                 created_at=model.get("created_at"),
                 updated_at=model.get("updated_at"),
                 extra_fields=extra_fields,
@@ -159,6 +160,7 @@ class RoleMapper:
                 is_default=model.is_default,
                 is_system=model.is_system,
                 priority=model.priority,
+                tenant_id=model.tenant_id,
                 created_at=model.created_at,
                 updated_at=model.updated_at,
                 extra_fields=extra_fields,
@@ -177,6 +179,7 @@ class RoleMapper:
                 is_default=model.is_default,
                 is_system=model.is_system,
                 priority=model.priority,
+                tenant_id=model.tenant_id,
                 created_at=model.created_at,
                 updated_at=model.updated_at,
                 extra_fields=extra_fields,
@@ -215,6 +218,7 @@ class RoleMapper:
             "is_default": entity.is_default,
             "is_system": entity.is_system,
             "priority": entity.priority,
+            "tenant_id": entity.tenant_id,
             "created_at": entity.created_at,
             "updated_at": entity.updated_at,
         }
@@ -261,6 +265,7 @@ class RoleMapper:
             "is_default": entity.is_default,
             "is_system": entity.is_system,
             "priority": entity.priority,
+            "tenant_id": entity.tenant_id,
             "created_at": entity.created_at,
             "updated_at": entity.updated_at,
         }
@@ -301,6 +306,7 @@ class RoleMapper:
             "is_default": entity.is_default,
             "is_system": entity.is_system,
             "priority": entity.priority,
+            "tenant_id": entity.tenant_id,
             "created_at": entity.created_at,
             "updated_at": entity.updated_at,
         }
@@ -337,6 +343,7 @@ class RoleMapper:
         model.is_default = entity.is_default
         model.is_system = entity.is_system
         model.priority = entity.priority
+        model.tenant_id = entity.tenant_id
         model.updated_at = entity.updated_at
 
         # Mettre à jour les champs personnalisés

@@ -71,7 +71,7 @@ class MongoDBRoleRepository(IRoleRepository):
         # Vérifier l'unicité du nom
         existing = await self._roles_collection.find_one({"name": role.name})
         if existing:
-            raise RoleAlreadyExistsError(f"Un rôle avec le nom '{role.name}' existe déjà")
+            raise RoleAlreadyExistsError("name",f"Un rôle avec le nom '{role.name}' existe déjà")
 
         doc = self._mapper.to_mongo_dict(role)
         doc.pop("_id", None)
@@ -110,7 +110,7 @@ class MongoDBRoleRepository(IRoleRepository):
         )
 
         if result.matched_count == 0:
-            raise RoleNotFoundError(f"Rôle non trouvé: {role.id}")
+            raise RoleNotFoundError("id", f"Rôle non trouvé: {role.id}")
 
         logger.debug(f"Rôle mis à jour: {role.name}")
         return role
@@ -217,7 +217,7 @@ class MongoDBRoleRepository(IRoleRepository):
         # Vérifier que le rôle existe
         role_exists = await self._roles_collection.find_one({"_id": ObjectId(role_id)})
         if not role_exists:
-            raise RoleNotFoundError(f"Rôle non trouvé: {role_id}")
+            raise RoleNotFoundError("id", f"Rôle non trouvé: {role_id}")
 
         # Vérifier si l'association existe déjà
         existing = await self._user_roles_collection.find_one({
@@ -340,13 +340,30 @@ class MongoDBRoleRepository(IRoleRepository):
         return True
 
     # ==========================================
+    # Vérifications pour la suppression
+    # ==========================================
+
+    async def count_roles_with_permission(self, permission_name: str) -> int:
+        """Compte le nombre de rôles qui utilisent une permission."""
+        return await self._roles_collection.count_documents({
+            "permissions": permission_name
+        })
+
+    # ==========================================
     # Index MongoDB
     # ==========================================
 
     async def create_indexes(self) -> None:
         """Crée les index nécessaires."""
-        # Index sur les rôles
-        await self._roles_collection.create_index("name", unique=True)
+        # Index composite unique : nom unique par tenant
+        await self._roles_collection.create_index(
+            [("tenant_id", 1), ("name", 1)],
+            unique=True,
+            name="uq_role_tenant_name"
+        )
+        # Index simple sur name pour les recherches
+        await self._roles_collection.create_index("name")
+        await self._roles_collection.create_index("tenant_id")
         await self._roles_collection.create_index("is_active")
         await self._roles_collection.create_index("is_default")
         await self._roles_collection.create_index("priority")

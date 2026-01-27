@@ -4,6 +4,7 @@ DTO pour l'inscription utilisateur.
 
 import re
 from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass(frozen=True)
@@ -17,11 +18,13 @@ class RegisterDTO:
         username: Nom d'utilisateur unique
         email: Adresse email unique
         password: Mot de passe en clair
+        tenant_id: Identifiant du tenant (optionnel)
     """
 
     username: str
     email: str
     password: str
+    tenant_id: Optional[str] = None
 
     def __post_init__(self):
         """Valide les données après initialisation."""

@@ -27,6 +27,7 @@ class MongoAuthUserModel(BaseModel):
         is_active: Compte actif
         is_verified: Email vérifié
         is_superuser: Administrateur
+        tenant_id: Identifiant du tenant (optionnel)
         created_at: Date de création
         updated_at: Date de mise à jour
         last_login: Dernière connexion
@@ -65,6 +66,7 @@ class MongoAuthUserModel(BaseModel):
     is_active: bool = True
     is_verified: bool = False
     is_superuser: bool = False
+    tenant_id: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     last_login: Optional[datetime] = None
