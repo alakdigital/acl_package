@@ -166,6 +166,17 @@ class PermissionAlreadyExistsError(ACLException):
         )
 
 
+class PermissionInUseError(ACLException):
+    """Permission en cours d'utilisation (assignée à des rôles)."""
+
+    def __init__(self, message: str = "Cette permission est en cours d'utilisation"):
+        super().__init__(
+            message=message,
+            status_code=409,
+            error_code="PERMISSION_IN_USE",
+        )
+
+
 # ============================================
 # Exceptions de rôles
 # ============================================

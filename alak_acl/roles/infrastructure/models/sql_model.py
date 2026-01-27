@@ -5,7 +5,7 @@ Modèles SQLAlchemy pour les rôles (PostgreSQL/MySQL).
 from datetime import datetime
 from uuid import uuid4
 
-from sqlalchemy import Column, String, Boolean, DateTime, JSON, Integer, Table, ForeignKey
+from sqlalchemy import Column, String, Boolean, DateTime, JSON, Integer, Table, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import declared_attr, relationship
 
 from alak_acl.shared.database.declarative_base import Base
@@ -45,6 +45,7 @@ class SQLRoleModel(Base):
         is_default: Rôle par défaut
         is_system: Rôle système (non supprimable)
         priority: Priorité du rôle
+        tenant_id: Identifiant du tenant (optionnel)
         created_at: Date de création
         updated_at: Date de mise à jour
 
@@ -67,6 +68,13 @@ class SQLRoleModel(Base):
     def __tablename__(cls) -> str:
         return getattr(cls, '_custom_tablename', 'acl_roles')
 
+    @declared_attr
+    def __table_args__(cls):
+        return (
+            # Index unique composite : un nom de rôle est unique par tenant
+            UniqueConstraint('tenant_id', 'name', name='uq_role_tenant_name'),
+        )
+
     id = Column(
         String(36),
         primary_key=True,
@@ -75,7 +83,6 @@ class SQLRoleModel(Base):
     )
     name = Column(
         String(50),
-        unique=True,
         nullable=False,
         index=True,
     )
@@ -113,6 +120,11 @@ class SQLRoleModel(Base):
         Integer,
         default=0,
         nullable=False,
+    )
+    tenant_id = Column(
+        String(36),
+        nullable=True,
+        index=True,
     )
     created_at = Column(
         DateTime,

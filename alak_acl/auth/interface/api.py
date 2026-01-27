@@ -68,6 +68,7 @@ async def register(
             username=request.username,
             email=request.email,
             password=request.password,
+            tenant_id=request.tenant_id,
         )
         user = await register_usecase.execute(register_dto)
 
@@ -78,6 +79,7 @@ async def register(
             is_active=user.is_active,
             is_verified=user.is_verified,
             is_superuser=user.is_superuser,
+            tenant_id=user.tenant_id,
             created_at=user.created_at,
             last_login=user.last_login,
         )

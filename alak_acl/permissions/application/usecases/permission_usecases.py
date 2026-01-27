@@ -9,7 +9,8 @@ from typing import List, Optional, Tuple
 from alak_acl.permissions.application.interface.permission_repository import IPermissionRepository
 from alak_acl.permissions.domain.dtos.permission_dto import CreatePermissionDTO, PermissionListResponseDTO, PermissionResponseDTO, UpdatePermissionDTO
 from alak_acl.permissions.domain.entities.permission import Permission
-from alak_acl.shared.exceptions import PermissionAlreadyExistsError, PermissionNotFoundError
+from alak_acl.roles.application.interface.role_repository import IRoleRepository
+from alak_acl.shared.exceptions import PermissionAlreadyExistsError, PermissionInUseError, PermissionNotFoundError
 
 
 class CreatePermissionUseCase:
@@ -94,8 +95,13 @@ class DeletePermissionUseCase:
     Use case pour supprimer une permission.
     """
 
-    def __init__(self, permission_repository: IPermissionRepository):
+    def __init__(
+        self,
+        permission_repository: IPermissionRepository,
+        role_repository: Optional[IRoleRepository] = None,
+    ):
         self._repository = permission_repository
+        self._role_repository = role_repository
 
     async def execute(self, permission_id: str) -> bool:
         """
@@ -109,6 +115,7 @@ class DeletePermissionUseCase:
 
         Raises:
             PermissionNotFoundError: Si la permission n'existe pas
+            PermissionInUseError: Si la permission est utilisée par des rôles
         """
         permission = await self._repository.get_by_id(permission_id)
         if not permission:
@@ -118,6 +125,16 @@ class DeletePermissionUseCase:
             raise PermissionNotFoundError(
                 "Impossible de supprimer une permission système"
             )
+
+        # Vérifier si la permission est utilisée par des rôles
+        if self._role_repository:
+            role_count = await self._role_repository.count_roles_with_permission(
+                permission.name
+            )
+            if role_count > 0:
+                raise PermissionInUseError(
+                    f"Impossible de supprimer la permission: elle est utilisée par {role_count} rôle(s)"
+                )
 
         return await self._repository.delete_permission(permission_id)
 

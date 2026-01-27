@@ -28,10 +28,13 @@ from alak_acl.permissions.domain.dtos.permission_dto import (
 )
 from alak_acl.permissions.domain.entities.permission import Permission
 from alak_acl.permissions.interface.dependencies import get_permission_repository
+from alak_acl.roles.application.interface.role_repository import IRoleRepository
+from alak_acl.roles.interface.dependencies import get_role_repository
 from alak_acl.auth.interface.dependencies import get_current_superuser
 from alak_acl.shared.exceptions import (
     PermissionNotFoundError,
     PermissionAlreadyExistsError,
+    PermissionInUseError,
 )
 
 
@@ -286,19 +289,26 @@ async def update_permission(
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Supprimer une permission",
     description="Supprime une permission. Réservé aux administrateurs. "
-                "Les permissions système ne peuvent pas être supprimées.",
+                "Les permissions système ne peuvent pas être supprimées. "
+                "Une permission utilisée par un rôle ne peut pas être supprimée.",
 )
 async def delete_permission(
     permission_id: str,
     repository: IPermissionRepository = Depends(get_permission_repository),
+    role_repository: IRoleRepository = Depends(get_role_repository),
     _: None = Depends(get_current_superuser),
 ):
     """Supprime une permission."""
-    usecase = DeletePermissionUseCase(repository)
+    usecase = DeletePermissionUseCase(repository, role_repository)
     try:
         await usecase.execute(permission_id)
     except PermissionNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(e),
+        )
+    except PermissionInUseError as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
             detail=str(e),
         )

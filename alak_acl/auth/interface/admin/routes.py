@@ -63,6 +63,7 @@ async def list_users(
                 is_active=user.is_active,
                 is_verified=user.is_verified,
                 is_superuser=user.is_superuser,
+                tenant_id=user.tenant_id,
                 created_at=user.created_at,
                 last_login=user.last_login,
             )
@@ -111,6 +112,7 @@ async def get_user(
         is_active=user.is_active,
         is_verified=user.is_verified,
         is_superuser=user.is_superuser,
+        tenant_id=user.tenant_id,
         created_at=user.created_at,
         last_login=user.last_login,
     )
@@ -158,6 +160,7 @@ async def activate_user(
         is_active=updated_user.is_active,
         is_verified=updated_user.is_verified,
         is_superuser=updated_user.is_superuser,
+        tenant_id=updated_user.tenant_id,
         created_at=updated_user.created_at,
         last_login=updated_user.last_login,
     )
@@ -212,6 +215,7 @@ async def deactivate_user(
         is_active=updated_user.is_active,
         is_verified=updated_user.is_verified,
         is_superuser=updated_user.is_superuser,
+        tenant_id=updated_user.tenant_id,
         created_at=updated_user.created_at,
         last_login=updated_user.last_login,
     )

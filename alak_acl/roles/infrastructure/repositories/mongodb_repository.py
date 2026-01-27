@@ -340,13 +340,30 @@ class MongoDBRoleRepository(IRoleRepository):
         return True
 
     # ==========================================
+    # Vérifications pour la suppression
+    # ==========================================
+
+    async def count_roles_with_permission(self, permission_name: str) -> int:
+        """Compte le nombre de rôles qui utilisent une permission."""
+        return await self._roles_collection.count_documents({
+            "permissions": permission_name
+        })
+
+    # ==========================================
     # Index MongoDB
     # ==========================================
 
     async def create_indexes(self) -> None:
         """Crée les index nécessaires."""
-        # Index sur les rôles
-        await self._roles_collection.create_index("name", unique=True)
+        # Index composite unique : nom unique par tenant
+        await self._roles_collection.create_index(
+            [("tenant_id", 1), ("name", 1)],
+            unique=True,
+            name="uq_role_tenant_name"
+        )
+        # Index simple sur name pour les recherches
+        await self._roles_collection.create_index("name")
+        await self._roles_collection.create_index("tenant_id")
         await self._roles_collection.create_index("is_active")
         await self._roles_collection.create_index("is_default")
         await self._roles_collection.create_index("priority")

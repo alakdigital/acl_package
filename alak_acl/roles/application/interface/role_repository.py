@@ -288,3 +288,20 @@ class IRoleRepository(ABC):
             True si succès
         """
         pass
+
+    # ==========================================
+    # Vérifications pour la suppression
+    # ==========================================
+
+    @abstractmethod
+    async def count_roles_with_permission(self, permission_name: str) -> int:
+        """
+        Compte le nombre de rôles qui utilisent une permission.
+
+        Args:
+            permission_name: Nom de la permission (ex: "posts:create")
+
+        Returns:
+            Nombre de rôles utilisant cette permission
+        """
+        pass

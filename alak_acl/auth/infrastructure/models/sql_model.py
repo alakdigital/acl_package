@@ -8,7 +8,7 @@ peut personnaliser en ajoutant ses propres colonnes via héritage.
 from datetime import datetime
 from uuid import uuid4
 
-from sqlalchemy import Column, String, Boolean, DateTime
+from sqlalchemy import Column, String, Boolean, DateTime, UniqueConstraint
 from sqlalchemy.orm import declared_attr, relationship
 
 from alak_acl.shared.database.declarative_base import Base
@@ -36,6 +36,7 @@ class SQLAuthUserModel(Base):
         is_active: Compte actif
         is_verified: Email vérifié
         is_superuser: Administrateur
+        tenant_id: Identifiant du tenant (optionnel)
         created_at: Date de création
         updated_at: Date de mise à jour
         last_login: Dernière connexion
@@ -64,6 +65,15 @@ class SQLAuthUserModel(Base):
     def __tablename__(cls) -> str:
         return getattr(cls, '_custom_tablename', 'acl_auth_users')
 
+    @declared_attr
+    def __table_args__(cls):
+        return (
+            # Index unique composite : username unique par tenant
+            UniqueConstraint('tenant_id', 'username', name='uq_user_tenant_username'),
+            # Index unique composite : email unique par tenant
+            UniqueConstraint('tenant_id', 'email', name='uq_user_tenant_email'),
+        )
+
     # UUID stocké en VARCHAR(36) pour compatibilité PostgreSQL et MySQL
     id = Column(
         String(36),
@@ -73,13 +83,11 @@ class SQLAuthUserModel(Base):
     )
     username = Column(
         String(50),
-        unique=True,
         nullable=False,
         index=True,
     )
     email = Column(
         String(255),
-        unique=True,
         nullable=False,
         index=True,
     )
@@ -102,6 +110,11 @@ class SQLAuthUserModel(Base):
         default=False,
         nullable=False,
     )
+    tenant_id = Column(
+        String(36),
+        nullable=True,
+        index=True,
+    )
     created_at = Column(
         DateTime,
         default=datetime.utcnow,
@@ -117,7 +130,6 @@ class SQLAuthUserModel(Base):
         DateTime,
         nullable=True,
     )
-
     # Relationship avec les rôles via la table d'association
     roles = relationship(
         "SQLRoleModel",

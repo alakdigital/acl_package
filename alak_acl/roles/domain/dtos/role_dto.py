@@ -17,6 +17,7 @@ class CreateRoleDTO(BaseModel):
     permissions: List[str] = Field(default_factory=list, description="Liste des permissions")
     is_default: bool = Field(False, description="Rôle par défaut pour les nouveaux utilisateurs")
     priority: int = Field(0, ge=0, description="Priorité du rôle")
+    tenant_id: Optional[str] = Field(None, description="Identifiant du tenant (optionnel)")
 
     model_config = {
         "json_schema_extra": {
@@ -27,6 +28,7 @@ class CreateRoleDTO(BaseModel):
                 "permissions": ["posts:read", "posts:update", "comments:delete"],
                 "is_default": False,
                 "priority": 50,
+                "tenant_id": None,
             }
         }
     }
@@ -41,6 +43,7 @@ class UpdateRoleDTO(BaseModel):
     is_active: Optional[bool] = None
     is_default: Optional[bool] = None
     priority: Optional[int] = Field(None, ge=0)
+    tenant_id: Optional[str] = Field(None, description="Identifiant du tenant")
 
     model_config = {
         "json_schema_extra": {
@@ -65,6 +68,7 @@ class RoleResponseDTO(BaseModel):
     is_default: bool
     is_system: bool
     priority: int
+    tenant_id: Optional[str] = None
     created_at: datetime
     updated_at: datetime
 
@@ -81,6 +85,7 @@ class RoleResponseDTO(BaseModel):
                 "is_default": False,
                 "is_system": False,
                 "priority": 50,
+                "tenant_id": None,
                 "created_at": "2024-01-01T00:00:00",
                 "updated_at": "2024-01-01T00:00:00",
             }

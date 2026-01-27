@@ -49,6 +49,7 @@ def role_to_response(role: Role) -> RoleResponseDTO:
         is_default=role.is_default,
         is_system=role.is_system,
         priority=role.priority,
+        tenant_id=role.tenant_id,
         created_at=role.created_at,
         updated_at=role.updated_at,
     )

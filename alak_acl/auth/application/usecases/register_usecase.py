@@ -79,6 +79,7 @@ class RegisterUseCase:
             hashed_password=hashed_password,
             is_active=True,
             is_verified=False,  # Nécessite vérification email
+            tenant_id=register_dto.tenant_id,
         )
 
         # Persister l'utilisateur

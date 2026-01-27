@@ -14,7 +14,9 @@ from alak_acl.shared.exceptions import (
     UserNotActiveError,
     UserAlreadyExistsError,
     PermissionDeniedError,
+    PermissionInUseError,
     RoleNotFoundError,
+    RoleInUseError,
     DatabaseConnectionError,
     CacheConnectionError,
 )
@@ -28,7 +30,9 @@ __all__ = [
     "UserNotActiveError",
     "UserAlreadyExistsError",
     "PermissionDeniedError",
+    "PermissionInUseError",
     "RoleNotFoundError",
+    "RoleInUseError",
     "DatabaseConnectionError",
     "CacheConnectionError",
 ]

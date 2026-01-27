@@ -345,3 +345,19 @@ class PostgreSQLRoleRepository(IRoleRepository):
             )
             logger.debug(f"Rôles supprimés pour l'utilisateur {user_id}")
             return True
+
+    # ==========================================
+    # Vérifications pour la suppression
+    # ==========================================
+
+    async def count_roles_with_permission(self, permission_name: str) -> int:
+        """Compte le nombre de rôles qui utilisent une permission."""
+        async with self._db.session() as session:
+            result = await session.execute(select(self._model_class))
+            models = result.scalars().all()
+
+            count = 0
+            for model in models:
+                if model.permissions and permission_name in model.permissions:
+                    count += 1
+            return count
