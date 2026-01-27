@@ -362,8 +362,8 @@ class MongoDBRoleRepository(IRoleRepository):
             name="uq_role_tenant_name"
         )
         # Index simple sur name pour les recherches
-        await self._roles_collection.create_index("name")
-        await self._roles_collection.create_index("tenant_id")
+        # await self._roles_collection.create_index("name")
+        # await self._roles_collection.create_index("tenant_id")
         await self._roles_collection.create_index("is_active")
         await self._roles_collection.create_index("is_default")
         await self._roles_collection.create_index("priority")

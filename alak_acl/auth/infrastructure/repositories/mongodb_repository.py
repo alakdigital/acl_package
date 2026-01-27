@@ -276,9 +276,9 @@ class MongoDBAuthRepository(IAuthRepository):
             name="uq_user_tenant_email"
         )
         # Index simples pour les recherches
-        await self._collection.create_index("username")
-        await self._collection.create_index("email")
-        await self._collection.create_index("tenant_id")
+        # await self._collection.create_index("username")
+        # await self._collection.create_index("email")
+        # await self._collection.create_index("tenant_id")
         await self._collection.create_index("is_active")
         await self._collection.create_index("created_at")
 

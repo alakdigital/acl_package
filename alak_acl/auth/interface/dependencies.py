@@ -160,7 +160,6 @@ def get_login_usecase(
     auth_repository: IAuthRepository = Depends(get_auth_repository),
     token_service: ITokenService = Depends(get_token_service),
     password_hasher: IPasswordHasher = Depends(get_password_hasher),
-    role_repository: Optional["IRoleRepository"] = Depends(get_role_repository),
 ) -> LoginUseCase:
     """
     Instancie le use case de connexion.
@@ -172,7 +171,6 @@ def get_login_usecase(
         auth_repository=auth_repository,
         token_service=token_service,
         password_hasher=password_hasher,
-        role_repository=role_repository,
     )
 
 
