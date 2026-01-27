@@ -7,7 +7,7 @@ Supporte les wildcards pour les permissions globales.
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional
+from typing import Any, Dict, Optional
 from uuid import uuid4
 
 
@@ -35,6 +35,7 @@ class Permission:
         category: Catégorie pour regroupement (ex: "Content", "Admin", "User")
         created_at: Date de création
         updated_at: Date de mise à jour
+        extra_fields: Champs personnalisés ajoutés par héritage du modèle
 
     Example:
         ```python
@@ -73,6 +74,7 @@ class Permission:
     category: Optional[str] = None
     created_at: datetime = field(default_factory=datetime.utcnow)
     updated_at: Optional[datetime] = None
+    extra_fields: Dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self):
         """Valide les données après initialisation."""
@@ -169,14 +171,41 @@ class Permission:
             category=category,
         )
 
-    def to_dict(self) -> dict:
+    def get_extra(self, key: str, default: Any = None) -> Any:
+        """
+        Récupère un champ personnalisé.
+
+        Args:
+            key: Nom du champ
+            default: Valeur par défaut si le champ n'existe pas
+
+        Returns:
+            Valeur du champ ou default
+        """
+        return self.extra_fields.get(key, default)
+
+    def set_extra(self, key: str, value: Any) -> None:
+        """
+        Définit un champ personnalisé.
+
+        Args:
+            key: Nom du champ
+            value: Valeur du champ
+        """
+        self.extra_fields[key] = value
+        self.updated_at = datetime.utcnow()
+
+    def to_dict(self, include_extra: bool = True) -> dict:
         """
         Convertit l'entité en dictionnaire.
+
+        Args:
+            include_extra: Inclure les champs personnalisés
 
         Returns:
             Dictionnaire représentant la permission
         """
-        return {
+        result = {
             "id": self.id,
             "resource": self.resource,
             "action": self.action,
@@ -189,6 +218,9 @@ class Permission:
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }
+        if include_extra and self.extra_fields:
+            result["extra_fields"] = self.extra_fields.copy()
+        return result
 
     def __eq__(self, other) -> bool:
         """Deux permissions sont égales si elles ont le même nom."""

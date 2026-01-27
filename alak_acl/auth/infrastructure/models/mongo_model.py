@@ -2,11 +2,11 @@
 Modèle Pydantic pour les documents MongoDB.
 
 Ce module fournit un modèle de base extensible que le développeur
-peut personnaliser en ajoutant ses propres champs.
+peut personnaliser en ajoutant ses propres champs via héritage.
 """
 
 from datetime import datetime
-from typing import Any, Dict, Optional, Type
+from typing import Optional
 
 from bson import ObjectId
 from pydantic import BaseModel, Field, EmailStr, ConfigDict
@@ -17,7 +17,7 @@ class MongoAuthUserModel(BaseModel):
     Modèle Pydantic de base pour les documents utilisateurs MongoDB.
 
     Ce modèle peut être étendu par le développeur pour ajouter
-    des champs personnalisés.
+    des champs personnalisés via héritage.
 
     Attributes:
         id: Identifiant unique (ObjectId généré par MongoDB, stocké comme string)
@@ -30,7 +30,6 @@ class MongoAuthUserModel(BaseModel):
         created_at: Date de création
         updated_at: Date de mise à jour
         last_login: Dernière connexion
-        extra_data: Champs personnalisés flexibles
 
     Example:
         Pour ajouter des champs personnalisés, créez une sous-classe:
@@ -38,7 +37,7 @@ class MongoAuthUserModel(BaseModel):
         ```python
         from typing import Optional
         from pydantic import Field
-        from fastapi_acl.auth.infrastructure.models import MongoAuthUserModel
+        from alak_acl.auth.infrastructure.models import MongoAuthUserModel
 
         class CustomUserModel(MongoAuthUserModel):
             # Champs personnalisés
@@ -56,7 +55,6 @@ class MongoAuthUserModel(BaseModel):
             ObjectId: str,
             datetime: lambda v: v.isoformat(),
         },
-        extra="allow",  # Permet les champs supplémentaires
     )
 
     # _id est optionnel car MongoDB le génère automatiquement lors de l'insertion
@@ -70,13 +68,10 @@ class MongoAuthUserModel(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     last_login: Optional[datetime] = None
-    extra_data: Dict[str, Any] = Field(default_factory=dict)
 
     def to_mongo_dict(self, include_id: bool = False) -> dict:
         """
         Convertit le modèle en dictionnaire pour MongoDB.
-
-        Inclut automatiquement les champs personnalisés.
 
         Args:
             include_id: Si True, inclut _id dans le dictionnaire
@@ -105,89 +100,3 @@ class MongoAuthUserModel(BaseModel):
             # Convertir ObjectId en string
             data["_id"] = str(data["_id"])
         return cls(**data)
-
-    def get_extra_fields(self) -> Dict[str, Any]:
-        """
-        Retourne les valeurs des champs personnalisés définis dans la sous-classe.
-
-        Returns:
-            Dictionnaire des champs non-standard
-        """
-        standard_fields = {
-            'id', 'username', 'email', 'hashed_password',
-            'is_active', 'is_verified', 'is_superuser',
-            'created_at', 'updated_at', 'last_login', 'extra_data'
-        }
-        result = {}
-        for field_name in self.model_fields:
-            if field_name not in standard_fields and field_name != '_id':
-                result[field_name] = getattr(self, field_name)
-        return result
-
-    @classmethod
-    def get_custom_field_names(cls) -> list:
-        """
-        Retourne la liste des noms de champs personnalisés.
-
-        Returns:
-            Liste des noms de champs ajoutés par le développeur
-        """
-        standard_fields = {
-            'id', 'username', 'email', 'hashed_password',
-            'is_active', 'is_verified', 'is_superuser',
-            'created_at', 'updated_at', 'last_login', 'extra_data'
-        }
-        return [
-            name for name in cls.model_fields
-            if name not in standard_fields
-        ]
-
-
-def create_mongo_user_model(
-    extra_fields: Optional[Dict[str, tuple]] = None,
-    model_name: str = "CustomMongoAuthUserModel",
-) -> Type[MongoAuthUserModel]:
-    """
-    Factory pour créer un modèle MongoDB personnalisé dynamiquement.
-
-    Args:
-        extra_fields: Dictionnaire {nom: (type, Field())} des champs à ajouter
-        model_name: Nom de la classe générée
-
-    Returns:
-        Classe de modèle personnalisée
-
-    Example:
-        ```python
-        from typing import Optional
-        from pydantic import Field
-        from fastapi_acl.auth.infrastructure.models import create_mongo_user_model
-
-        CustomUser = create_mongo_user_model(
-            extra_fields={
-                "phone": (Optional[str], Field(None, max_length=20)),
-                "company": (Optional[str], Field(None, max_length=100)),
-                "age": (Optional[int], Field(None, ge=0)),
-            }
-        )
-        ```
-    """
-    # Annotations de type pour les nouveaux champs
-    annotations = {}
-    defaults = {}
-
-    if extra_fields:
-        for field_name, (field_type, field_info) in extra_fields.items():
-            annotations[field_name] = field_type
-            defaults[field_name] = field_info
-
-    # Créer la nouvelle classe
-    namespace = {
-        '__annotations__': {**MongoAuthUserModel.__annotations__, **annotations},
-        '__module__': __name__,
-        **defaults,
-    }
-
-    CustomModel = type(model_name, (MongoAuthUserModel,), namespace)
-
-    return CustomModel

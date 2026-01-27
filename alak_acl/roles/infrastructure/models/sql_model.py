@@ -3,7 +3,6 @@ Modèles SQLAlchemy pour les rôles (PostgreSQL/MySQL).
 """
 
 from datetime import datetime
-from typing import Any, Dict, List, Type, Optional
 from uuid import uuid4
 
 from sqlalchemy import Column, String, Boolean, DateTime, JSON, Integer, Table, ForeignKey
@@ -33,6 +32,9 @@ class SQLRoleModel(Base):
 
     Compatible PostgreSQL et MySQL.
 
+    Ce modèle peut être étendu par le développeur pour ajouter
+    des colonnes personnalisées via héritage.
+
     Attributes:
         id: Identifiant unique (VARCHAR(36))
         name: Nom unique du rôle
@@ -45,12 +47,13 @@ class SQLRoleModel(Base):
         priority: Priorité du rôle
         created_at: Date de création
         updated_at: Date de mise à jour
-        metadata: Métadonnées additionnelles (JSON)
 
     Example:
+        Pour ajouter des colonnes personnalisées, créez une sous-classe:
+
         ```python
         from sqlalchemy import Column, String
-        from fastapi_acl.roles.infrastructure.models import SQLRoleModel
+        from alak_acl.roles.infrastructure.models import SQLRoleModel
 
         class CustomRoleModel(SQLRoleModel):
             __tablename__ = "custom_roles"
@@ -122,41 +125,17 @@ class SQLRoleModel(Base):
         onupdate=datetime.utcnow,
         nullable=False,
     )
-    metadata_ = Column(
-        "metadata",
-        JSON,
-        nullable=True,
-        default=dict,
+
+    # Relationship avec les utilisateurs via la table d'association
+    users = relationship(
+        "SQLAuthUserModel",
+        secondary="acl_user_roles",
+        back_populates="roles",
+        lazy="selectin",
     )
 
     def __repr__(self) -> str:
-        return f"<SQLRoleModel(id={self.id}, name={self.name})>"
-
-    def get_extra_columns(self) -> Dict[str, Any]:
-        """Retourne les valeurs des colonnes personnalisées."""
-        standard_columns = {
-            'id', 'name', 'display_name', 'description', 'permissions',
-            'is_active', 'is_default', 'is_system', 'priority',
-            'created_at', 'updated_at', 'metadata', 'metadata_'
-        }
-        result = {}
-        for column in self.__table__.columns:
-            if column.name not in standard_columns:
-                result[column.name] = getattr(self, column.name)
-        return result
-
-    @classmethod
-    def get_custom_column_names(cls) -> list:
-        """Retourne la liste des noms de colonnes personnalisées."""
-        standard_columns = {
-            'id', 'name', 'display_name', 'description', 'permissions',
-            'is_active', 'is_default', 'is_system', 'priority',
-            'created_at', 'updated_at', 'metadata', 'metadata_'
-        }
-        return [
-            col.name for col in cls.__table__.columns
-            if col.name not in standard_columns
-        ]
+        return f"<{self.__class__.__name__}(id={self.id}, name={self.name})>"
 
 
 class SQLUserRoleModel(Base):
@@ -184,34 +163,3 @@ class SQLUserRoleModel(Base):
         default=datetime.utcnow,
         nullable=False,
     )
-
-
-def create_role_model(
-    tablename: str = "acl_roles",
-    extra_columns: Optional[Dict[str, Column]] = None,
-) -> Type[SQLRoleModel]:
-    """
-    Factory pour créer un modèle rôle personnalisé.
-
-    Args:
-        tablename: Nom de la table
-        extra_columns: Dictionnaire {nom: Column} des colonnes à ajouter
-
-    Returns:
-        Classe de modèle personnalisée
-    """
-    attrs = {
-        '__tablename__': tablename,
-        '__table_args__': {'extend_existing': True},
-    }
-
-    if extra_columns:
-        attrs.update(extra_columns)
-
-    CustomModel = type(
-        'CustomRoleModel',
-        (SQLRoleModel,),
-        attrs
-    )
-
-    return CustomModel

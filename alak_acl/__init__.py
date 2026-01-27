@@ -67,7 +67,7 @@ from alak_acl.auth.domain.dtos.register_dto import RegisterDTO
 from alak_acl.auth.domain.dtos.token_dto import TokenDTO
 
 # Modèle MongoDB (pas de dépendance SQL)
-from alak_acl.auth.infrastructure.models.mongo_model import MongoAuthUserModel, create_mongo_user_model
+from alak_acl.auth.infrastructure.models.mongo_model import MongoAuthUserModel
 from alak_acl.auth.infrastructure.mappers.auth_user_mapper import AuthUserMapper
 
 # Dépendances FastAPI Auth
@@ -114,9 +114,6 @@ def __getattr__(name: str):
     if name == "SQLAuthUserModel":
         from alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel
         return SQLAuthUserModel
-    elif name == "create_user_model":
-        from alak_acl.auth.infrastructure.models.sql_model import create_user_model
-        return create_user_model
     # Base SQLAlchemy
     elif name == "Base":
         from alak_acl.shared.database.declarative_base import Base
@@ -166,8 +163,6 @@ __all__ = [
     # Modèles extensibles (pour champs personnalisés)
     "SQLAuthUserModel",
     "MongoAuthUserModel",
-    "create_user_model",
-    "create_mongo_user_model",
     "AuthUserMapper",
     # Dépendances Auth
     "get_current_user",

@@ -2,7 +2,7 @@
 Dépendances FastAPI pour l'authentification.
 """
 
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -20,6 +20,9 @@ from alak_acl.shared.exceptions import (
 )
 from alak_acl.shared.logging import logger
 
+if TYPE_CHECKING:
+    from alak_acl.roles.application.interface.role_repository import IRoleRepository
+
 
 # Security scheme pour Swagger
 security = HTTPBearer(auto_error=False)
@@ -29,12 +32,14 @@ security = HTTPBearer(auto_error=False)
 _auth_repository: Optional[IAuthRepository] = None
 _token_service: Optional[ITokenService] = None
 _password_hasher: Optional[IPasswordHasher] = None
+_role_repository: Optional["IRoleRepository"] = None
 
 
 def set_auth_dependencies(
     auth_repository: IAuthRepository,
     token_service: ITokenService,
     password_hasher: IPasswordHasher,
+    role_repository: Optional["IRoleRepository"] = None,
 ) -> None:
     """
     Configure les dépendances d'authentification.
@@ -45,11 +50,13 @@ def set_auth_dependencies(
         auth_repository: Repository d'authentification
         token_service: Service de tokens
         password_hasher: Service de hashage
+        role_repository: Repository des rôles (optionnel)
     """
-    global _auth_repository, _token_service, _password_hasher
+    global _auth_repository, _token_service, _password_hasher, _role_repository
     _auth_repository = auth_repository
     _token_service = token_service
     _password_hasher = password_hasher
+    _role_repository = role_repository
 
 
 def get_auth_repository() -> IAuthRepository:
@@ -106,10 +113,21 @@ def get_password_hasher() -> IPasswordHasher:
     return _password_hasher
 
 
+def get_role_repository() -> Optional["IRoleRepository"]:
+    """
+    Récupère le repository des rôles.
+
+    Returns:
+        Repository des rôles ou None si non configuré
+    """
+    return _role_repository
+
+
 def get_login_usecase(
     auth_repository: IAuthRepository = Depends(get_auth_repository),
     token_service: ITokenService = Depends(get_token_service),
     password_hasher: IPasswordHasher = Depends(get_password_hasher),
+    role_repository: Optional["IRoleRepository"] = Depends(get_role_repository),
 ) -> LoginUseCase:
     """
     Instancie le use case de connexion.
@@ -121,6 +139,7 @@ def get_login_usecase(
         auth_repository=auth_repository,
         token_service=token_service,
         password_hasher=password_hasher,
+        role_repository=role_repository,
     )
 
 

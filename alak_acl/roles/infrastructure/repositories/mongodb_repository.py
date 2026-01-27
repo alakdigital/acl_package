@@ -12,7 +12,7 @@ from alak_acl.roles.domain.entities.role import Role
 from alak_acl.roles.infrastructure.mappers.role_mapper import RoleMapper
 from alak_acl.roles.infrastructure.models.mongo_model import MongoRoleModel
 from alak_acl.shared.database.mongodb import MongoDBDatabase
-from alak_acl.shared.exceptions import PermissionDeniedError, RoleAlreadyExistsError, RoleNotFoundError
+from alak_acl.shared.exceptions import PermissionDeniedError, RoleAlreadyExistsError, RoleInUseError, RoleNotFoundError
 from alak_acl.shared.logging import logger
 
 
@@ -116,15 +116,41 @@ class MongoDBRoleRepository(IRoleRepository):
         return role
 
     async def delete_role(self, role_id: str) -> bool:
-        """Supprime un rôle."""
+        """
+        Supprime un rôle.
+
+        Conditions de suppression:
+        - Le rôle ne doit pas être un rôle système
+        - Le rôle ne doit pas être assigné à des utilisateurs
+        - Le rôle ne doit pas avoir de permissions associées
+
+        Raises:
+            PermissionDeniedError: Si c'est un rôle système
+            RoleInUseError: Si le rôle est assigné à des utilisateurs ou a des permissions
+        """
         try:
-            # Vérifier si c'est un rôle système
+            # Vérifier si le rôle existe et récupérer ses données
             doc = await self._roles_collection.find_one({"_id": ObjectId(role_id)})
-            if doc and doc.get("is_system"):
+            if not doc:
+                return False
+
+            # Vérifier si c'est un rôle système
+            if doc.get("is_system"):
                 raise PermissionDeniedError("Impossible de supprimer un rôle système")
 
-            # Supprimer les associations
-            await self._user_roles_collection.delete_many({"role_id": role_id})
+            # Vérifier si le rôle est assigné à des utilisateurs
+            user_count = await self._user_roles_collection.count_documents({"role_id": role_id})
+            if user_count > 0:
+                raise RoleInUseError(
+                    f"Impossible de supprimer le rôle: il est assigné à {user_count} utilisateur(s)"
+                )
+
+            # Vérifier si le rôle a des permissions
+            permissions = doc.get("permissions", [])
+            if permissions and len(permissions) > 0:
+                raise RoleInUseError(
+                    f"Impossible de supprimer le rôle: il possède {len(permissions)} permission(s)"
+                )
 
             # Supprimer le rôle
             result = await self._roles_collection.delete_one({"_id": ObjectId(role_id)})
@@ -132,7 +158,7 @@ class MongoDBRoleRepository(IRoleRepository):
             if result.deleted_count > 0:
                 logger.debug(f"Rôle supprimé: {role_id}")
                 return True
-        except PermissionDeniedError:
+        except (PermissionDeniedError, RoleInUseError):
             raise
         except Exception:
             pass

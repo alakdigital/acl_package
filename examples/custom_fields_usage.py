@@ -68,7 +68,8 @@ class CustomUserModel(SQLAuthUserModel):
 # OPTION 2: Champs personnalisés avec MongoDB
 # ============================================
 
-from alak_acl import MongoAuthUserModel, create_mongo_user_model
+# from alak_acl import MongoAuthUserModel, create_mongo_user_model
+from alak_acl import MongoAuthUserModel
 
 
 # Méthode 2A: Créer une sous-classe du modèle MongoDB

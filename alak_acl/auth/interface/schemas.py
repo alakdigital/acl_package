@@ -128,6 +128,19 @@ class RefreshTokenRequest(BaseModel):
 # ============================================
 
 
+class RoleResponse(BaseModel):
+    """Schéma de réponse pour un rôle."""
+
+    id: str = Field(..., description="Identifiant unique du rôle")
+    name: str = Field(..., description="Nom du rôle")
+    display_name: Optional[str] = Field(None, description="Nom d'affichage")
+    permissions: list[str] = Field(default_factory=list, description="Liste des permissions")
+
+    class Config:
+        """Configuration Pydantic."""
+        from_attributes = True
+
+
 class LoginResponse(BaseModel):
     """Schéma de réponse pour la connexion."""
 
@@ -156,6 +169,25 @@ class UserResponse(BaseModel):
     is_superuser: bool = Field(..., description="Administrateur")
     created_at: datetime = Field(..., description="Date de création")
     last_login: Optional[datetime] = Field(None, description="Dernière connexion")
+
+    class Config:
+        """Configuration Pydantic."""
+        from_attributes = True
+
+
+class UserMeResponse(BaseModel):
+    """Schéma de réponse pour /me avec rôles et permissions."""
+
+    id: str = Field(..., description="Identifiant unique (UUID)")
+    username: str = Field(..., description="Nom d'utilisateur")
+    email: EmailStr = Field(..., description="Adresse email")
+    is_active: bool = Field(..., description="Compte actif")
+    is_verified: bool = Field(..., description="Email vérifié")
+    is_superuser: bool = Field(..., description="Administrateur")
+    created_at: datetime = Field(..., description="Date de création")
+    last_login: Optional[datetime] = Field(None, description="Dernière connexion")
+    roles: list[RoleResponse] = Field(default_factory=list, description="Rôles de l'utilisateur")
+    permissions: list[str] = Field(default_factory=list, description="Permissions de l'utilisateur")
 
     class Config:
         """Configuration Pydantic."""

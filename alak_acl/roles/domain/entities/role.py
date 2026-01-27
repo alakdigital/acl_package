@@ -33,7 +33,7 @@ class Role:
         priority: Priorité du rôle (plus haute = plus importante)
         created_at: Date de création
         updated_at: Date de dernière mise à jour
-        metadata: Métadonnées supplémentaires
+        extra_fields: Champs personnalisés ajoutés par héritage du modèle
 
     Example:
         ```python
@@ -57,7 +57,7 @@ class Role:
     priority: int = 0
     created_at: datetime = field(default_factory=datetime.utcnow)
     updated_at: datetime = field(default_factory=datetime.utcnow)
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    extra_fields: Dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self):
         """Initialise display_name si non fourni."""
@@ -148,14 +148,41 @@ class Role:
         self.is_default = False
         self.updated_at = datetime.utcnow()
 
-    def to_dict(self) -> dict:
+    def get_extra(self, key: str, default: Any = None) -> Any:
+        """
+        Récupère un champ personnalisé.
+
+        Args:
+            key: Nom du champ
+            default: Valeur par défaut si le champ n'existe pas
+
+        Returns:
+            Valeur du champ ou default
+        """
+        return self.extra_fields.get(key, default)
+
+    def set_extra(self, key: str, value: Any) -> None:
+        """
+        Définit un champ personnalisé.
+
+        Args:
+            key: Nom du champ
+            value: Valeur du champ
+        """
+        self.extra_fields[key] = value
+        self.updated_at = datetime.utcnow()
+
+    def to_dict(self, include_extra: bool = True) -> dict:
         """
         Convertit l'entité en dictionnaire.
+
+        Args:
+            include_extra: Inclure les champs personnalisés
 
         Returns:
             Dictionnaire représentant le rôle
         """
-        return {
+        result = {
             "id": self.id,
             "name": self.name,
             "display_name": self.display_name,
@@ -167,8 +194,10 @@ class Role:
             "priority": self.priority,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
-            "metadata": self.metadata.copy(),
         }
+        if include_extra and self.extra_fields:
+            result["extra_fields"] = self.extra_fields.copy()
+        return result
 
     def __eq__(self, other: object) -> bool:
         """Compare deux rôles par leur ID."""

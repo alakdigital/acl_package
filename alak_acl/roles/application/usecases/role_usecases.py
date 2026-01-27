@@ -42,7 +42,6 @@ class CreateRoleUseCase:
             permissions=dto.permissions,
             is_default=dto.is_default,
             priority=dto.priority,
-            metadata=dto.metadata,
         )
 
         return await self._role_repository.create_role(role)
@@ -85,8 +84,6 @@ class UpdateRoleUseCase:
             role.is_default = dto.is_default
         if dto.priority is not None:
             role.priority = dto.priority
-        if dto.metadata is not None:
-            role.metadata = dto.metadata
 
         role.updated_at = datetime.utcnow()
 

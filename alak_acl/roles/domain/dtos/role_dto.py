@@ -3,7 +3,7 @@ DTOs pour la feature Roles.
 """
 
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -17,7 +17,6 @@ class CreateRoleDTO(BaseModel):
     permissions: List[str] = Field(default_factory=list, description="Liste des permissions")
     is_default: bool = Field(False, description="Rôle par défaut pour les nouveaux utilisateurs")
     priority: int = Field(0, ge=0, description="Priorité du rôle")
-    metadata: Dict[str, Any] = Field(default_factory=dict, description="Métadonnées")
 
     model_config = {
         "json_schema_extra": {
@@ -42,7 +41,6 @@ class UpdateRoleDTO(BaseModel):
     is_active: Optional[bool] = None
     is_default: Optional[bool] = None
     priority: Optional[int] = Field(None, ge=0)
-    metadata: Optional[Dict[str, Any]] = None
 
     model_config = {
         "json_schema_extra": {
@@ -69,7 +67,6 @@ class RoleResponseDTO(BaseModel):
     priority: int
     created_at: datetime
     updated_at: datetime
-    metadata: Dict[str, Any] = Field(default_factory=dict)
 
     model_config = {
         "from_attributes": True,
@@ -86,7 +83,6 @@ class RoleResponseDTO(BaseModel):
                 "priority": 50,
                 "created_at": "2024-01-01T00:00:00",
                 "updated_at": "2024-01-01T00:00:00",
-                "metadata": {},
             }
         }
     }

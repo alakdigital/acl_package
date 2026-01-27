@@ -66,30 +66,61 @@ from alak_acl.roles.application.usecases import (
     AssignDefaultRolesUseCase,
 )
 
-# Infrastructure
-from alak_acl.roles.infrastructure import (
-    PostgreSQLRoleRepository,
-    MySQLRoleRepository,
-    MongoDBRoleRepository,
-    SQLRoleModel,
-    SQLUserRoleModel,
-    MongoRoleModel,
-    MongoUserRoleModel,
-    RoleMapper,
-)
+# Infrastructure - imports directs uniquement pour les modèles Mongo et le mapper
+from alak_acl.roles.infrastructure.mappers.role_mapper import RoleMapper
+from alak_acl.roles.infrastructure.models.mongo_model import MongoRoleModel, MongoUserRoleModel
 
-# Interface (Routes et dépendances)
-from alak_acl.roles.interface import (
-    router,
-    set_role_dependencies,
-    get_role_repository,
-    get_current_user_roles,
-    get_current_user_permissions,
-    RequireRole,
-    RequireRoles,
-    RequirePermission,
-    RequirePermissions,
-)
+
+# Lazy imports pour éviter les imports circulaires et les dépendances manquantes
+def __getattr__(name: str):
+    """Lazy loading pour éviter les imports circulaires."""
+    # Interface (Routes et dépendances) - lazy pour éviter import circulaire avec auth
+    if name == "router":
+        from alak_acl.roles.interface.routes import router
+        return router
+    elif name == "set_role_dependencies":
+        from alak_acl.roles.interface.dependencies import set_role_dependencies
+        return set_role_dependencies
+    elif name == "get_role_repository":
+        from alak_acl.roles.interface.dependencies import get_role_repository
+        return get_role_repository
+    elif name == "get_current_user_roles":
+        from alak_acl.roles.interface.dependencies import get_current_user_roles
+        return get_current_user_roles
+    elif name == "get_current_user_permissions":
+        from alak_acl.roles.interface.dependencies import get_current_user_permissions
+        return get_current_user_permissions
+    elif name == "RequireRole":
+        from alak_acl.roles.interface.dependencies import RequireRole
+        return RequireRole
+    elif name == "RequireRoles":
+        from alak_acl.roles.interface.dependencies import RequireRoles
+        return RequireRoles
+    elif name == "RequirePermission":
+        from alak_acl.roles.interface.dependencies import RequirePermission
+        return RequirePermission
+    elif name == "RequirePermissions":
+        from alak_acl.roles.interface.dependencies import RequirePermissions
+        return RequirePermissions
+    # Modèles SQL
+    elif name == "SQLRoleModel":
+        from alak_acl.roles.infrastructure.models.sql_model import SQLRoleModel
+        return SQLRoleModel
+    elif name == "SQLUserRoleModel":
+        from alak_acl.roles.infrastructure.models.sql_model import SQLUserRoleModel
+        return SQLUserRoleModel
+    # Repositories
+    elif name == "PostgreSQLRoleRepository":
+        from alak_acl.roles.infrastructure.repositories.postgresql_repository import PostgreSQLRoleRepository
+        return PostgreSQLRoleRepository
+    elif name == "MySQLRoleRepository":
+        from alak_acl.roles.infrastructure.repositories.mysql_repository import MySQLRoleRepository
+        return MySQLRoleRepository
+    elif name == "MongoDBRoleRepository":
+        from alak_acl.roles.infrastructure.repositories.mongodb_repository import MongoDBRoleRepository
+        return MongoDBRoleRepository
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 __all__ = [
     # Domain - Entité

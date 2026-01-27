@@ -15,16 +15,20 @@ from alak_acl.auth.interface.schemas import (
     LoginResponse,
     RegisterRequest,
     UserResponse,
+    UserMeResponse,
     RefreshTokenRequest,
     RefreshTokenResponse,
     MessageResponse,
+    RoleResponse,
 )
 from alak_acl.auth.interface.dependencies import (
     get_login_usecase,
     get_register_usecase,
     get_refresh_token_usecase,
     get_current_active_user,
+    get_role_repository,
 )
+from alak_acl.roles.application.interface.role_repository import IRoleRepository
 from alak_acl.shared.exceptions import (
     ACLException,
     InvalidCredentialsError,
@@ -176,23 +180,43 @@ async def refresh_token(
 
 @router.get(
     "/me",
-    response_model=UserResponse,
+    response_model=UserMeResponse,
     summary="Informations utilisateur connecté",
-    description="Retourne les informations de l'utilisateur authentifié.",
+    description="Retourne les informations de l'utilisateur authentifié avec ses rôles et permissions.",
 )
 async def get_me(
     current_user: AuthUser = Depends(get_current_active_user),
-) -> UserResponse:
+    role_repository: IRoleRepository = Depends(get_role_repository),
+) -> UserMeResponse:
     """
-    Récupère les informations de l'utilisateur connecté.
+    Récupère les informations de l'utilisateur connecté avec ses rôles et permissions.
 
     Args:
         current_user: Utilisateur authentifié
+        role_repository: Repository des rôles
 
     Returns:
-        Informations utilisateur
+        Informations utilisateur avec rôles et permissions
     """
-    return UserResponse(
+    roles_response = []
+    all_permissions = set()
+
+    if role_repository:
+        try:
+            roles = await role_repository.get_user_roles(current_user.id)
+            for role in roles:
+                if role.is_active:
+                    roles_response.append(RoleResponse(
+                        id=role.id,
+                        name=role.name,
+                        display_name=role.display_name,
+                        permissions=role.permissions or [],
+                    ))
+                    all_permissions.update(role.permissions or [])
+        except Exception as e:
+            logger.warning(f"Erreur lors de la récupération des rôles: {e}")
+
+    return UserMeResponse(
         id=current_user.id,
         username=current_user.username,
         email=current_user.email,
@@ -201,6 +225,8 @@ async def get_me(
         is_superuser=current_user.is_superuser,
         created_at=current_user.created_at,
         last_login=current_user.last_login,
+        roles=roles_response,
+        permissions=sorted(list(all_permissions)),
     )
 
 

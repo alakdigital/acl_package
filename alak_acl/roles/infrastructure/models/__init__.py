@@ -5,7 +5,7 @@ Les imports SQL sont conditionnels pour éviter de charger SQLAlchemy
 si l'utilisateur n'utilise que MongoDB.
 """
 
-from alak_acl.roles.infrastructure.models.mongo_model import MongoRoleModel, MongoUserRoleModel, create_mongo_role_model
+from alak_acl.roles.infrastructure.models.mongo_model import MongoRoleModel, MongoUserRoleModel
 
 
 # Lazy imports pour éviter les erreurs de dépendances manquantes
@@ -17,9 +17,6 @@ def __getattr__(name: str):
     elif name == "SQLUserRoleModel":
         from alak_acl.roles.infrastructure.models.sql_model import SQLUserRoleModel
         return SQLUserRoleModel
-    elif name == "create_role_model":
-        from alak_acl.roles.infrastructure.models.sql_model import create_role_model
-        return create_role_model
     elif name == "user_roles_table":
         from alak_acl.roles.infrastructure.models.sql_model import user_roles_table
         return user_roles_table
@@ -30,10 +27,8 @@ __all__ = [
     # Modèles SQL
     "SQLRoleModel",
     "SQLUserRoleModel",
-    "create_role_model",
     "user_roles_table",
     # Modèles MongoDB
     "MongoRoleModel",
     "MongoUserRoleModel",
-    "create_mongo_role_model",
 ]

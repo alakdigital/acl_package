@@ -257,7 +257,7 @@ class ACLManager:
         set_database(self._database)
 
         # Créer les tables si PostgreSQL/MySQL
-        if isinstance(self._database, (PostgreSQLDatabase, MySQLDatabase)):
+        if self._config.database_type in ("postgresql", "mysql"):
             await self._database.create_tables()
 
     async def _init_cache(self) -> None:
@@ -319,11 +319,12 @@ class ACLManager:
             )
             logger.debug(f"MySQL model: {self._sql_user_model.__name__}")
 
-        # Configurer les dépendances FastAPI
+        # Configurer les dépendances FastAPI (role_repository sera ajouté après son initialisation)
         set_auth_dependencies(
             auth_repository=self._auth_repository,
             token_service=self._token_service,
             password_hasher=self._password_hasher,
+            role_repository=None,  # Sera mis à jour après _init_role_services
         )
 
         logger.info("Services d'authentification initialisés")
@@ -360,10 +361,19 @@ class ACLManager:
             )
             logger.debug("MySQL role repository initialisé")
 
-        # Configurer les dépendances FastAPI
+        # Configurer les dépendances FastAPI pour les rôles
         set_role_dependencies(
             role_repository=self._role_repository,
         )
+
+        # Mettre à jour les dépendances auth avec le role_repository
+        if self._auth_repository and self._token_service and self._password_hasher:
+            set_auth_dependencies(
+                auth_repository=self._auth_repository,
+                token_service=self._token_service,
+                password_hasher=self._password_hasher,
+                role_repository=self._role_repository,
+            )
 
         logger.info("Services de rôles initialisés")
 

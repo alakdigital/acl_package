@@ -51,7 +51,6 @@ def role_to_response(role: Role) -> RoleResponseDTO:
         priority=role.priority,
         created_at=role.created_at,
         updated_at=role.updated_at,
-        metadata=role.metadata,
     )
 
 

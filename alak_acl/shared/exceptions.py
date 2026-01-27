@@ -193,6 +193,17 @@ class RoleAlreadyExistsError(ACLException):
         )
 
 
+class RoleInUseError(ACLException):
+    """Rôle en cours d'utilisation (assigné à des utilisateurs ou avec des permissions)."""
+
+    def __init__(self, message: str = "Ce rôle est en cours d'utilisation"):
+        super().__init__(
+            message=message,
+            status_code=409,
+            error_code="ROLE_IN_USE",
+        )
+
+
 # ============================================
 # Exceptions d'infrastructure
 # ============================================

@@ -2,19 +2,16 @@
 Modèle SQLAlchemy pour les utilisateurs (PostgreSQL/MySQL).
 
 Ce module fournit un modèle de base extensible que le développeur
-peut personnaliser en ajoutant ses propres colonnes.
+peut personnaliser en ajoutant ses propres colonnes via héritage.
 """
 
 from datetime import datetime
-from typing import Any, Dict, Type, Optional
 from uuid import uuid4
 
-from sqlalchemy import Column, String, Boolean, DateTime, JSON
-from sqlalchemy.orm import declared_attr
+from sqlalchemy import Column, String, Boolean, DateTime
+from sqlalchemy.orm import declared_attr, relationship
 
 from alak_acl.shared.database.declarative_base import Base
-
-# from ....shared.database.postgresql import Base
 
 
 def generate_uuid_str() -> str:
@@ -29,7 +26,7 @@ class SQLAuthUserModel(Base):
     Compatible PostgreSQL et MySQL.
 
     Ce modèle peut être étendu par le développeur pour ajouter
-    des colonnes personnalisées.
+    des colonnes personnalisées via héritage.
 
     Attributes:
         id: Identifiant unique UUID (stocké en VARCHAR(36))
@@ -42,17 +39,16 @@ class SQLAuthUserModel(Base):
         created_at: Date de création
         updated_at: Date de mise à jour
         last_login: Dernière connexion
-        extra_data: Champs personnalisés stockés en JSON
 
     Example:
         Pour ajouter des colonnes personnalisées, créez une sous-classe:
 
         ```python
         from sqlalchemy import Column, String, Integer
-        from fastapi_acl.auth.infrastructure.models import SQLAuthUserModel
+        from alak_acl.auth.infrastructure.models import SQLAuthUserModel
 
         class CustomUserModel(SQLAuthUserModel):
-            __tablename__ = "users"  # Votre propre nom de table
+            __tablename__ = "users"
 
             # Colonnes personnalisées
             phone = Column(String(20), nullable=True)
@@ -121,101 +117,14 @@ class SQLAuthUserModel(Base):
         DateTime,
         nullable=True,
     )
-    # Champ JSON pour stocker des données supplémentaires flexibles
-    # Utile pour les données non structurées
-    extra_data = Column(
-        JSON,
-        nullable=True,
-        default=dict,
+
+    # Relationship avec les rôles via la table d'association
+    roles = relationship(
+        "SQLRoleModel",
+        secondary="acl_user_roles",
+        back_populates="users",
+        lazy="selectin",
     )
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}(id={self.id}, username={self.username})>"
-
-    def get_extra_columns(self) -> Dict[str, Any]:
-        """
-        Retourne les valeurs des colonnes personnalisées.
-
-        Returns:
-            Dictionnaire des colonnes non-standard
-        """
-        standard_columns = {
-            'id', 'username', 'email', 'hashed_password',
-            'is_active', 'is_verified', 'is_superuser',
-            'created_at', 'updated_at', 'last_login', 'extra_data'
-        }
-        result = {}
-        for column in self.__table__.columns:
-            if column.name not in standard_columns:
-                result[column.name] = getattr(self, column.name)
-        return result
-
-    @classmethod
-    def get_custom_column_names(cls) -> list:
-        """
-        Retourne la liste des noms de colonnes personnalisées.
-
-        Returns:
-            Liste des noms de colonnes ajoutées par le développeur
-        """
-        standard_columns = {
-            'id', 'username', 'email', 'hashed_password',
-            'is_active', 'is_verified', 'is_superuser',
-            'created_at', 'updated_at', 'last_login', 'extra_data'
-        }
-        return [
-            col.name for col in cls.__table__.columns
-            if col.name not in standard_columns
-        ]
-
-
-def create_user_model(
-    tablename: str = "acl_auth_users",
-    extra_columns: Optional[Dict[str, Column]] = None,
-) -> Type[SQLAuthUserModel]:
-    """
-    Factory pour créer un modèle utilisateur personnalisé.
-
-    Cette fonction permet de créer dynamiquement un modèle
-    avec des colonnes supplémentaires sans créer de sous-classe.
-
-    Args:
-        tablename: Nom de la table
-        extra_columns: Dictionnaire {nom: Column} des colonnes à ajouter
-
-    Returns:
-        Classe de modèle personnalisée
-
-    Example:
-        ```python
-        from sqlalchemy import Column, String, Integer
-        from fastapi_acl.auth.infrastructure.models import create_user_model
-
-        CustomUser = create_user_model(
-            tablename="users",
-            extra_columns={
-                "phone": Column(String(20), nullable=True),
-                "company": Column(String(100), nullable=True),
-                "age": Column(Integer, nullable=True),
-            }
-        )
-        ```
-    """
-    # Créer les attributs de la nouvelle classe
-    attrs = {
-        '__tablename__': tablename,
-        '__table_args__': {'extend_existing': True},
-    }
-
-    # Ajouter les colonnes personnalisées
-    if extra_columns:
-        attrs.update(extra_columns)
-
-    # Créer la nouvelle classe dynamiquement
-    CustomModel = type(
-        'CustomAuthUserModel',
-        (SQLAuthUserModel,),
-        attrs
-    )
-
-    return CustomModel

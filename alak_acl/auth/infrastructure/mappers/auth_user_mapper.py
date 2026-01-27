@@ -1,11 +1,14 @@
 """
 Mapper pour convertir AuthUser Entity <-> Models.
 
-Ce mapper gère automatiquement les champs personnalisés
-définis par le développeur.
+Ce mapper assure la conversion entre l'entité domaine AuthUser
+et les modèles de base de données (SQL et MongoDB).
+
+Il détecte automatiquement les colonnes personnalisées ajoutées
+par héritage dans les sous-classes de modèles.
 """
 
-from typing import Type, Union, Optional, TYPE_CHECKING, Any
+from typing import Type, Union, Optional, TYPE_CHECKING, Any, Set
 
 from alak_acl.auth.domain.entities.auth_user import AuthUser
 from alak_acl.auth.infrastructure.models.mongo_model import MongoAuthUserModel
@@ -15,6 +18,70 @@ if TYPE_CHECKING:
     from alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel
 
 
+# Champs standards du modèle de base (ne sont pas des champs personnalisés)
+STANDARD_USER_FIELDS: Set[str] = {
+    'id', '_id', 'username', 'email', 'hashed_password',
+    'is_active', 'is_verified', 'is_superuser',
+    'created_at', 'updated_at', 'last_login',
+    # Champs techniques SQLAlchemy
+    'roles', '_sa_instance_state',
+}
+
+
+def get_custom_columns_from_sql_model(model: Any) -> dict:
+    """
+    Extrait les colonnes personnalisées d'un modèle SQLAlchemy.
+
+    Détecte les colonnes ajoutées par héritage qui ne font pas
+    partie du modèle de base.
+
+    Args:
+        model: Instance du modèle SQLAlchemy
+
+    Returns:
+        Dictionnaire des colonnes personnalisées {nom: valeur}
+    """
+    extra = {}
+    # Parcourir les colonnes de la table
+    if hasattr(model, '__table__'):
+        for column in model.__table__.columns:
+            if column.name not in STANDARD_USER_FIELDS:
+                extra[column.name] = getattr(model, column.name, None)
+    return extra
+
+
+def get_custom_fields_from_mongo_model(model: MongoAuthUserModel) -> dict:
+    """
+    Extrait les champs personnalisés d'un modèle Pydantic MongoDB.
+
+    Args:
+        model: Instance du modèle Pydantic
+
+    Returns:
+        Dictionnaire des champs personnalisés {nom: valeur}
+    """
+    extra = {}
+    # Accéder à model_fields depuis la classe pour éviter la dépréciation
+    for field_name in type(model).model_fields:
+        if field_name not in STANDARD_USER_FIELDS and field_name != '_id':
+            extra[field_name] = getattr(model, field_name, None)
+    return extra
+
+
+def get_custom_fields_from_dict(data: dict) -> dict:
+    """
+    Extrait les champs personnalisés d'un dictionnaire MongoDB.
+
+    Args:
+        data: Document MongoDB
+
+    Returns:
+        Dictionnaire des champs personnalisés {nom: valeur}
+    """
+    return {
+        key: value for key, value in data.items()
+        if key not in STANDARD_USER_FIELDS
+    }
 
 
 class AuthUserMapper:
@@ -22,26 +89,17 @@ class AuthUserMapper:
     Mapper pour convertir entre l'entité AuthUser et les modèles DB.
 
     Assure la séparation entre la couche domaine et l'infrastructure.
-    Gère automatiquement les champs personnalisés.
+    Détecte automatiquement les colonnes personnalisées ajoutées par héritage.
 
     Attributes:
         _sql_model_class: Classe du modèle SQL (peut être personnalisée)
         _mongo_model_class: Classe du modèle MongoDB (peut être personnalisée)
-        _custom_field_names: Liste des noms de champs personnalisés
     """
-
-    # Champs standards qui ne sont pas des champs personnalisés
-    STANDARD_FIELDS = {
-        'id', '_id', 'username', 'email', 'hashed_password',
-        'is_active', 'is_verified', 'is_superuser',
-        'created_at', 'updated_at', 'last_login', 'extra_data'
-    }
 
     def __init__(
         self,
         sql_model_class: Optional[Type["SQLAuthUserModel"]] = None,
         mongo_model_class: Type[MongoAuthUserModel] = MongoAuthUserModel,
-        custom_field_names: Optional[list] = None,
     ):
         """
         Initialise le mapper avec les classes de modèles personnalisées.
@@ -49,11 +107,9 @@ class AuthUserMapper:
         Args:
             sql_model_class: Classe du modèle SQL (par défaut ou personnalisée)
             mongo_model_class: Classe du modèle MongoDB (par défaut ou personnalisée)
-            custom_field_names: Liste explicite des noms de champs personnalisés
         """
         self._sql_model_class = sql_model_class
         self._mongo_model_class = mongo_model_class
-        self._custom_field_names = custom_field_names or []
 
     def _get_sql_model_class(self) -> Type["SQLAuthUserModel"]:
         """Retourne la classe SQL, avec import lazy si nécessaire."""
@@ -69,7 +125,8 @@ class AuthUserMapper:
         """
         Convertit un modèle DB en entité domaine.
 
-        Les champs personnalisés sont stockés dans extra_fields.
+        Les colonnes personnalisées ajoutées par héritage sont
+        automatiquement détectées et stockées dans extra_fields.
 
         Args:
             model: Modèle SQLAlchemy, Pydantic ou dictionnaire MongoDB
@@ -77,19 +134,9 @@ class AuthUserMapper:
         Returns:
             Entité AuthUser avec les champs personnalisés dans extra_fields
         """
-        extra_fields = {}
-
         if isinstance(model, dict):
             # Document MongoDB brut
-            # Extraire les champs personnalisés
-            for key, value in model.items():
-                if key not in self.STANDARD_FIELDS:
-                    extra_fields[key] = value
-
-            # Combiner avec extra_data si présent
-            if "extra_data" in model and model["extra_data"]:
-                extra_fields.update(model["extra_data"])
-
+            extra_fields = get_custom_fields_from_dict(model)
             return AuthUser(
                 id=str(model["_id"]),
                 username=model["username"],
@@ -105,13 +152,7 @@ class AuthUserMapper:
             )
 
         if isinstance(model, MongoAuthUserModel):
-            # Extraire les champs personnalisés du modèle Pydantic
-            extra_fields = model.get_extra_fields()
-
-            # Combiner avec extra_data si présent
-            if model.extra_data:
-                extra_fields.update(model.extra_data)
-
+            extra_fields = get_custom_fields_from_mongo_model(model)
             return AuthUser(
                 id=str(model.id),
                 username=model.username,
@@ -126,16 +167,9 @@ class AuthUserMapper:
                 extra_fields=extra_fields,
             )
 
-        # Modèle SQL (SQLAlchemy) - vérifie par duck typing au lieu de isinstance
-        # pour éviter d'importer SQLAlchemy si non utilisé
-        if hasattr(model, 'get_extra_columns') and hasattr(model, 'hashed_password'):
-            # Extraire les colonnes personnalisées du modèle SQL
-            extra_fields = model.get_extra_columns()
-
-            # Combiner avec extra_data JSON si présent
-            if model.extra_data:
-                extra_fields.update(model.extra_data)
-
+        # Modèle SQL (SQLAlchemy) - vérifie par duck typing
+        if hasattr(model, 'hashed_password') and hasattr(model, 'username'):
+            extra_fields = get_custom_columns_from_sql_model(model)
             return AuthUser(
                 id=str(model.id),
                 username=model.username,
@@ -160,8 +194,8 @@ class AuthUserMapper:
         """
         Convertit une entité en modèle SQLAlchemy.
 
-        Les champs personnalisés sont mappés si le modèle les supporte,
-        sinon ils sont stockés dans extra_data (JSON).
+        Les champs personnalisés dans extra_fields sont mappés
+        aux colonnes correspondantes si elles existent dans le modèle.
 
         Args:
             entity: Entité AuthUser
@@ -186,19 +220,15 @@ class AuthUserMapper:
             "last_login": entity.last_login,
         }
 
-        # Gérer les champs personnalisés
-        extra_data_json = {}
-        custom_columns = cls.get_custom_column_names() if hasattr(cls, 'get_custom_column_names') else []
-
-        for key, value in entity.extra_fields.items():
-            if key in custom_columns:
-                # Le champ existe comme colonne dans le modèle
-                model_data[key] = value
-            else:
-                # Stocker dans extra_data JSON
-                extra_data_json[key] = value
-
-        model_data["extra_data"] = extra_data_json if extra_data_json else None
+        # Ajouter les champs personnalisés s'ils existent comme colonnes
+        if entity.extra_fields and hasattr(cls, '__table__'):
+            custom_column_names = {
+                col.name for col in cls.__table__.columns
+                if col.name not in STANDARD_USER_FIELDS
+            }
+            for key, value in entity.extra_fields.items():
+                if key in custom_column_names:
+                    model_data[key] = value
 
         return cls(**model_data)
 
@@ -210,8 +240,8 @@ class AuthUserMapper:
         """
         Convertit une entité en modèle Pydantic pour MongoDB.
 
-        Les champs personnalisés sont mappés si le modèle les supporte,
-        sinon ils sont stockés dans extra_data.
+        Les champs personnalisés dans extra_fields sont mappés
+        aux champs correspondants si ils existent dans le modèle.
 
         Args:
             entity: Entité AuthUser
@@ -236,19 +266,15 @@ class AuthUserMapper:
             "last_login": entity.last_login,
         }
 
-        # Gérer les champs personnalisés
-        extra_data = {}
-        custom_fields = cls.get_custom_field_names() if hasattr(cls, 'get_custom_field_names') else []
-
-        for key, value in entity.extra_fields.items():
-            if key in custom_fields:
-                # Le champ existe dans le modèle Pydantic
-                model_data[key] = value
-            else:
-                # Stocker dans extra_data
-                extra_data[key] = value
-
-        model_data["extra_data"] = extra_data
+        # Ajouter les champs personnalisés s'ils existent dans le modèle
+        if entity.extra_fields:
+            custom_field_names = {
+                name for name in cls.model_fields
+                if name not in STANDARD_USER_FIELDS
+            }
+            for key, value in entity.extra_fields.items():
+                if key in custom_field_names:
+                    model_data[key] = value
 
         return cls(**model_data)
 
@@ -256,7 +282,7 @@ class AuthUserMapper:
         """
         Convertit une entité en dictionnaire pour MongoDB.
 
-        Inclut tous les champs personnalisés.
+        Inclut automatiquement les champs personnalisés.
 
         Args:
             entity: Entité AuthUser
@@ -290,6 +316,9 @@ class AuthUserMapper:
         """
         Met à jour un modèle SQL avec les données d'une entité.
 
+        Les champs personnalisés sont également mis à jour s'ils
+        existent comme colonnes dans le modèle.
+
         Args:
             model: Modèle SQLAlchemy existant
             entity: Entité avec les nouvelles données
@@ -307,16 +336,14 @@ class AuthUserMapper:
         model.last_login = entity.last_login
 
         # Mettre à jour les champs personnalisés
-        custom_columns = model.get_custom_column_names() if hasattr(model, 'get_custom_column_names') else []
-        extra_data_json = {}
-
-        for key, value in entity.extra_fields.items():
-            if key in custom_columns:
-                setattr(model, key, value)
-            else:
-                extra_data_json[key] = value
-
-        model.extra_data = extra_data_json if extra_data_json else None
+        if entity.extra_fields and hasattr(model, '__table__'):
+            custom_column_names = {
+                col.name for col in model.__table__.columns
+                if col.name not in STANDARD_USER_FIELDS
+            }
+            for key, value in entity.extra_fields.items():
+                if key in custom_column_names:
+                    setattr(model, key, value)
 
         return model
 

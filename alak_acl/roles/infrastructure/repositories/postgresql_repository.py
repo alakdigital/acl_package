@@ -13,7 +13,7 @@ from alak_acl.roles.domain.entities.role import Role
 from alak_acl.roles.infrastructure.mappers.role_mapper import RoleMapper
 from alak_acl.roles.infrastructure.models.sql_model import SQLRoleModel, SQLUserRoleModel
 from alak_acl.shared.database.postgresql import PostgreSQLDatabase
-from alak_acl.shared.exceptions import PermissionDeniedError, RoleAlreadyExistsError, RoleNotFoundError
+from alak_acl.shared.exceptions import PermissionDeniedError, RoleAlreadyExistsError, RoleInUseError, RoleNotFoundError
 from alak_acl.shared.logging import logger
 
 
@@ -109,7 +109,18 @@ class PostgreSQLRoleRepository(IRoleRepository):
             return self._mapper.to_entity(model)
 
     async def delete_role(self, role_id: str) -> bool:
-        """Supprime un rôle."""
+        """
+        Supprime un rôle.
+
+        Conditions de suppression:
+        - Le rôle ne doit pas être un rôle système
+        - Le rôle ne doit pas être assigné à des utilisateurs
+        - Le rôle ne doit pas avoir de permissions associées
+
+        Raises:
+            PermissionDeniedError: Si c'est un rôle système
+            RoleInUseError: Si le rôle est assigné à des utilisateurs ou a des permissions
+        """
         async with self._db.session() as session:
             result = await session.execute(
                 select(self._model_class).where(self._model_class.id == role_id)
@@ -122,10 +133,23 @@ class PostgreSQLRoleRepository(IRoleRepository):
             if model.is_system:
                 raise PermissionDeniedError("Impossible de supprimer un rôle système")
 
-            # Supprimer les associations user_roles
-            await session.execute(
-                delete(SQLUserRoleModel).where(SQLUserRoleModel.role_id == role_id)
+            # Vérifier si le rôle est assigné à des utilisateurs
+            user_count_result = await session.execute(
+                select(func.count(SQLUserRoleModel.user_id)).where(
+                    SQLUserRoleModel.role_id == role_id
+                )
             )
+            user_count = user_count_result.scalar_one()
+            if user_count > 0:
+                raise RoleInUseError(
+                    f"Impossible de supprimer le rôle: il est assigné à {user_count} utilisateur(s)"
+                )
+
+            # Vérifier si le rôle a des permissions
+            if model.permissions and len(model.permissions) > 0:
+                raise RoleInUseError(
+                    f"Impossible de supprimer le rôle: il possède {len(model.permissions)} permission(s)"
+                )
 
             await session.delete(model)
             logger.debug(f"Rôle supprimé: {role_id}")
