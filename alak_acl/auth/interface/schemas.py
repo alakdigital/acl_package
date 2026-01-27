@@ -120,9 +120,57 @@ class RefreshTokenRequest(BaseModel):
     @classmethod
     def validate_refresh_token(cls, v: str) -> str:
         if not v or not v.strip():
-            raise ValueError("L'email ne peut pas être vide")
+            raise ValueError("Le token ne peut pas être vide")
         v = v.strip()
         return v
+
+
+class ForgotPasswordRequest(BaseModel):
+    """Schéma de requête pour demander la réinitialisation du mot de passe."""
+
+    email: EmailStr = Field(..., description="Adresse email du compte")
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "email": "user@example.com"
+            }
+        }
+    }
+
+
+class ResetPasswordRequest(BaseModel):
+    """Schéma de requête pour réinitialiser le mot de passe."""
+
+    token: str = Field(..., description="Token de réinitialisation reçu par email")
+    new_password: str = Field(..., description="Nouveau mot de passe")
+
+    @field_validator("token")
+    @classmethod
+    def validate_token(cls, v: str) -> str:
+        if not v or not v.strip():
+            raise ValueError("Le token de réinitialisation est requis")
+        return v.strip()
+
+    @field_validator("new_password")
+    @classmethod
+    def validate_new_password(cls, v: str) -> str:
+        if not v or not v.strip():
+            raise ValueError("Le nouveau mot de passe est requis")
+        v = v.strip()
+        if len(v) < 8:
+            raise ValueError("Le mot de passe doit contenir au moins 8 caractères")
+        return v
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                "new_password": "NewSecurePassword123"
+            }
+        }
+    }
+
 
 # ============================================
 # Response Schemas

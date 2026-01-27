@@ -109,3 +109,53 @@ class ITokenService(ABC):
             True si c'est un refresh token
         """
         pass
+
+    @abstractmethod
+    def create_reset_token(
+        self,
+        user_id: str,
+        email: str,
+    ) -> str:
+        """
+        Crée un token de réinitialisation de mot de passe.
+
+        Token de courte durée (1h par défaut) pour reset password.
+
+        Args:
+            user_id: ID de l'utilisateur
+            email: Email de l'utilisateur (inclus pour validation)
+
+        Returns:
+            Token JWT de réinitialisation encodé
+        """
+        pass
+
+    @abstractmethod
+    def decode_reset_token(self, token: str) -> Dict[str, Any]:
+        """
+        Décode et valide un token de réinitialisation.
+
+        Args:
+            token: Token JWT de réinitialisation
+
+        Returns:
+            Payload du token contenant user_id et email
+
+        Raises:
+            ResetTokenInvalidError: Si le token est invalide
+            ResetTokenExpiredError: Si le token est expiré
+        """
+        pass
+
+    @abstractmethod
+    def is_reset_token(self, token: str) -> bool:
+        """
+        Vérifie si le token est un token de réinitialisation.
+
+        Args:
+            token: Token JWT
+
+        Returns:
+            True si c'est un reset token
+        """
+        pass

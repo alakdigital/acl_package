@@ -25,7 +25,8 @@ from alak_acl.auth.infrastructure.services.jwt_token_service import JWTTokenServ
 from alak_acl.auth.infrastructure.services.argon2_password_hasher import Argon2PasswordHasher
 from alak_acl.auth.infrastructure.models.mongo_model import MongoAuthUserModel
 from alak_acl.auth.infrastructure.mappers.auth_user_mapper import AuthUserMapper
-from alak_acl.auth.interface.dependencies import set_auth_dependencies
+from alak_acl.auth.interface.dependencies import set_auth_dependencies, set_email_dependencies
+from alak_acl.auth.application.interface.email_service import IEmailService
 from alak_acl.auth.interface.api import router as auth_router
 from alak_acl.auth.interface.admin.routes import router as admin_router
 from alak_acl.auth.domain.dtos.register_dto import RegisterDTO
@@ -154,6 +155,9 @@ class ACLManager:
         # Services Permissions (initialisés dans initialize())
         self._permission_repository: Optional[IPermissionRepository] = None
 
+        # Service Email (initialisé dans initialize())
+        self._email_service: Optional[IEmailService] = None
+
         # Configurer le logger
         get_logger(level=config.log_level)
 
@@ -228,6 +232,10 @@ class ACLManager:
             # 3. Initialiser les services Auth
             if self._config.enable_auth_feature:
                 await self._init_auth_services()
+
+            # 3b. Initialiser le service Email
+            if self._config.enable_auth_feature:
+                self._init_email_service()
 
             # 4. Initialiser les services Roles
             if self._config.enable_roles_feature:
@@ -335,6 +343,39 @@ class ACLManager:
         )
 
         logger.info("Services d'authentification initialisés")
+
+    def _init_email_service(self) -> None:
+        """
+        Initialise le service d'email pour le reset de mot de passe.
+
+        Utilise SMTP si configuré, sinon ConsoleEmailService pour le dev.
+        """
+        if self._config.smtp_enabled and self._config.smtp_server:
+            # Service SMTP pour la production
+            from alak_acl.auth.infrastructure.services.smtp_email_service import SMTPEmailService
+            self._email_service = SMTPEmailService(
+                smtp_server=self._config.smtp_server,
+                smtp_port=self._config.smtp_port,
+                smtp_username=self._config.smtp_username,
+                smtp_password=self._config.smtp_password,
+                from_email=self._config.smtp_from_email or "noreply@example.com",
+                from_name=self._config.smtp_from_name,
+                use_tls=self._config.smtp_use_tls,
+            )
+            logger.info("Service email SMTP initialisé")
+        else:
+            # Service Console pour le développement
+            from alak_acl.auth.infrastructure.services.console_email_service import ConsoleEmailService
+            self._email_service = ConsoleEmailService(
+                app_name=self._config.smtp_from_name,
+            )
+            logger.info("Service email Console initialisé (mode développement)")
+
+        # Configurer les dépendances email
+        set_email_dependencies(
+            email_service=self._email_service,
+            reset_url_base=self._config.password_reset_url,
+        )
 
     async def _init_role_services(self) -> None:
         """

@@ -14,6 +14,9 @@ from alak_acl.auth.application.interface.password_hasher import IPasswordHasher
 from alak_acl.auth.application.usecases.login_usecase import LoginUseCase
 from alak_acl.auth.application.usecases.register_usecase import RegisterUseCase
 from alak_acl.auth.application.usecases.refresh_token_usecase import RefreshTokenUseCase
+from alak_acl.auth.application.usecases.forgot_password_usecase import ForgotPasswordUseCase
+from alak_acl.auth.application.usecases.reset_password_usecase import ResetPasswordUseCase
+from alak_acl.auth.application.interface.email_service import IEmailService
 from alak_acl.shared.exceptions import (
     InvalidTokenError,
     TokenExpiredError,
@@ -33,6 +36,8 @@ _auth_repository: Optional[IAuthRepository] = None
 _token_service: Optional[ITokenService] = None
 _password_hasher: Optional[IPasswordHasher] = None
 _role_repository: Optional["IRoleRepository"] = None
+_email_service: Optional[IEmailService] = None
+_reset_url_base: Optional[str] = None
 
 
 def set_auth_dependencies(
@@ -57,6 +62,24 @@ def set_auth_dependencies(
     _token_service = token_service
     _password_hasher = password_hasher
     _role_repository = role_repository
+
+
+def set_email_dependencies(
+    email_service: Optional[IEmailService] = None,
+    reset_url_base: Optional[str] = None,
+) -> None:
+    """
+    Configure les dépendances email pour le reset de mot de passe.
+
+    Appelé par ACLManager lors de l'initialisation.
+
+    Args:
+        email_service: Service d'email (SMTP ou Console)
+        reset_url_base: URL de base pour les liens de reset
+    """
+    global _email_service, _reset_url_base
+    _email_service = email_service
+    _reset_url_base = reset_url_base
 
 
 def get_auth_repository() -> IAuthRepository:
@@ -121,6 +144,16 @@ def get_role_repository() -> Optional["IRoleRepository"]:
         Repository des rôles ou None si non configuré
     """
     return _role_repository
+
+
+def get_email_service() -> Optional[IEmailService]:
+    """
+    Récupère le service d'email.
+
+    Returns:
+        Service d'email ou None si non configuré
+    """
+    return _email_service
 
 
 def get_login_usecase(
@@ -265,3 +298,45 @@ async def get_current_superuser(
             detail="Droits administrateur requis",
         )
     return current_user
+
+
+def get_forgot_password_usecase(
+    auth_repository: IAuthRepository = Depends(get_auth_repository),
+    token_service: ITokenService = Depends(get_token_service),
+    email_service: Optional[IEmailService] = Depends(get_email_service),
+) -> ForgotPasswordUseCase:
+    """
+    Instancie le use case de demande de réinitialisation de mot de passe.
+
+    Returns:
+        Instance de ForgotPasswordUseCase
+    """
+    from alak_acl.auth.infrastructure.services.console_email_service import ConsoleEmailService
+
+    # Utiliser ConsoleEmailService si aucun service email n'est configuré
+    effective_email_service = email_service or ConsoleEmailService()
+
+    return ForgotPasswordUseCase(
+        auth_repository=auth_repository,
+        token_service=token_service,
+        email_service=effective_email_service,
+        reset_url_base=_reset_url_base,
+    )
+
+
+def get_reset_password_usecase(
+    auth_repository: IAuthRepository = Depends(get_auth_repository),
+    token_service: ITokenService = Depends(get_token_service),
+    password_hasher: IPasswordHasher = Depends(get_password_hasher),
+) -> ResetPasswordUseCase:
+    """
+    Instancie le use case de réinitialisation de mot de passe.
+
+    Returns:
+        Instance de ResetPasswordUseCase
+    """
+    return ResetPasswordUseCase(
+        auth_repository=auth_repository,
+        token_service=token_service,
+        password_hasher=password_hasher,
+    )

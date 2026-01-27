@@ -10,7 +10,12 @@ from jose import jwt, JWTError, ExpiredSignatureError
 
 from alak_acl.auth.application.interface.token_service import ITokenService
 from alak_acl.shared.config import ACLConfig
-from alak_acl.shared.exceptions import InvalidTokenError, TokenExpiredError
+from alak_acl.shared.exceptions import (
+    InvalidTokenError,
+    TokenExpiredError,
+    ResetTokenExpiredError,
+    ResetTokenInvalidError,
+)
 from alak_acl.shared.logging import logger
 
 
@@ -24,6 +29,7 @@ class JWTTokenService(ITokenService):
 
     TOKEN_TYPE_ACCESS = "access"
     TOKEN_TYPE_REFRESH = "refresh"
+    TOKEN_TYPE_RESET = "reset"
 
     def __init__(self, config: ACLConfig):
         """
@@ -37,6 +43,7 @@ class JWTTokenService(ITokenService):
         self._algorithm = config.jwt_algorithm
         self._access_expire_minutes = config.jwt_access_token_expire_minutes
         self._refresh_expire_days = config.jwt_refresh_token_expire_days
+        self._reset_expire_minutes = getattr(config, 'reset_token_expire_minutes', 60)
 
     def create_access_token(
         self,
@@ -134,3 +141,54 @@ class JWTTokenService(ITokenService):
             Durée en secondes
         """
         return self._access_expire_minutes * 60
+
+    def create_reset_token(
+        self,
+        user_id: str,
+        email: str,
+    ) -> str:
+        """Crée un token de réinitialisation de mot de passe."""
+        expire = datetime.utcnow() + timedelta(minutes=self._reset_expire_minutes)
+
+        payload = {
+            "sub": user_id,
+            "email": email,
+            "type": self.TOKEN_TYPE_RESET,
+            "exp": expire,
+            "iat": datetime.utcnow(),
+        }
+
+        token = jwt.encode(payload, self._secret_key, algorithm=self._algorithm)
+        logger.debug(f"Reset token créé pour: {email}")
+        return token
+
+    def decode_reset_token(self, token: str) -> Dict[str, Any]:
+        """Décode et valide un token de réinitialisation."""
+        try:
+            payload = jwt.decode(
+                token,
+                self._secret_key,
+                algorithms=[self._algorithm],
+            )
+
+            # Vérifier que c'est bien un reset token
+            if payload.get("type") != self.TOKEN_TYPE_RESET:
+                raise ResetTokenInvalidError("Ce n'est pas un token de réinitialisation")
+
+            return payload
+
+        except ExpiredSignatureError:
+            logger.warning("Reset token expiré")
+            raise ResetTokenExpiredError()
+
+        except JWTError as e:
+            logger.warning(f"Erreur de décodage reset token: {e}")
+            raise ResetTokenInvalidError()
+
+    def is_reset_token(self, token: str) -> bool:
+        """Vérifie si le token est un token de réinitialisation."""
+        try:
+            payload = self.decode_token(token)
+            return payload.get("type") == self.TOKEN_TYPE_RESET
+        except (InvalidTokenError, TokenExpiredError):
+            return False

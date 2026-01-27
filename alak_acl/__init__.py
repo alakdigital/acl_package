@@ -58,6 +58,9 @@ from alak_acl.shared.exceptions import (
     DatabaseConnectionError,
     CacheConnectionError,
     ConfigurationError,
+    ResetTokenExpiredError,
+    ResetTokenInvalidError,
+    EmailSendError,
 )
 
 # Entités et DTOs Auth
@@ -65,6 +68,7 @@ from alak_acl.auth.domain.entities.auth_user import AuthUser
 from alak_acl.auth.domain.dtos.login_dto import LoginDTO
 from alak_acl.auth.domain.dtos.register_dto import RegisterDTO
 from alak_acl.auth.domain.dtos.token_dto import TokenDTO
+from alak_acl.auth.domain.dtos.password_reset_dto import ForgotPasswordDTO, ResetPasswordDTO
 
 # Modèle MongoDB (pas de dépendance SQL)
 from alak_acl.auth.infrastructure.models.mongo_model import MongoAuthUserModel
@@ -155,11 +159,16 @@ __all__ = [
     "DatabaseConnectionError",
     "CacheConnectionError",
     "ConfigurationError",
+    "ResetTokenExpiredError",
+    "ResetTokenInvalidError",
+    "EmailSendError",
     # Entités et DTOs
     "AuthUser",
     "LoginDTO",
     "RegisterDTO",
     "TokenDTO",
+    "ForgotPasswordDTO",
+    "ResetPasswordDTO",
     # Modèles extensibles (pour champs personnalisés)
     "SQLAuthUserModel",
     "MongoAuthUserModel",

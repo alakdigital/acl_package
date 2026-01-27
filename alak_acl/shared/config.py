@@ -104,6 +104,50 @@ class ACLConfig(BaseSettings):
         description="Durée de vie du refresh token en jours"
     )
 
+    # Password Reset Configuration
+    reset_token_expire_minutes: int = Field(
+        default=60,
+        description="Durée de vie du token de réinitialisation en minutes"
+    )
+    password_reset_url: Optional[str] = Field(
+        default=None,
+        description="URL de la page de réinitialisation du frontend (ex: https://app.com/reset-password)"
+    )
+
+    # Email/SMTP Configuration
+    smtp_enabled: bool = Field(
+        default=False,
+        description="Activer l'envoi d'emails via SMTP (sinon utilise Console)"
+    )
+    smtp_server: Optional[str] = Field(
+        default=None,
+        description="Serveur SMTP (ex: smtp.gmail.com)"
+    )
+    smtp_port: int = Field(
+        default=587,
+        description="Port SMTP (587 pour TLS, 465 pour SSL)"
+    )
+    smtp_username: Optional[str] = Field(
+        default=None,
+        description="Nom d'utilisateur SMTP"
+    )
+    smtp_password: Optional[str] = Field(
+        default=None,
+        description="Mot de passe SMTP"
+    )
+    smtp_from_email: Optional[str] = Field(
+        default=None,
+        description="Adresse email source pour les envois"
+    )
+    smtp_from_name: str = Field(
+        default="alak-acl",
+        description="Nom affiché de l'expéditeur"
+    )
+    smtp_use_tls: bool = Field(
+        default=True,
+        description="Utiliser STARTTLS (True pour port 587)"
+    )
+
     # API Configuration
     enable_api_routes: bool = Field(
         default=True,

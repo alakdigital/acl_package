@@ -64,6 +64,42 @@ class TokenExpiredError(ACLException):
         )
 
 
+class ResetTokenExpiredError(ACLException):
+    """Token de réinitialisation de mot de passe expiré."""
+
+    def __init__(self, message: str = "Le lien de réinitialisation a expiré"):
+        super().__init__(
+            message=message,
+            status_code=401,
+            details=[{"field": "token", "message": message}],
+            error_code="RESET_TOKEN_EXPIRED",
+        )
+
+
+class ResetTokenInvalidError(ACLException):
+    """Token de réinitialisation de mot de passe invalide."""
+
+    def __init__(self, message: str = "Le lien de réinitialisation est invalide"):
+        super().__init__(
+            message=message,
+            status_code=401,
+            details=[{"field": "token", "message": message}],
+            error_code="RESET_TOKEN_INVALID",
+        )
+
+
+class EmailSendError(ACLException):
+    """Erreur lors de l'envoi d'un email."""
+
+    def __init__(self, message: str = "Impossible d'envoyer l'email"):
+        super().__init__(
+            message=message,
+            status_code=503,
+            details=[{"field": "email", "message": message}],
+            error_code="EMAIL_SEND_ERROR",
+        )
+
+
 # ============================================
 # Exceptions utilisateur
 # ============================================

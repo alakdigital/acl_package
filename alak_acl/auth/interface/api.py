@@ -10,6 +10,9 @@ from alak_acl.auth.domain.entities.auth_user import AuthUser
 from alak_acl.auth.application.usecases.login_usecase import LoginUseCase
 from alak_acl.auth.application.usecases.register_usecase import RegisterUseCase
 from alak_acl.auth.application.usecases.refresh_token_usecase import RefreshTokenUseCase
+from alak_acl.auth.application.usecases.forgot_password_usecase import ForgotPasswordUseCase
+from alak_acl.auth.application.usecases.reset_password_usecase import ResetPasswordUseCase
+from alak_acl.auth.domain.dtos.password_reset_dto import ForgotPasswordDTO, ResetPasswordDTO
 from alak_acl.auth.interface.schemas import (
     LoginRequest,
     LoginResponse,
@@ -20,11 +23,15 @@ from alak_acl.auth.interface.schemas import (
     RefreshTokenResponse,
     MessageResponse,
     RoleResponse,
+    ForgotPasswordRequest,
+    ResetPasswordRequest,
 )
 from alak_acl.auth.interface.dependencies import (
     get_login_usecase,
     get_register_usecase,
     get_refresh_token_usecase,
+    get_forgot_password_usecase,
+    get_reset_password_usecase,
     get_current_active_user,
     get_role_repository,
 )
@@ -35,6 +42,8 @@ from alak_acl.shared.exceptions import (
     UserAlreadyExistsError,
     UserNotActiveError,
     InvalidTokenError,
+    ResetTokenExpiredError,
+    ResetTokenInvalidError,
 )
 from alak_acl.shared.logging import logger
 
@@ -246,3 +255,86 @@ async def logout(
         message="Déconnexion réussie",
         success=True,
     )
+
+
+@router.post(
+    "/forgot-password",
+    response_model=MessageResponse,
+    summary="Demande de réinitialisation de mot de passe",
+    description="Envoie un email avec un lien de réinitialisation si l'adresse existe.",
+)
+async def forgot_password(
+    request: ForgotPasswordRequest,
+    forgot_password_usecase: ForgotPasswordUseCase = Depends(get_forgot_password_usecase),
+) -> MessageResponse:
+    """
+    Demande la réinitialisation du mot de passe.
+
+    Pour des raisons de sécurité, retourne toujours un succès même si
+    l'email n'existe pas (évite l'énumération des utilisateurs).
+
+    Args:
+        request: Email de l'utilisateur
+        forgot_password_usecase: Use case de demande de reset
+
+    Returns:
+        Message de confirmation
+    """
+    try:
+        dto = ForgotPasswordDTO(email=request.email)
+        await forgot_password_usecase.execute(dto)
+
+        return MessageResponse(
+            message="Si cette adresse email est associée à un compte, "
+                    "vous recevrez un email avec les instructions de réinitialisation.",
+            success=True,
+        )
+
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
+
+
+@router.post(
+    "/reset-password",
+    response_model=MessageResponse,
+    summary="Réinitialisation du mot de passe",
+    description="Réinitialise le mot de passe avec le token reçu par email.",
+)
+async def reset_password(
+    request: ResetPasswordRequest,
+    reset_password_usecase: ResetPasswordUseCase = Depends(get_reset_password_usecase),
+) -> MessageResponse:
+    """
+    Réinitialise le mot de passe avec un token valide.
+
+    Args:
+        request: Token et nouveau mot de passe
+        reset_password_usecase: Use case de réinitialisation
+
+    Returns:
+        Message de confirmation
+    """
+    try:
+        dto = ResetPasswordDTO(
+            token=request.token,
+            new_password=request.new_password,
+        )
+        await reset_password_usecase.execute(dto)
+
+        return MessageResponse(
+            message="Votre mot de passe a été réinitialisé avec succès.",
+            success=True,
+        )
+
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
+    except (ResetTokenExpiredError, ResetTokenInvalidError) as e:
+        raise e
+    except ACLException as e:
+        raise e
