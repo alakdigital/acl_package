@@ -102,6 +102,7 @@ class MongoDBAuthRepository(IAuthRepository):
         })
         if existing:
             raise UserAlreadyExistsError(
+                "__all__",
                 "Un utilisateur avec ce username ou email existe déjà"
             )
 
@@ -154,7 +155,7 @@ class MongoDBAuthRepository(IAuthRepository):
         )
 
         if result.matched_count == 0:
-            raise UserNotFoundError(f"Utilisateur non trouvé: {user.id}")
+            raise UserNotFoundError("id", f"Utilisateur non trouvé: {user.id}")
 
         logger.debug(f"Utilisateur mis à jour: {user.username}")
         return user

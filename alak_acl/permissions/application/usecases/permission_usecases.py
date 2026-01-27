@@ -73,7 +73,7 @@ class UpdatePermissionUseCase:
         """
         permission = await self._repository.get_by_id(permission_id)
         if not permission:
-            raise PermissionNotFoundError(f"Permission non trouvée: {permission_id}")
+            raise PermissionNotFoundError("id", f"Permission non trouvée: {permission_id}")
 
         # Mettre à jour les champs fournis
         if dto.display_name is not None:
@@ -119,10 +119,11 @@ class DeletePermissionUseCase:
         """
         permission = await self._repository.get_by_id(permission_id)
         if not permission:
-            raise PermissionNotFoundError(f"Permission non trouvée: {permission_id}")
+            raise PermissionNotFoundError("id", f"Permission non trouvée: {permission_id}")
 
         if permission.is_system:
             raise PermissionNotFoundError(
+                "id",
                 "Impossible de supprimer une permission système"
             )
 

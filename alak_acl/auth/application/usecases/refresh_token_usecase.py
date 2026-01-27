@@ -59,14 +59,14 @@ class RefreshTokenUseCase:
         # Vérifier que c'est bien un refresh token
         if not self._token_service.is_refresh_token(refresh_token):
             logger.warning("Token fourni n'est pas un refresh token")
-            raise InvalidTokenError("Token de rafraîchissement invalide")
+            raise InvalidTokenError("Token", "Token de rafraîchissement invalide")
 
         # Décoder le token
         try:
             payload = self._token_service.decode_token(refresh_token)
         except Exception as e:
             logger.warning(f"Erreur décodage refresh token: {e}")
-            raise InvalidTokenError("Token de rafraîchissement invalide ou expiré")
+            raise InvalidTokenError("Token", "Token de rafraîchissement invalide ou expiré")
 
         # Récupérer l'utilisateur
         user_id = self._token_service.get_user_id_from_token(refresh_token)
@@ -74,7 +74,7 @@ class RefreshTokenUseCase:
 
         if not user:
             logger.warning(f"Utilisateur non trouvé pour refresh: {user_id}")
-            raise UserNotFoundError("Utilisateur non trouvé")
+            raise UserNotFoundError("id","Utilisateur non trouvé")
 
         # Vérifier si le compte est actif
         if not user.is_active:

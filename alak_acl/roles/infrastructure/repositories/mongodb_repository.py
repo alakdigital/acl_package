@@ -71,7 +71,7 @@ class MongoDBRoleRepository(IRoleRepository):
         # Vérifier l'unicité du nom
         existing = await self._roles_collection.find_one({"name": role.name})
         if existing:
-            raise RoleAlreadyExistsError(f"Un rôle avec le nom '{role.name}' existe déjà")
+            raise RoleAlreadyExistsError("name",f"Un rôle avec le nom '{role.name}' existe déjà")
 
         doc = self._mapper.to_mongo_dict(role)
         doc.pop("_id", None)
@@ -110,7 +110,7 @@ class MongoDBRoleRepository(IRoleRepository):
         )
 
         if result.matched_count == 0:
-            raise RoleNotFoundError(f"Rôle non trouvé: {role.id}")
+            raise RoleNotFoundError("id", f"Rôle non trouvé: {role.id}")
 
         logger.debug(f"Rôle mis à jour: {role.name}")
         return role
@@ -217,7 +217,7 @@ class MongoDBRoleRepository(IRoleRepository):
         # Vérifier que le rôle existe
         role_exists = await self._roles_collection.find_one({"_id": ObjectId(role_id)})
         if not role_exists:
-            raise RoleNotFoundError(f"Rôle non trouvé: {role_id}")
+            raise RoleNotFoundError("id", f"Rôle non trouvé: {role_id}")
 
         # Vérifier si l'association existe déjà
         existing = await self._user_roles_collection.find_one({

@@ -64,7 +64,7 @@ class PostgreSQLRoleRepository(IRoleRepository):
                 return self._mapper.to_entity(model)
             except IntegrityError as e:
                 logger.warning(f"Erreur d'intégrité lors de la création du rôle: {e}")
-                raise RoleAlreadyExistsError(f"Un rôle avec le nom '{role.name}' existe déjà")
+                raise RoleAlreadyExistsError("name",f"Un rôle avec le nom '{role.name}' existe déjà")
 
     async def get_by_id(self, role_id: str) -> Optional[Role]:
         """Récupère un rôle par son ID."""
@@ -99,7 +99,7 @@ class PostgreSQLRoleRepository(IRoleRepository):
             model = result.scalar_one_or_none()
 
             if not model:
-                raise RoleNotFoundError(f"Rôle non trouvé: {role.id}")
+                raise RoleNotFoundError("id", f"Rôle non trouvé: {role.id}")
 
             self._mapper.update_sql_model(model, role)
             await session.flush()
@@ -223,7 +223,7 @@ class PostgreSQLRoleRepository(IRoleRepository):
                 select(self._model_class).where(self._model_class.id == role_id)
             )
             if not role_result.scalar_one_or_none():
-                raise RoleNotFoundError(f"Rôle non trouvé: {role_id}")
+                raise RoleNotFoundError("id", f"Rôle non trouvé: {role_id}")
 
             # Vérifier si l'association existe déjà
             existing = await session.execute(

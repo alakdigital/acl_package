@@ -160,6 +160,13 @@ class ACLManager:
         # Auto-register des routes si app fournie
         if app and config.enable_api_routes:
             self._register_routes(app)
+            self._register_exception_handlers(app)
+
+            
+            
+    def _register_exception_handlers(self, app: FastAPI):
+        from alak_acl.shared.exception_handlers import register_exception_handlers
+        register_exception_handlers(app)
 
     def _parse_extra_indexes(self) -> List[str]:
         """Parse les index supplémentaires depuis la config."""
@@ -769,3 +776,5 @@ class ACLManager:
                 "Vérifiez que enable_permissions_feature=True"
             )
         return self._permission_repository
+
+

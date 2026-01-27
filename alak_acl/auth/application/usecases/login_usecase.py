@@ -68,12 +68,12 @@ class LoginUseCase:
 
         if not user:
             logger.warning(f"Utilisateur non trouvé: {login_dto.username}")
-            raise InvalidCredentialsError("Identifiants invalides")
+            raise InvalidCredentialsError("username/password","Identifiants invalides")
 
         # Vérifier le mot de passe
         if not self._password_hasher.verify(login_dto.password, user.hashed_password):
             logger.warning(f"Mot de passe incorrect pour: {login_dto.username}")
-            raise InvalidCredentialsError("Identifiants invalides")
+            raise InvalidCredentialsError("username/password","Identifiants invalides")
 
         # Vérifier si le compte est actif
         if not user.is_active:

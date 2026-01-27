@@ -52,6 +52,7 @@ class PostgreSQLPermissionRepository(IPermissionRepository):
             )
             if existing.scalar_one_or_none():
                 raise PermissionAlreadyExistsError(
+                    "name",
                     f"Permission '{permission.name}' existe déjà"
                 )
 
@@ -101,6 +102,7 @@ class PostgreSQLPermissionRepository(IPermissionRepository):
 
             if not model:
                 raise PermissionNotFoundError(
+                    "id",
                     f"Permission non trouvée: {permission.id}"
                 )
 
@@ -132,6 +134,7 @@ class PostgreSQLPermissionRepository(IPermissionRepository):
 
             if model.is_system:
                 raise PermissionNotFoundError(
+                    "id",
                     "Impossible de supprimer une permission système"
                 )
 

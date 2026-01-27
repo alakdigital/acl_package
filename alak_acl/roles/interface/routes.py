@@ -77,10 +77,7 @@ async def create_role(
         role = await use_case.execute(dto)
         return role_to_response(role)
     except RoleAlreadyExistsError as e:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=str(e),
-        )
+        raise e
 
 
 @router.get(
@@ -174,10 +171,7 @@ async def update_role(
         role = await use_case.execute(role_id, dto)
         return role_to_response(role)
     except RoleNotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e),
-        )
+        raise e
 
 
 @router.delete(
@@ -201,10 +195,7 @@ async def delete_role(
                 detail=f"Rôle non trouvé: {role_id}",
             )
     except PermissionDeniedError as e:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail=str(e),
-        )
+        raise e
 
 
 # ==========================================
@@ -251,9 +242,8 @@ async def remove_permission_from_role(
     """Retire une permission d'un rôle."""
     role = await role_repository.get_by_id(role_id)
     if not role:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Rôle non trouvé: {role_id}",
+        raise RoleNotFoundError(
+            "id",f"Rôle non trouvé: {role_id}",
         )
 
     role.remove_permission(permission)
@@ -282,10 +272,7 @@ async def assign_role_to_user(
         await use_case.execute(dto.user_id, dto.role_id)
         return {"message": "Rôle assigné avec succès"}
     except RoleNotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e),
-        )
+        raise e
 
 
 @router.delete(

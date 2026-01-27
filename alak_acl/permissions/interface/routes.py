@@ -186,10 +186,7 @@ async def get_permission(
         permission = await usecase.execute(permission_id=permission_id)
         return _to_response_dto(permission)
     except PermissionNotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e),
-        )
+        raise e
 
 
 @router.get(
@@ -208,10 +205,7 @@ async def get_permission_by_name(
         permission = await usecase.execute(name=name)
         return _to_response_dto(permission)
     except PermissionNotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e),
-        )
+        raise e
 
 
 # ============================================
@@ -236,10 +230,7 @@ async def create_permission(
         permission = await usecase.execute(dto)
         return _to_response_dto(permission)
     except PermissionAlreadyExistsError as e:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=str(e),
-        )
+        raise e
 
 
 @router.post(
@@ -278,10 +269,7 @@ async def update_permission(
         permission = await usecase.execute(permission_id, dto)
         return _to_response_dto(permission)
     except PermissionNotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e),
-        )
+        raise e
 
 
 @router.delete(
@@ -303,12 +291,6 @@ async def delete_permission(
     try:
         await usecase.execute(permission_id)
     except PermissionNotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e),
-        )
+        raise e
     except PermissionInUseError as e:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=str(e),
-        )
+        raise e

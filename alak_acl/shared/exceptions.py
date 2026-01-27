@@ -1,32 +1,22 @@
-"""
-Exceptions personnalisées du package fastapi-acl.
-
-Toutes les exceptions héritent de ACLException pour faciliter
-la gestion des erreurs au niveau de l'application.
-"""
-
-from typing import Optional
-
+from typing import List, Dict
 
 class ACLException(Exception):
     """
-    Exception de base pour toutes les erreurs du package ACL.
-
-    Attributes:
-        message: Message d'erreur descriptif
-        status_code: Code HTTP associé à l'erreur
-        error_code: Code d'erreur interne pour le debugging
+    Exception de base pour toutes les erreurs ACL.
+    Format uniforme pour JSONResponse.
     """
 
     def __init__(
         self,
         message: str = "Une erreur ACL s'est produite",
         status_code: int = 500,
-        error_code: Optional[str] = None,
+        details: List[Dict[str, str]] = None,
+        error_code: str = "ACL_ERROR",
     ):
         self.message = message
         self.status_code = status_code
-        self.error_code = error_code or "ACL_ERROR"
+        self.details = details or []
+        self.error_code = error_code
         super().__init__(self.message)
 
 
@@ -34,47 +24,42 @@ class ACLException(Exception):
 # Exceptions d'authentification
 # ============================================
 
-
 class AuthenticationError(ACLException):
-    """Erreur générique d'authentification."""
-
-    def __init__(self, message: str = "Erreur d'authentification"):
+    def __init__(self, field: str, message: str):
         super().__init__(
-            message=message,
+            message="Erreur d'authentification",
             status_code=401,
+            details=[{"field": field, "message": message}],
             error_code="AUTHENTICATION_ERROR",
         )
 
 
 class InvalidCredentialsError(ACLException):
-    """Identifiants invalides (username ou password incorrect)."""
-
-    def __init__(self, message: str = "Identifiants invalides"):
+    def __init__(self, field: str, message: str):
         super().__init__(
-            message=message,
+            message="Identifiants invalides",
             status_code=401,
+            details=[{"field": field, "message": message}],
             error_code="INVALID_CREDENTIALS",
         )
 
 
 class InvalidTokenError(ACLException):
-    """Token JWT invalide ou expiré."""
-
-    def __init__(self, message: str = "Token invalide ou expiré"):
+    def __init__(self, field: str, message: str):
         super().__init__(
-            message=message,
+            message="Token invalide ou expiré",
             status_code=401,
+            details=[{"field": field, "message": message}],
             error_code="INVALID_TOKEN",
         )
 
 
 class TokenExpiredError(ACLException):
-    """Token JWT expiré."""
-
-    def __init__(self, message: str = "Token expiré"):
+    def __init__(self, field: str, message: str):
         super().__init__(
-            message=message,
+            message="Token expiré",
             status_code=401,
+            details=[{"field": field, "message": message}],
             error_code="TOKEN_EXPIRED",
         )
 
@@ -83,171 +68,156 @@ class TokenExpiredError(ACLException):
 # Exceptions utilisateur
 # ============================================
 
-
 class UserNotFoundError(ACLException):
-    """Utilisateur non trouvé."""
-
-    def __init__(self, message: str = "Utilisateur non trouvé"):
+    def __init__(self, field: str, message: str):
         super().__init__(
-            message=message,
+            message="Utilisateur non trouvé",
             status_code=404,
+            details=[{"field": field, "message": message}],
             error_code="USER_NOT_FOUND",
         )
 
 
 class UserNotActiveError(ACLException):
-    """Utilisateur désactivé."""
-
-    def __init__(self, message: str = "Compte utilisateur désactivé"):
+    def __init__(self, message: str):
         super().__init__(
-            message=message,
+            message="Compte utilisateur désactivé",
             status_code=403,
+            details=[{"field": 'is_active', "message": message}],
             error_code="USER_NOT_ACTIVE",
         )
 
 
 class UserAlreadyExistsError(ACLException):
-    """Utilisateur déjà existant (username ou email)."""
-
-    def __init__(self, message: str = "Un utilisateur avec ces identifiants existe déjà"):
+    def __init__(self, field: str, message: str):
         super().__init__(
-            message=message,
+            message="Utilisateur déjà existant",
             status_code=409,
+            details=[{"field": field, "message": message}],
             error_code="USER_ALREADY_EXISTS",
         )
 
 
 class UserNotVerifiedError(ACLException):
-    """Utilisateur non vérifié."""
-
-    def __init__(self, message: str = "Compte utilisateur non vérifié"):
+    def __init__(self, message: str):
         super().__init__(
-            message=message,
+            message="Compte utilisateur non vérifié",
             status_code=403,
+            details=[{"field": "email", "message": message}],
             error_code="USER_NOT_VERIFIED",
         )
 
 
 # ============================================
-# Exceptions de permissions
+# Exceptions permissions
 # ============================================
+class PermissionInUseError(ACLException):
+    """
+    Permission en cours d'utilisation
+    (assignée à des rôles ou utilisateurs).
+    """
 
+    def __init__(self, message: str):
+        super().__init__(
+            message="Permission en cours d'utilisation",
+            status_code=409,
+            details=message,
+            error_code="PERMISSION_IN_USE",
+        )
 
 class PermissionDeniedError(ACLException):
-    """Permission refusée."""
-
-    def __init__(self, message: str = "Permission refusée"):
+    def __init__(self, message: str):
         super().__init__(
-            message=message,
+            message="Permission refusée",
             status_code=403,
+            details=message,
             error_code="PERMISSION_DENIED",
         )
 
 
 class PermissionNotFoundError(ACLException):
-    """Permission non trouvée."""
-
-    def __init__(self, message: str = "Permission non trouvée"):
+    def __init__(self, field: str, message: str):
         super().__init__(
-            message=message,
+            message="Permission non trouvée",
             status_code=404,
+            details=[{"field": field, "message": message}],
             error_code="PERMISSION_NOT_FOUND",
         )
 
 
 class PermissionAlreadyExistsError(ACLException):
-    """Permission déjà existante."""
-
-    def __init__(self, message: str = "Cette permission existe déjà"):
+    def __init__(self, field: str, message: str):
         super().__init__(
-            message=message,
+            message="Permission déjà existante",
             status_code=409,
+            details=[{"field": field, "message": message}],
             error_code="PERMISSION_ALREADY_EXISTS",
         )
 
 
-class PermissionInUseError(ACLException):
-    """Permission en cours d'utilisation (assignée à des rôles)."""
-
-    def __init__(self, message: str = "Cette permission est en cours d'utilisation"):
-        super().__init__(
-            message=message,
-            status_code=409,
-            error_code="PERMISSION_IN_USE",
-        )
-
-
 # ============================================
-# Exceptions de rôles
+# Exceptions rôles
 # ============================================
-
 
 class RoleNotFoundError(ACLException):
-    """Rôle non trouvé."""
-
-    def __init__(self, message: str = "Rôle non trouvé"):
+    def __init__(self, field: str, message: str):
         super().__init__(
-            message=message,
+            message="Rôle non trouvé",
             status_code=404,
+            details=[{"field": field, "message": message}],
             error_code="ROLE_NOT_FOUND",
         )
 
 
 class RoleAlreadyExistsError(ACLException):
-    """Rôle déjà existant."""
-
-    def __init__(self, message: str = "Ce rôle existe déjà"):
+    def __init__(self, field: str, message: str):
         super().__init__(
-            message=message,
+            message="Rôle déjà existant",
             status_code=409,
+            details=[{"field": field, "message": message}],
             error_code="ROLE_ALREADY_EXISTS",
         )
 
 
 class RoleInUseError(ACLException):
-    """Rôle en cours d'utilisation (assigné à des utilisateurs ou avec des permissions)."""
-
-    def __init__(self, message: str = "Ce rôle est en cours d'utilisation"):
+    def __init__(self, message: str):
         super().__init__(
-            message=message,
+            message="Rôle en cours d'utilisation",
             status_code=409,
+            details=message,
             error_code="ROLE_IN_USE",
         )
 
 
 # ============================================
-# Exceptions d'infrastructure
+# Exceptions infrastructure
 # ============================================
 
-
 class DatabaseConnectionError(ACLException):
-    """Erreur de connexion à la base de données."""
-
-    def __init__(self, message: str = "Impossible de se connecter à la base de données"):
+    def __init__(self, message: str):
         super().__init__(
-            message=message,
+            message="Erreur de connexion à la base de données",
             status_code=503,
+            details=message,
             error_code="DATABASE_CONNECTION_ERROR",
         )
 
 
 class CacheConnectionError(ACLException):
-    """Erreur de connexion au cache."""
-
-    def __init__(self, message: str = "Impossible de se connecter au cache"):
+    def __init__(self, message: str):
         super().__init__(
-            message=message,
+            message="Erreur de connexion au cache",
             status_code=503,
+            details=message,
             error_code="CACHE_CONNECTION_ERROR",
         )
 
 
 class ConfigurationError(ACLException):
-    """Erreur de configuration."""
-
-    def __init__(self, message: str = "Erreur de configuration"):
+    def __init__(self, message: str):
         super().__init__(
-            message=message,
+            message="Erreur de configuration",
             status_code=500,
+            details=message,
             error_code="CONFIGURATION_ERROR",
         )

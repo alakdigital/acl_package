@@ -52,6 +52,7 @@ class MySQLPermissionRepository(IPermissionRepository):
             )
             if existing.scalar_one_or_none():
                 raise PermissionAlreadyExistsError(
+                    "name",
                     f"Permission '{permission.name}' existe déjà"
                 )
 
@@ -101,6 +102,7 @@ class MySQLPermissionRepository(IPermissionRepository):
 
             if not model:
                 raise PermissionNotFoundError(
+                    "id",
                     f"Permission non trouvée: {permission.id}"
                 )
 
@@ -131,6 +133,7 @@ class MySQLPermissionRepository(IPermissionRepository):
 
             if model.is_system:
                 raise PermissionNotFoundError(
+                    "id",
                     "Impossible de supprimer une permission système"
                 )
 

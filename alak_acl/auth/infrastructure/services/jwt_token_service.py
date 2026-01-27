@@ -94,11 +94,11 @@ class JWTTokenService(ITokenService):
 
         except ExpiredSignatureError:
             logger.warning("Token expiré")
-            raise TokenExpiredError("Le token a expiré")
+            raise TokenExpiredError("token", "Le token a expiré")
 
         except JWTError as e:
             logger.warning(f"Erreur de décodage JWT: {e}")
-            raise InvalidTokenError("Token invalide")
+            raise InvalidTokenError("Token", "Token invalide")
 
     def verify_token(self, token: str) -> bool:
         """Vérifie si un token est valide."""
@@ -114,7 +114,7 @@ class JWTTokenService(ITokenService):
         user_id = payload.get("sub")
 
         if not user_id:
-            raise InvalidTokenError("Token invalide: ID utilisateur manquant")
+            raise InvalidTokenError("Token", "Token invalide: ID utilisateur manquant")
 
         return user_id
 
