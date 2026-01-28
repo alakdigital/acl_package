@@ -340,6 +340,7 @@ class ACLManager:
             token_service=self._token_service,
             password_hasher=self._password_hasher,
             role_repository=None,  # Sera mis à jour après _init_role_services
+            config=self._config,
         )
 
         logger.info("Services d'authentification initialisés")
@@ -421,6 +422,7 @@ class ACLManager:
                 token_service=self._token_service,
                 password_hasher=self._password_hasher,
                 role_repository=self._role_repository,
+                config=self._config,
             )
 
         logger.info("Services de rôles initialisés")
@@ -636,7 +638,13 @@ class ACLManager:
                 logger.debug(f"Rôle {role.name} existe déjà")
 
     async def _create_default_admin(self) -> None:
-        """Crée l'administrateur par défaut si configuré."""
+        """
+        Crée l'administrateur par défaut si configuré.
+
+        Note: L'admin par défaut est créé comme superuser (is_superuser=True),
+        ce qui lui donne tous les droits indépendamment des rôles/tenants.
+        Il n'est pas assigné à un tenant car c'est un compte système.
+        """
         if not self._auth_repository or not self._password_hasher:
             return
 
@@ -662,22 +670,13 @@ class ACLManager:
 
             user = await register_usecase.execute(register_dto)
 
-            # Promouvoir en superuser
+            # Promouvoir en superuser - cela donne tous les droits
+            # sans avoir besoin d'être assigné à un tenant
             user.is_superuser = True
             user.is_verified = True
             await self._auth_repository.update_user(user)
 
             logger.info(f"Admin par défaut créé: {self._config.default_admin_username}")
-
-            # Assigner le rôle admin si la feature roles est activée
-            if self._role_repository and self._config.enable_roles_feature:
-                admin_role = await self._role_repository.get_by_name("admin")
-                if admin_role:
-                    await self._role_repository.assign_role_to_user(
-                        user_id=user.id,
-                        role_id=admin_role.id,
-                    )
-                    logger.debug(f"Rôle admin assigné à {user.username}")
 
         except Exception as e:
             logger.warning(f"Impossible de créer l'admin par défaut: {e}")
@@ -714,6 +713,143 @@ class ACLManager:
         """Retourne True si le manager est initialisé."""
         return self._initialized
 
+    
+    async def assign_role(
+        self,
+        *,
+        user_id: str,
+        tenant_id: str,
+        role_id: str | None = None,
+        role_name: str | None = None,
+        assigned_by: str | None = None,
+    ) -> None:
+        """
+        Assigne un rôle à un utilisateur dans un tenant (crée un membership).
+
+        En mode SaaS, un utilisateur peut appartenir à plusieurs tenants
+        avec des rôles différents dans chacun.
+
+        Args:
+            user_id: ID de l'utilisateur
+            tenant_id: ID du tenant (fourni par l'app hôte)
+            role_id: ID du rôle (optionnel si role_name fourni)
+            role_name: Nom du rôle (optionnel si role_id fourni)
+            assigned_by: ID de l'utilisateur qui fait l'assignation (optionnel)
+
+        Raises:
+            ConfigurationError: Si les rôles ne sont pas activés
+            ValueError: Si ni role_id ni role_name n'est fourni
+        """
+        if not self._role_repository:
+            raise ConfigurationError("Roles non initialisés. Activez enable_roles_feature=True")
+
+        if role_id is None:
+            if not role_name:
+                raise ValueError("role_id ou role_name est requis")
+            role = await self._role_repository.get_by_name(role_name)
+            if not role:
+                raise ValueError(f"Rôle introuvable: {role_name}")
+            role_id = role.id
+
+        await self._role_repository.assign_role_to_user(
+            user_id=user_id,
+            role_id=role_id,
+            tenant_id=tenant_id,
+            assigned_by=assigned_by,
+        )
+
+    async def create_account(
+        self,
+        username: str,
+        email: str,
+        password: str,
+    ):
+        """
+        Crée un utilisateur sans passer par les routes API publiques.
+
+        Cette méthode est conçue pour être appelée par l'application hôte
+        lors de la création d'un nouveau compte utilisateur.
+
+        Note SaaS:
+            L'utilisateur n'est PAS automatiquement assigné à un tenant.
+            Utilisez assign_role() après create_account() pour ajouter
+            l'utilisateur à un tenant avec un rôle.
+
+        Args:
+            username: Nom d'utilisateur (globalement unique)
+            email: Email (globalement unique)
+            password: Mot de passe en clair
+
+        Returns:
+            AuthUser: L'utilisateur créé
+
+        Example:
+            ```python
+            # 1. Créer l'utilisateur
+            user = await acl.create_account(
+                username="john",
+                email="john@example.com",
+                password="secret123",
+            )
+
+            # 2. Assigner à un tenant avec un rôle
+            await acl.assign_role(
+                user_id=user.id,
+                tenant_id="tenant-123",
+                role_name="user",
+            )
+            ```
+        """
+        if not self._auth_repository or not self._password_hasher:
+            raise ConfigurationError("Auth non initialisé. Appelez ACLManager.initialize()")
+
+        register_usecase = RegisterUseCase(
+            auth_repository=self._auth_repository,
+            password_hasher=self._password_hasher,
+        )
+
+        dto = RegisterDTO(username=username, email=email, password=password)
+        user = await register_usecase.execute(dto)
+
+        return user
+
+    async def add_user_to_tenant(
+        self,
+        user_id: str,
+        tenant_id: str,
+        role_name: str = "user",
+    ) -> None:
+        """
+        Raccourci pour ajouter un utilisateur à un tenant avec un rôle.
+
+        Equivalent à assign_role() mais plus explicite pour l'onboarding.
+
+        Args:
+            user_id: ID de l'utilisateur
+            tenant_id: ID du tenant
+            role_name: Nom du rôle (défaut: "user")
+        """
+        await self.assign_role(
+            user_id=user_id,
+            tenant_id=tenant_id,
+            role_name=role_name,
+        )
+
+    async def get_user_tenants(self, user_id: str) -> List[str]:
+        """
+        Récupère la liste des tenants auxquels un utilisateur appartient.
+
+        Args:
+            user_id: ID de l'utilisateur
+
+        Returns:
+            Liste des IDs de tenants
+        """
+        if not self._role_repository:
+            raise ConfigurationError("Roles non initialisés. Activez enable_roles_feature=True")
+
+        return await self._role_repository.get_user_tenants(user_id)
+    
     def get_auth_repository(self) -> IAuthRepository:
         """
         Retourne le repository d'authentification.

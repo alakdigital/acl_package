@@ -171,6 +171,14 @@ class ACLConfig(BaseSettings):
         default=False,
         description="Activer la feature des rôles"
     )
+    enable_public_registration: bool = Field(
+        default=False,
+        description=(
+            "Activer l'API publique d'inscription (/register). "
+            "Recommandé: True pour apps classiques (non-SaaS), False pour SaaS multi-tenant. "
+            "En mode SaaS, utilisez ACLManager.create_account() pour créer des comptes."
+        )
+    )
 
     # Development Configuration
     disable_auth_for_dev: bool = Field(

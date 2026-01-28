@@ -94,11 +94,24 @@ class MongoRoleModel(BaseModel):
         return cls(**data)
 
 
-class MongoUserRoleModel(BaseModel):
+class MongoMembershipModel(BaseModel):
     """
-    Modèle pour les associations user-role dans MongoDB.
+    Modèle pour les memberships (pivot user-tenant-role) dans MongoDB.
 
-    Stocké dans une collection séparée ou embedded dans les utilisateurs.
+    Représente l'appartenance d'un utilisateur à un tenant avec un rôle.
+    C'est le cœur du système SaaS multi-tenant.
+
+    Un utilisateur peut:
+    - Appartenir à plusieurs tenants
+    - Avoir plusieurs rôles dans un même tenant
+    - Avoir des rôles différents selon le tenant
+
+    Attributes:
+        user_id: ID de l'utilisateur
+        tenant_id: ID du tenant (fourni par l'app hôte)
+        role_id: ID du rôle
+        assigned_at: Date d'assignation
+        assigned_by: ID de l'utilisateur ayant fait l'assignation (optionnel)
     """
 
     model_config = ConfigDict(
@@ -107,8 +120,10 @@ class MongoUserRoleModel(BaseModel):
 
     id: Optional[str] = Field(default=None, alias="_id")
     user_id: str
+    tenant_id: str  # Obligatoire pour SaaS
     role_id: str
     assigned_at: datetime = Field(default_factory=datetime.utcnow)
+    assigned_by: Optional[str] = None
 
     def to_mongo_dict(self, include_id: bool = False) -> dict:
         """Convertit en dictionnaire MongoDB."""
@@ -116,3 +131,14 @@ class MongoUserRoleModel(BaseModel):
         if not include_id or data.get("_id") is None:
             data.pop("_id", None)
         return data
+
+    @classmethod
+    def from_mongo_dict(cls, data: dict) -> "MongoMembershipModel":
+        """Crée une instance depuis un document MongoDB."""
+        if "_id" in data:
+            data["_id"] = str(data["_id"])
+        return cls(**data)
+
+
+# Alias pour rétrocompatibilité (déprécié)
+MongoUserRoleModel = MongoMembershipModel

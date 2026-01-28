@@ -151,18 +151,36 @@ class IRoleRepository(ABC):
         """
         pass
 
+    @abstractmethod
+    async def get_default_role(self) -> Optional[Role]:
+        """
+        Récupère le rôle par défaut (premier rôle marqué is_default=True).
+
+        Returns:
+            Rôle par défaut ou None
+        """
+        pass
+
     # ==========================================
-    # Assignation des rôles aux utilisateurs
+    # Memberships (user <-> tenant <-> role)
     # ==========================================
 
     @abstractmethod
-    async def assign_role_to_user(self, user_id: str, role_id: str) -> bool:
+    async def assign_role_to_user(
+        self,
+        user_id: str,
+        role_id: str,
+        tenant_id: str,
+        assigned_by: Optional[str] = None,
+    ) -> bool:
         """
-        Assigne un rôle à un utilisateur.
+        Assigne un rôle à un utilisateur dans un tenant (crée un membership).
 
         Args:
             user_id: ID de l'utilisateur
             role_id: ID du rôle
+            tenant_id: ID du tenant (fourni par l'app hôte)
+            assigned_by: ID de l'utilisateur ayant fait l'assignation (optionnel)
 
         Returns:
             True si assigné avec succès
@@ -173,13 +191,19 @@ class IRoleRepository(ABC):
         pass
 
     @abstractmethod
-    async def remove_role_from_user(self, user_id: str, role_id: str) -> bool:
+    async def remove_role_from_user(
+        self,
+        user_id: str,
+        role_id: str,
+        tenant_id: str,
+    ) -> bool:
         """
-        Retire un rôle d'un utilisateur.
+        Retire un rôle d'un utilisateur dans un tenant.
 
         Args:
             user_id: ID de l'utilisateur
             role_id: ID du rôle
+            tenant_id: ID du tenant
 
         Returns:
             True si retiré avec succès
@@ -187,12 +211,17 @@ class IRoleRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_user_roles(self, user_id: str) -> List[Role]:
+    async def get_user_roles(
+        self,
+        user_id: str,
+        tenant_id: Optional[str] = None,
+    ) -> List[Role]:
         """
-        Récupère tous les rôles d'un utilisateur.
+        Récupère les rôles d'un utilisateur.
 
         Args:
             user_id: ID de l'utilisateur
+            tenant_id: ID du tenant (si None, retourne les rôles de tous les tenants)
 
         Returns:
             Liste des rôles de l'utilisateur
@@ -200,9 +229,23 @@ class IRoleRepository(ABC):
         pass
 
     @abstractmethod
+    async def get_user_tenants(self, user_id: str) -> List[str]:
+        """
+        Récupère les IDs des tenants auxquels un utilisateur appartient.
+
+        Args:
+            user_id: ID de l'utilisateur
+
+        Returns:
+            Liste des IDs de tenants
+        """
+        pass
+
+    @abstractmethod
     async def get_users_with_role(
         self,
         role_id: str,
+        tenant_id: Optional[str] = None,
         skip: int = 0,
         limit: int = 100,
     ) -> List[str]:
@@ -211,6 +254,7 @@ class IRoleRepository(ABC):
 
         Args:
             role_id: ID du rôle
+            tenant_id: ID du tenant (si None, cherche dans tous les tenants)
             skip: Offset pour la pagination
             limit: Limite du nombre de résultats
 
@@ -220,40 +264,57 @@ class IRoleRepository(ABC):
         pass
 
     @abstractmethod
-    async def user_has_role(self, user_id: str, role_id: str) -> bool:
+    async def user_has_role(
+        self,
+        user_id: str,
+        role_id: str,
+        tenant_id: str,
+    ) -> bool:
         """
-        Vérifie si un utilisateur a un rôle spécifique.
+        Vérifie si un utilisateur a un rôle dans un tenant.
 
         Args:
             user_id: ID de l'utilisateur
             role_id: ID du rôle
+            tenant_id: ID du tenant
 
         Returns:
-            True si l'utilisateur a le rôle
+            True si l'utilisateur a le rôle dans ce tenant
         """
         pass
 
     @abstractmethod
-    async def user_has_role_by_name(self, user_id: str, role_name: str) -> bool:
+    async def user_has_role_by_name(
+        self,
+        user_id: str,
+        role_name: str,
+        tenant_id: str,
+    ) -> bool:
         """
-        Vérifie si un utilisateur a un rôle par son nom.
+        Vérifie si un utilisateur a un rôle par son nom dans un tenant.
 
         Args:
             user_id: ID de l'utilisateur
             role_name: Nom du rôle
+            tenant_id: ID du tenant
 
         Returns:
-            True si l'utilisateur a le rôle
+            True si l'utilisateur a le rôle dans ce tenant
         """
         pass
 
     @abstractmethod
-    async def get_user_permissions(self, user_id: str) -> List[str]:
+    async def get_user_permissions(
+        self,
+        user_id: str,
+        tenant_id: str,
+    ) -> List[str]:
         """
-        Récupère toutes les permissions d'un utilisateur (via ses rôles).
+        Récupère toutes les permissions d'un utilisateur dans un tenant.
 
         Args:
             user_id: ID de l'utilisateur
+            tenant_id: ID du tenant
 
         Returns:
             Liste des permissions uniques
@@ -261,15 +322,21 @@ class IRoleRepository(ABC):
         pass
 
     @abstractmethod
-    async def set_user_roles(self, user_id: str, role_ids: List[str]) -> bool:
+    async def set_user_roles(
+        self,
+        user_id: str,
+        role_ids: List[str],
+        tenant_id: str,
+    ) -> bool:
         """
-        Définit la liste complète des rôles d'un utilisateur.
+        Définit la liste complète des rôles d'un utilisateur dans un tenant.
 
-        Remplace tous les rôles existants.
+        Remplace tous les rôles existants dans ce tenant.
 
         Args:
             user_id: ID de l'utilisateur
             role_ids: Liste des IDs de rôles
+            tenant_id: ID du tenant
 
         Returns:
             True si succès
@@ -277,15 +344,53 @@ class IRoleRepository(ABC):
         pass
 
     @abstractmethod
-    async def clear_user_roles(self, user_id: str) -> bool:
+    async def clear_user_roles(
+        self,
+        user_id: str,
+        tenant_id: Optional[str] = None,
+    ) -> bool:
         """
-        Supprime tous les rôles d'un utilisateur.
+        Supprime les rôles d'un utilisateur.
 
         Args:
             user_id: ID de l'utilisateur
+            tenant_id: ID du tenant (si None, supprime dans tous les tenants)
 
         Returns:
             True si succès
+        """
+        pass
+
+    @abstractmethod
+    async def get_tenant_members(
+        self,
+        tenant_id: str,
+        skip: int = 0,
+        limit: int = 100,
+    ) -> List[str]:
+        """
+        Récupère les IDs des utilisateurs membres d'un tenant.
+
+        Args:
+            tenant_id: ID du tenant
+            skip: Offset pour la pagination
+            limit: Limite du nombre de résultats
+
+        Returns:
+            Liste des IDs utilisateurs
+        """
+        pass
+
+    @abstractmethod
+    async def count_tenant_members(self, tenant_id: str) -> int:
+        """
+        Compte le nombre de membres d'un tenant.
+
+        Args:
+            tenant_id: ID du tenant
+
+        Returns:
+            Nombre de membres
         """
         pass
 

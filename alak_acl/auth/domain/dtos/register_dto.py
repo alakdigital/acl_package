@@ -4,7 +4,6 @@ DTO pour l'inscription utilisateur.
 
 import re
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass(frozen=True)
@@ -14,17 +13,21 @@ class RegisterDTO:
 
     Immutable (frozen) pour garantir l'intégrité des données.
 
+    Note SaaS:
+        Le tenant_id n'est PAS inclus ici car un utilisateur
+        peut appartenir à plusieurs tenants. L'association
+        user <-> tenant se fait via la table de membership
+        après création du compte.
+
     Attributes:
-        username: Nom d'utilisateur unique
-        email: Adresse email unique
+        username: Nom d'utilisateur unique (globalement)
+        email: Adresse email unique (globalement)
         password: Mot de passe en clair
-        tenant_id: Identifiant du tenant (optionnel)
     """
 
     username: str
     email: str
     password: str
-    tenant_id: Optional[str] = None
 
     def __post_init__(self):
         """Valide les données après initialisation."""

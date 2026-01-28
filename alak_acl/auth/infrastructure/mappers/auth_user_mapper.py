@@ -21,10 +21,10 @@ if TYPE_CHECKING:
 # Champs standards du modèle de base (ne sont pas des champs personnalisés)
 STANDARD_USER_FIELDS: Set[str] = {
     'id', '_id', 'username', 'email', 'hashed_password',
-    'is_active', 'is_verified', 'is_superuser', 'tenant_id',
+    'is_active', 'is_verified', 'is_superuser',
     'created_at', 'updated_at', 'last_login',
     # Champs techniques SQLAlchemy
-    'roles', '_sa_instance_state',
+    'memberships', '_sa_instance_state',
 }
 
 
@@ -145,7 +145,6 @@ class AuthUserMapper:
                 is_active=model.get("is_active", True),
                 is_verified=model.get("is_verified", False),
                 is_superuser=model.get("is_superuser", False),
-                tenant_id=model.get("tenant_id"),
                 created_at=model.get("created_at"),
                 updated_at=model.get("updated_at"),
                 last_login=model.get("last_login"),
@@ -162,7 +161,6 @@ class AuthUserMapper:
                 is_active=model.is_active,
                 is_verified=model.is_verified,
                 is_superuser=model.is_superuser,
-                tenant_id=model.tenant_id,
                 created_at=model.created_at,
                 updated_at=model.updated_at,
                 last_login=model.last_login,
@@ -180,7 +178,6 @@ class AuthUserMapper:
                 is_active=model.is_active,
                 is_verified=model.is_verified,
                 is_superuser=model.is_superuser,
-                tenant_id=model.tenant_id,
                 created_at=model.created_at,
                 updated_at=model.updated_at,
                 last_login=model.last_login,
@@ -218,7 +215,6 @@ class AuthUserMapper:
             "is_active": entity.is_active,
             "is_verified": entity.is_verified,
             "is_superuser": entity.is_superuser,
-            "tenant_id": entity.tenant_id,
             "created_at": entity.created_at,
             "updated_at": entity.updated_at,
             "last_login": entity.last_login,
@@ -265,7 +261,6 @@ class AuthUserMapper:
             "is_active": entity.is_active,
             "is_verified": entity.is_verified,
             "is_superuser": entity.is_superuser,
-            "tenant_id": entity.tenant_id,
             "created_at": entity.created_at,
             "updated_at": entity.updated_at,
             "last_login": entity.last_login,
@@ -302,7 +297,6 @@ class AuthUserMapper:
             "is_active": entity.is_active,
             "is_verified": entity.is_verified,
             "is_superuser": entity.is_superuser,
-            "tenant_id": entity.tenant_id,
             "created_at": entity.created_at,
             "updated_at": entity.updated_at,
             "last_login": entity.last_login,
@@ -338,7 +332,6 @@ class AuthUserMapper:
         model.is_active = entity.is_active
         model.is_verified = entity.is_verified
         model.is_superuser = entity.is_superuser
-        model.tenant_id = entity.tenant_id
         model.updated_at = entity.updated_at
         model.last_login = entity.last_login
 

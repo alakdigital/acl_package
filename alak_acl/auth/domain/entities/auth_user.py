@@ -29,17 +29,21 @@ class AuthUser:
 
     Attributes:
         id: Identifiant unique de l'utilisateur (string UUID)
-        username: Nom d'utilisateur unique
-        email: Adresse email unique
+        username: Nom d'utilisateur unique (globalement)
+        email: Adresse email unique (globalement)
         hashed_password: Mot de passe hashé (bcrypt)
         is_active: Compte actif ou désactivé
         is_verified: Email vérifié
         is_superuser: Utilisateur administrateur
-        tenant_id: Identifiant du tenant (optionnel, pour le multi-tenant)
         created_at: Date de création
         updated_at: Date de dernière mise à jour
         last_login: Date de dernière connexion
         extra_fields: Champs personnalisés définis par le développeur
+
+    Note:
+        En mode SaaS multi-tenant, un utilisateur peut appartenir à plusieurs
+        tenants via la table de membership (acl_memberships). Le tenant_id
+        n'est donc PAS stocké sur l'utilisateur mais dans la table pivot.
 
     Example:
         ```python
@@ -66,7 +70,6 @@ class AuthUser:
     is_active: bool = True
     is_verified: bool = False
     is_superuser: bool = False
-    tenant_id: Optional[str] = None
     created_at: datetime = field(default_factory=datetime.utcnow)
     updated_at: datetime = field(default_factory=datetime.utcnow)
     last_login: Optional[datetime] = None
@@ -192,7 +195,6 @@ class AuthUser:
             "is_active": self.is_active,
             "is_verified": self.is_verified,
             "is_superuser": self.is_superuser,
-            "tenant_id": self.tenant_id,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
             "last_login": self.last_login.isoformat() if self.last_login else None,
