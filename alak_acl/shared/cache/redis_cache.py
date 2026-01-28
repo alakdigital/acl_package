@@ -214,3 +214,30 @@ class RedisCache(CacheBackend):
         except Exception as e:
             logger.warning(f"Erreur de lecture hash pour {key}: {e}")
             return None
+
+    async def scan_and_delete(self, pattern: str) -> int:
+        """
+        Supprime toutes les clés correspondant au pattern.
+
+        Args:
+            pattern: Pattern de recherche (ex: "acl:user_me:*")
+
+        Returns:
+            Nombre de clés supprimées
+        """
+        if not self._client:
+            return 0
+
+        deleted_count = 0
+        try:
+            async for key in self._client.scan_iter(match=pattern):
+                await self._client.delete(key)
+                deleted_count += 1
+
+            if deleted_count > 0:
+                logger.debug(f"Cache: {deleted_count} clés supprimées (pattern: {pattern})")
+
+        except Exception as e:
+            logger.warning(f"Erreur scan_and_delete pour {pattern}: {e}")
+
+        return deleted_count

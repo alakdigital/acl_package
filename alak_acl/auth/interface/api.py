@@ -2,7 +2,9 @@
 Routes publiques de l'API d'authentification.
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from typing import Optional
+
+from fastapi import APIRouter, Depends, Header, HTTPException, status
 
 from alak_acl.auth.domain.dtos.login_dto import LoginDTO
 from alak_acl.auth.domain.dtos.register_dto import RegisterDTO
@@ -34,8 +36,11 @@ from alak_acl.auth.interface.dependencies import (
     get_reset_password_usecase,
     get_current_active_user,
     get_role_repository,
+    get_config,
 )
 from alak_acl.roles.application.interface.role_repository import IRoleRepository
+from alak_acl.shared.config import ACLConfig
+from alak_acl.shared.cache.utils import CachePrefix, get_user_cache, invalidate_all_user_caches, set_user_cache
 from alak_acl.shared.exceptions import (
     ACLException,
     InvalidCredentialsError,
@@ -56,28 +61,51 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
     response_model=UserResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Inscription d'un nouvel utilisateur",
-    description="Crée un nouveau compte utilisateur.",
+    description=(
+        "Crée un nouveau compte utilisateur. "
+        "Cette route est désactivée par défaut en mode SaaS. "
+        "Utilisez enable_public_registration=True pour l'activer."
+    ),
 )
 async def register(
     request: RegisterRequest,
     register_usecase: RegisterUseCase = Depends(get_register_usecase),
+    config: ACLConfig = Depends(get_config),
 ) -> UserResponse:
     """
     Inscrit un nouvel utilisateur.
 
+    Note SaaS:
+        En mode SaaS, cette route est désactivée par défaut.
+        L'application hôte doit créer les comptes via ACLManager.create_account()
+        puis assigner les utilisateurs aux tenants via ACLManager.assign_role().
+
     Args:
         request: Données d'inscription
         register_usecase: Use case d'inscription
+        config: Configuration ACL
 
     Returns:
         Informations de l'utilisateur créé
+
+    Raises:
+        HTTPException 403: Si l'inscription publique est désactivée
     """
+    # Vérifier si l'inscription publique est activée
+    if not config.enable_public_registration:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=(
+                "L'inscription publique est désactivée. "
+                "Contactez l'administrateur pour créer un compte."
+            ),
+        )
+
     try:
         register_dto = RegisterDTO(
             username=request.username,
             email=request.email,
             password=request.password,
-            tenant_id=request.tenant_id,
         )
         user = await register_usecase.execute(register_dto)
 
@@ -88,7 +116,6 @@ async def register(
             is_active=user.is_active,
             is_verified=user.is_verified,
             is_superuser=user.is_superuser,
-            tenant_id=user.tenant_id,
             created_at=user.created_at,
             last_login=user.last_login,
         )
@@ -179,41 +206,72 @@ async def refresh_token(
     "/me",
     response_model=UserMeResponse,
     summary="Informations utilisateur connecté",
-    description="Retourne les informations de l'utilisateur authentifié avec ses rôles et permissions.",
+    description=(
+        "Retourne les informations de l'utilisateur authentifié avec ses rôles et permissions. "
+        "En mode SaaS, spécifiez le header X-Tenant-ID pour obtenir les rôles/permissions "
+        "du tenant concerné."
+    ),
 )
 async def get_me(
     current_user: AuthUser = Depends(get_current_active_user),
     role_repository: IRoleRepository = Depends(get_role_repository),
+    config: ACLConfig = Depends(get_config),
+    x_tenant_id: Optional[str] = Header(None, alias="X-Tenant-ID"),
 ) -> UserMeResponse:
     """
     Récupère les informations de l'utilisateur connecté avec ses rôles et permissions.
 
+    En mode SaaS multi-tenant:
+    - Spécifiez X-Tenant-ID pour obtenir les rôles/permissions dans ce tenant
+    - Sans X-Tenant-ID, les listes roles/permissions seront vides
+    - La liste 'tenants' contient tous les tenants de l'utilisateur
+
     Args:
         current_user: Utilisateur authentifié
         role_repository: Repository des rôles
+        config: Configuration ACL
+        x_tenant_id: ID du tenant (header optionnel)
 
     Returns:
-        Informations utilisateur avec rôles et permissions
+        Informations utilisateur avec rôles et permissions du tenant
     """
+    # Vérifier le cache si activé
+    if config.enable_cache:
+        cached_data = await get_user_cache(
+            user_id=current_user.id,
+            tenant_id=x_tenant_id,
+            prefix=CachePrefix.USER_ME,
+        )
+        if cached_data:
+            return UserMeResponse(**cached_data)
+
+    # Cache MISS - Récupérer les données
     roles_response = []
     all_permissions = set()
+    user_tenants = []
 
     if role_repository:
         try:
-            roles = await role_repository.get_user_roles(current_user.id)
-            for role in roles:
-                if role.is_active:
-                    roles_response.append(RoleResponse(
-                        id=role.id,
-                        name=role.name,
-                        display_name=role.display_name,
-                        permissions=role.permissions or [],
-                    ))
-                    all_permissions.update(role.permissions or [])
+            # Récupérer la liste des tenants de l'utilisateur
+            user_tenants = await role_repository.get_user_tenants(current_user.id)
+
+            # Récupérer les rôles pour le tenant spécifié
+            if x_tenant_id:
+                roles = await role_repository.get_user_roles(current_user.id, x_tenant_id)
+                for role in roles:
+                    if role.is_active:
+                        roles_response.append(RoleResponse(
+                            id=role.id,
+                            name=role.name,
+                            display_name=role.display_name,
+                            permissions=role.permissions or [],
+                            tenant_id=role.tenant_id,
+                        ))
+                        all_permissions.update(role.permissions or [])
         except Exception as e:
             logger.warning(f"Erreur lors de la récupération des rôles: {e}")
 
-    return UserMeResponse(
+    response = UserMeResponse(
         id=current_user.id,
         username=current_user.username,
         email=current_user.email,
@@ -224,7 +282,20 @@ async def get_me(
         last_login=current_user.last_login,
         roles=roles_response,
         permissions=sorted(list(all_permissions)),
+        tenants=user_tenants,
     )
+
+    # Stocker en cache si activé
+    if config.enable_cache:
+        await set_user_cache(
+            user_id=current_user.id,
+            data=response,
+            tenant_id=x_tenant_id,
+            prefix=CachePrefix.USER_ME,
+            ttl=config.cache_ttl,
+        )
+
+    return response
 
 
 @router.post(
@@ -250,7 +321,7 @@ async def logout(
         Message de confirmation
     """
     logger.info(f"Déconnexion de l'utilisateur: {current_user.username}")
-
+    await invalidate_all_user_caches(current_user.id)
     return MessageResponse(
         message="Déconnexion réussie",
         success=True,

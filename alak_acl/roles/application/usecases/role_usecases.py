@@ -142,9 +142,16 @@ class ListRolesUseCase:
         skip: int = 0,
         limit: int = 100,
         is_active: Optional[bool] = None,
+        tenant_id: Optional[str] = None,
     ) -> tuple[List[Role], int]:
         """
         Liste les rôles avec pagination.
+
+        Args:
+            skip: Nombre d'éléments à sauter
+            limit: Limite de résultats
+            is_active: Filtrer par statut actif
+            tenant_id: Filtrer par tenant (mode multi-tenant)
 
         Returns:
             Tuple (liste des rôles, total)
@@ -153,8 +160,12 @@ class ListRolesUseCase:
             skip=skip,
             limit=limit,
             is_active=is_active,
+            tenant_id=tenant_id,
         )
-        total = await self._role_repository.count_roles(is_active=is_active)
+        total = await self._role_repository.count_roles(
+            is_active=is_active,
+            tenant_id=tenant_id,
+        )
         return roles, total
 
 

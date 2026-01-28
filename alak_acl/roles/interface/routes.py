@@ -4,10 +4,10 @@ Routes API pour la feature Roles.
 
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query, Header
 
 from alak_acl.auth.domain.entities.auth_user import AuthUser
-from alak_acl.auth.interface.dependencies import get_current_active_user
+from alak_acl.auth.interface.dependencies import get_config, get_current_active_user
 from alak_acl.roles.application.interface.role_repository import IRoleRepository
 from alak_acl.roles.application.usecases.role_usecases import (
     CreateRoleUseCase,
@@ -31,10 +31,28 @@ from alak_acl.roles.domain.dtos.role_dto import (
 )
 from alak_acl.roles.domain.entities.role import Role
 from alak_acl.roles.interface.dependencies import RequirePermission, get_role_repository
+from alak_acl.shared.cache.utils import (
+    CachePrefix,
+    invalidate_all_user_caches,
+    invalidate_cache_pattern,
+    get_user_cache,
+    set_user_cache,
+    build_cache_key,
+    get_cache_value,
+    set_cache,
+)
+from alak_acl.shared.config import ACLConfig
 from alak_acl.shared.exceptions import PermissionDeniedError, RoleAlreadyExistsError, RoleNotFoundError
 
 
 router = APIRouter(prefix="/roles", tags=["roles"])
+
+
+def _build_role_cache_pattern(tenant_id: Optional[str] = None) -> str:
+    """Construit le pattern d'invalidation cache pour les rôles d'un tenant."""
+    if tenant_id:
+        return f"ALAKACL:role:tenant:{tenant_id}:*"
+    return "ALAKACL:role:global:*"
 
 
 def role_to_response(role: Role) -> RoleResponseDTO:
@@ -68,6 +86,7 @@ def role_to_response(role: Role) -> RoleResponseDTO:
 )
 async def create_role(
     dto: CreateRoleDTO,
+    config: ACLConfig = Depends(get_config),
     current_user: AuthUser = Depends(RequirePermission("roles:create")),
     role_repository: IRoleRepository = Depends(get_role_repository),
 ):
@@ -75,6 +94,10 @@ async def create_role(
     try:
         use_case = CreateRoleUseCase(role_repository)
         role = await use_case.execute(dto)
+        if config.enable_cache:
+            # Invalider le cache des rôles du tenant concerné
+            await invalidate_cache_pattern(_build_role_cache_pattern(role.tenant_id))
+
         return role_to_response(role)
     except RoleAlreadyExistsError as e:
         raise e
@@ -84,7 +107,7 @@ async def create_role(
     "",
     response_model=RoleListResponseDTO,
     summary="Lister les rôles",
-    description="Liste tous les rôles avec pagination.",
+    description="Liste tous les rôles avec pagination. En mode multi-tenant, spécifiez X-Tenant-ID pour filtrer par tenant.",
 )
 async def list_roles(
     skip: int = Query(0, ge=0, description="Nombre d'éléments à sauter"),
@@ -92,17 +115,40 @@ async def list_roles(
     is_active: Optional[bool] = Query(None, description="Filtrer par statut actif"),
     current_user: AuthUser = Depends(get_current_active_user),
     role_repository: IRoleRepository = Depends(get_role_repository),
+    x_tenant_id: Optional[str] = Header(None, alias="X-Tenant-ID"),
+    config: ACLConfig = Depends(get_config),
 ):
     """Liste les rôles."""
-    use_case = ListRolesUseCase(role_repository)
-    roles, total = await use_case.execute(skip=skip, limit=limit, is_active=is_active)
+    # Construire clé de cache avec paramètres (incluant le tenant)
+    if config.enable_cache:
+        cache_key = build_cache_key(
+            CachePrefix.ROLE,
+            tenant_id=x_tenant_id,
+            params={"skip": skip, "limit": limit, "is_active": is_active, "action": "list"},
+        )
 
-    return RoleListResponseDTO(
+        # Vérifier le cache
+        cached = await get_cache_value(cache_key)
+        if cached:
+            return RoleListResponseDTO(**cached)
+
+    # Cache MISS
+    use_case = ListRolesUseCase(role_repository)
+    roles, total = await use_case.execute(
+        skip=skip, limit=limit, is_active=is_active, tenant_id=x_tenant_id
+    )
+
+    response = RoleListResponseDTO(
         items=[role_to_response(role) for role in roles],
         total=total,
         skip=skip,
         limit=limit,
     )
+    if config.enable_cache:
+        # Stocker en cache
+        await set_cache(cache_key, response, ttl=300)
+
+    return response
 
 
 @router.get(
@@ -162,6 +208,7 @@ async def get_role_by_name(
 async def update_role(
     role_id: str,
     dto: UpdateRoleDTO,
+    config: ACLConfig = Depends(get_config),
     current_user: AuthUser = Depends(RequirePermission("roles:update")),
     role_repository: IRoleRepository = Depends(get_role_repository),
 ):
@@ -169,6 +216,10 @@ async def update_role(
     try:
         use_case = UpdateRoleUseCase(role_repository)
         role = await use_case.execute(role_id, dto)
+        if config.enable_cache:
+            # Invalider le cache des rôles du tenant concerné
+            await invalidate_cache_pattern(_build_role_cache_pattern(role.tenant_id))
+
         return role_to_response(role)
     except RoleNotFoundError as e:
         raise e
@@ -182,18 +233,28 @@ async def update_role(
 )
 async def delete_role(
     role_id: str,
+    config: ACLConfig = Depends(get_config),
     current_user: AuthUser = Depends(RequirePermission("roles:delete")),
     role_repository: IRoleRepository = Depends(get_role_repository),
 ):
     """Supprime un rôle."""
     try:
-        use_case = DeleteRoleUseCase(role_repository)
-        deleted = await use_case.execute(role_id)
-        if not deleted:
+        # Récupérer le rôle pour connaître son tenant_id avant suppression
+        role = await role_repository.get_by_id(role_id)
+        if not role:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Rôle non trouvé: {role_id}",
             )
+        tenant_id = role.tenant_id
+
+        use_case = DeleteRoleUseCase(role_repository)
+        await use_case.execute(role_id)
+        
+        if config.enable_cache:
+            # Invalider le cache des rôles du tenant concerné
+            await invalidate_cache_pattern(_build_role_cache_pattern(tenant_id))
+
     except PermissionDeniedError as e:
         raise e
 
@@ -263,6 +324,7 @@ async def remove_permission_from_role(
 )
 async def assign_role_to_user(
     dto: AssignRoleDTO,
+    config: ACLConfig = Depends(get_config),
     current_user: AuthUser = Depends(RequirePermission("roles:assign")),
     role_repository: IRoleRepository = Depends(get_role_repository),
 ):
@@ -270,6 +332,11 @@ async def assign_role_to_user(
     try:
         use_case = AssignRoleUseCase(role_repository)
         await use_case.execute(dto.user_id, dto.role_id)
+
+        if config.enable_cache:
+            # Invalider tous les caches utilisateur
+            await invalidate_all_user_caches(dto.user_id)
+
         return {"message": "Rôle assigné avec succès"}
     except RoleNotFoundError as e:
         raise e
@@ -284,6 +351,7 @@ async def assign_role_to_user(
 async def remove_role_from_user(
     user_id: str,
     role_id: str,
+    config: ACLConfig = Depends(get_config),
     current_user: AuthUser = Depends(RequirePermission("roles:assign")),
     role_repository: IRoleRepository = Depends(get_role_repository),
 ):
@@ -296,6 +364,9 @@ async def remove_role_from_user(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Association rôle-utilisateur non trouvée",
         )
+    if config.enable_cache:
+        # Invalider tous les caches utilisateur
+        await invalidate_all_user_caches(user_id)
 
     return {"message": "Rôle retiré avec succès"}
 
@@ -339,18 +410,40 @@ async def get_user_roles(
     description="Récupère les rôles et permissions de l'utilisateur courant.",
 )
 async def get_my_roles(
+    config: ACLConfig = Depends(get_config),
     current_user: AuthUser = Depends(get_current_active_user),
     role_repository: IRoleRepository = Depends(get_role_repository),
 ):
     """Récupère les rôles de l'utilisateur courant."""
+    # Vérifier le cache
+    if config.enable_cache:
+        cached = await get_user_cache(
+            user_id=current_user.id,
+            prefix=CachePrefix.USER_ROLES,
+        )
+        if cached:
+            return UserRolesResponseDTO(**cached)
+
+    # Cache MISS
     roles = await role_repository.get_user_roles(current_user.id)
     all_permissions = await role_repository.get_user_permissions(current_user.id)
 
-    return UserRolesResponseDTO(
+    response = UserRolesResponseDTO(
         user_id=current_user.id,
         roles=[role_to_response(role) for role in roles],
         all_permissions=all_permissions,
     )
+
+    if config.enable_cache:
+        # Stocker en cache
+        await set_user_cache(
+            user_id=current_user.id,
+            data=response,
+            prefix=CachePrefix.USER_ROLES,
+            ttl=300,
+        )
+
+    return response
 
 
 @router.get(

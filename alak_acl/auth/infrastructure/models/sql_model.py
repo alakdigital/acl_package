@@ -3,12 +3,17 @@ Modèle SQLAlchemy pour les utilisateurs (PostgreSQL/MySQL).
 
 Ce module fournit un modèle de base extensible que le développeur
 peut personnaliser en ajoutant ses propres colonnes via héritage.
+
+Note SaaS Multi-Tenant:
+    Un utilisateur peut appartenir à plusieurs tenants. L'association
+    user <-> tenant <-> role est gérée via la table acl_memberships.
+    Le tenant_id n'est donc PAS sur l'utilisateur.
 """
 
 from datetime import datetime
 from uuid import uuid4
 
-from sqlalchemy import Column, String, Boolean, DateTime, UniqueConstraint
+from sqlalchemy import Column, String, Boolean, DateTime
 from sqlalchemy.orm import declared_attr, relationship
 
 from alak_acl.shared.database.declarative_base import Base
@@ -30,16 +35,19 @@ class SQLAuthUserModel(Base):
 
     Attributes:
         id: Identifiant unique UUID (stocké en VARCHAR(36))
-        username: Nom d'utilisateur unique
-        email: Email unique
+        username: Nom d'utilisateur unique (globalement)
+        email: Email unique (globalement)
         hashed_password: Mot de passe hashé
         is_active: Compte actif
         is_verified: Email vérifié
         is_superuser: Administrateur
-        tenant_id: Identifiant du tenant (optionnel)
         created_at: Date de création
         updated_at: Date de mise à jour
         last_login: Dernière connexion
+
+    Note:
+        En mode SaaS, un utilisateur peut appartenir à plusieurs tenants
+        via la table acl_memberships (user_id, tenant_id, role_id).
 
     Example:
         Pour ajouter des colonnes personnalisées, créez une sous-classe:
@@ -65,15 +73,6 @@ class SQLAuthUserModel(Base):
     def __tablename__(cls) -> str:
         return getattr(cls, '_custom_tablename', 'acl_auth_users')
 
-    @declared_attr
-    def __table_args__(cls):
-        return (
-            # Index unique composite : username unique par tenant
-            UniqueConstraint('tenant_id', 'username', name='uq_user_tenant_username'),
-            # Index unique composite : email unique par tenant
-            UniqueConstraint('tenant_id', 'email', name='uq_user_tenant_email'),
-        )
-
     # UUID stocké en VARCHAR(36) pour compatibilité PostgreSQL et MySQL
     id = Column(
         String(36),
@@ -84,11 +83,13 @@ class SQLAuthUserModel(Base):
     username = Column(
         String(50),
         nullable=False,
+        unique=True,  # Globalement unique
         index=True,
     )
     email = Column(
         String(255),
         nullable=False,
+        unique=True,  # Globalement unique
         index=True,
     )
     hashed_password = Column(
@@ -110,11 +111,6 @@ class SQLAuthUserModel(Base):
         default=False,
         nullable=False,
     )
-    tenant_id = Column(
-        String(36),
-        nullable=True,
-        index=True,
-    )
     created_at = Column(
         DateTime,
         default=datetime.utcnow,
@@ -130,12 +126,12 @@ class SQLAuthUserModel(Base):
         DateTime,
         nullable=True,
     )
-    # Relationship avec les rôles via la table d'association
-    roles = relationship(
-        "SQLRoleModel",
-        secondary="acl_user_roles",
-        back_populates="users",
+    # Relationship avec les memberships (user <-> tenant <-> role)
+    memberships = relationship(
+        "SQLMembershipModel",
+        back_populates="user",
         lazy="selectin",
+        cascade="all, delete-orphan",
     )
 
     def __repr__(self) -> str:

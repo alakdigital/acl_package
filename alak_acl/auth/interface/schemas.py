@@ -48,12 +48,18 @@ class LoginRequest(BaseModel):
 
 
 class RegisterRequest(BaseModel):
-    """Schéma de requête pour l'inscription."""
+    """
+    Schéma de requête pour l'inscription.
+
+    Note SaaS:
+        Le tenant_id n'est pas inclus ici car un utilisateur
+        peut appartenir à plusieurs tenants. L'association
+        se fait via l'API de membership après création du compte.
+    """
 
     username: str
     email: EmailStr
     password: str
-    tenant_id: Optional[str] = Field(None, description="Identifiant du tenant (optionnel)")
 
     
     
@@ -209,7 +215,13 @@ class RefreshTokenResponse(BaseModel):
 
 
 class UserResponse(BaseModel):
-    """Schéma de réponse pour les informations utilisateur."""
+    """
+    Schéma de réponse pour les informations utilisateur.
+
+    Note SaaS:
+        Un utilisateur peut appartenir à plusieurs tenants.
+        Utilisez l'API /memberships pour voir les tenants de l'utilisateur.
+    """
 
     id: str = Field(..., description="Identifiant unique (UUID)")
     username: str = Field(..., description="Nom d'utilisateur")
@@ -217,7 +229,6 @@ class UserResponse(BaseModel):
     is_active: bool = Field(..., description="Compte actif")
     is_verified: bool = Field(..., description="Email vérifié")
     is_superuser: bool = Field(..., description="Administrateur")
-    tenant_id: Optional[str] = Field(None, description="Identifiant du tenant")
     created_at: datetime = Field(..., description="Date de création")
     last_login: Optional[datetime] = Field(None, description="Dernière connexion")
 
@@ -227,7 +238,14 @@ class UserResponse(BaseModel):
 
 
 class UserMeResponse(BaseModel):
-    """Schéma de réponse pour /me avec rôles et permissions."""
+    """
+    Schéma de réponse pour /me avec rôles et permissions.
+
+    Note SaaS:
+        Les rôles et permissions retournés dépendent du tenant
+        spécifié dans le header X-Tenant-ID. Si aucun tenant
+        n'est spécifié, les listes seront vides.
+    """
 
     id: str = Field(..., description="Identifiant unique (UUID)")
     username: str = Field(..., description="Nom d'utilisateur")
@@ -235,11 +253,11 @@ class UserMeResponse(BaseModel):
     is_active: bool = Field(..., description="Compte actif")
     is_verified: bool = Field(..., description="Email vérifié")
     is_superuser: bool = Field(..., description="Administrateur")
-    tenant_id: Optional[str] = Field(None, description="Identifiant du tenant")
     created_at: datetime = Field(..., description="Date de création")
     last_login: Optional[datetime] = Field(None, description="Dernière connexion")
-    roles: list[RoleResponse] = Field(default_factory=list, description="Rôles de l'utilisateur")
-    permissions: list[str] = Field(default_factory=list, description="Permissions de l'utilisateur")
+    roles: list[RoleResponse] = Field(default_factory=list, description="Rôles de l'utilisateur dans le tenant courant")
+    permissions: list[str] = Field(default_factory=list, description="Permissions de l'utilisateur dans le tenant courant")
+    tenants: list[str] = Field(default_factory=list, description="Liste des tenants auxquels l'utilisateur appartient")
 
     class Config:
         """Configuration Pydantic."""
@@ -268,7 +286,13 @@ class UserListResponse(BaseModel):
 
 
 class UpdateUserRequest(BaseModel):
-    """Schéma de requête pour mettre à jour un utilisateur."""
+    """
+    Schéma de requête pour mettre à jour un utilisateur.
+
+    Note SaaS:
+        Pour modifier l'appartenance à un tenant, utilisez
+        l'API de membership, pas cette route.
+    """
 
     username: Optional[str] = Field(
         None,
@@ -291,8 +315,4 @@ class UpdateUserRequest(BaseModel):
     is_superuser: Optional[bool] = Field(
         None,
         description="Statut administrateur",
-    )
-    tenant_id: Optional[str] = Field(
-        None,
-        description="Identifiant du tenant",
     )

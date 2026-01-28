@@ -3,6 +3,11 @@ Modèle Pydantic pour les documents MongoDB.
 
 Ce module fournit un modèle de base extensible que le développeur
 peut personnaliser en ajoutant ses propres champs via héritage.
+
+Note SaaS Multi-Tenant:
+    Un utilisateur peut appartenir à plusieurs tenants. L'association
+    user <-> tenant <-> role est gérée via la collection acl_memberships.
+    Le tenant_id n'est donc PAS sur l'utilisateur.
 """
 
 from datetime import datetime
@@ -21,16 +26,19 @@ class MongoAuthUserModel(BaseModel):
 
     Attributes:
         id: Identifiant unique (ObjectId généré par MongoDB, stocké comme string)
-        username: Nom d'utilisateur unique
-        email: Email unique
+        username: Nom d'utilisateur unique (globalement)
+        email: Email unique (globalement)
         hashed_password: Mot de passe hashé
         is_active: Compte actif
         is_verified: Email vérifié
         is_superuser: Administrateur
-        tenant_id: Identifiant du tenant (optionnel)
         created_at: Date de création
         updated_at: Date de mise à jour
         last_login: Dernière connexion
+
+    Note:
+        En mode SaaS, un utilisateur peut appartenir à plusieurs tenants
+        via la collection acl_memberships (user_id, tenant_id, role_id).
 
     Example:
         Pour ajouter des champs personnalisés, créez une sous-classe:
@@ -66,7 +74,6 @@ class MongoAuthUserModel(BaseModel):
     is_active: bool = True
     is_verified: bool = False
     is_superuser: bool = False
-    tenant_id: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     last_login: Optional[datetime] = None

@@ -169,11 +169,14 @@ class MongoDBRoleRepository(IRoleRepository):
         skip: int = 0,
         limit: int = 100,
         is_active: Optional[bool] = None,
+        tenant_id: Optional[str] = None,
     ) -> List[Role]:
         """Liste les rôles avec pagination."""
-        query = {}
+        query: dict[str, Any] = {}
         if is_active is not None:
             query["is_active"] = is_active
+        if tenant_id is not None:
+            query["tenant_id"] = tenant_id
 
         cursor = (
             self._roles_collection
@@ -186,11 +189,17 @@ class MongoDBRoleRepository(IRoleRepository):
 
         return [self._mapper.to_entity(doc) for doc in docs]
 
-    async def count_roles(self, is_active: Optional[bool] = None) -> int:
+    async def count_roles(
+        self,
+        is_active: Optional[bool] = None,
+        tenant_id: Optional[str] = None,
+    ) -> int:
         """Compte le nombre de rôles."""
-        query = {}
+        query: dict[str, Any] = {}
         if is_active is not None:
             query["is_active"] = is_active
+        if tenant_id is not None:
+            query["tenant_id"] = tenant_id
 
         return await self._roles_collection.count_documents(query)
 

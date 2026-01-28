@@ -17,6 +17,7 @@ from alak_acl.auth.application.usecases.refresh_token_usecase import RefreshToke
 from alak_acl.auth.application.usecases.forgot_password_usecase import ForgotPasswordUseCase
 from alak_acl.auth.application.usecases.reset_password_usecase import ResetPasswordUseCase
 from alak_acl.auth.application.interface.email_service import IEmailService
+from alak_acl.shared.config import ACLConfig
 from alak_acl.shared.exceptions import (
     InvalidTokenError,
     TokenExpiredError,
@@ -38,6 +39,7 @@ _password_hasher: Optional[IPasswordHasher] = None
 _role_repository: Optional["IRoleRepository"] = None
 _email_service: Optional[IEmailService] = None
 _reset_url_base: Optional[str] = None
+_config: Optional[ACLConfig] = None
 
 
 def set_auth_dependencies(
@@ -45,6 +47,7 @@ def set_auth_dependencies(
     token_service: ITokenService,
     password_hasher: IPasswordHasher,
     role_repository: Optional["IRoleRepository"] = None,
+    config: Optional[ACLConfig] = None,
 ) -> None:
     """
     Configure les dépendances d'authentification.
@@ -56,12 +59,14 @@ def set_auth_dependencies(
         token_service: Service de tokens
         password_hasher: Service de hashage
         role_repository: Repository des rôles (optionnel)
+        config: Configuration ACL (optionnel)
     """
-    global _auth_repository, _token_service, _password_hasher, _role_repository
+    global _auth_repository, _token_service, _password_hasher, _role_repository, _config
     _auth_repository = auth_repository
     _token_service = token_service
     _password_hasher = password_hasher
     _role_repository = role_repository
+    _config = config
 
 
 def set_email_dependencies(
@@ -154,6 +159,21 @@ def get_email_service() -> Optional[IEmailService]:
         Service d'email ou None si non configuré
     """
     return _email_service
+
+def get_config() -> ACLConfig:
+    """
+    Récupère la configuration ACL.
+
+    Returns:
+        Configuration ACL
+
+    Raises:
+        HTTPException: Si non initialisé
+    """
+    if _config is None:
+        # Retourner une config par défaut si non initialisée
+        return ACLConfig()
+    return _config
 
 
 def get_login_usecase(

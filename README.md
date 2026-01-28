@@ -60,6 +60,7 @@ config = ACLConfig(
     jwt_secret_key="your-super-secret-key-min-32-chars",
     enable_roles_feature=True,
     enable_permissions_feature=True,
+    enable_public_registration=True,  # Pour apps classiques
 )
 
 @asynccontextmanager
@@ -90,12 +91,17 @@ async def admin_only(user=Depends(RequireRole("admin"))):
 
 | Méthode | Endpoint | Description |
 |---------|----------|-------------|
-| POST | `/register` | Inscription |
+| POST | `/register` | Inscription (désactivé par défaut) |
 | POST | `/login` | Connexion (retourne JWT) |
 | POST | `/refresh` | Rafraîchir le token |
-| GET | `/me` | Profil utilisateur |
+| GET | `/me` | Profil utilisateur + rôles |
 | PUT | `/me` | Modifier son profil |
+| POST | `/forgot-password` | Envoie un email avec un lien de réinitialisation |
+| POST | `/reset-password` | Réinitialisation du mot de passe |
 | POST | `/change-password` | Changer de mot de passe |
+
+> La route `/register` est désactivée par défaut pour le mode SaaS multi-tenant.
+> Activez-la avec `enable_public_registration=True` pour les apps classiques.
 
 ### Rôles (`/api/v1/roles`)
 
@@ -264,94 +270,255 @@ Les permissions supportent les wildcards pour des droits globaux :
 # Vérifie users:create → False
 ```
 
-## Support Multi-Tenant
+## Modes d'utilisation
 
-ALAK-ACL supporte nativement l'architecture multi-tenant avec le champ `tenant_id` sur les utilisateurs et les rôles.
+ALAK-ACL supporte trois modes d'utilisation selon vos besoins.
+
+### Mode Classique
+
+Pour les applications simples où les utilisateurs s'inscrivent eux-mêmes.
+
+```python
+config = ACLConfig(
+    database_type="postgresql",
+    postgresql_uri="postgresql+asyncpg://...",
+    jwt_secret_key="your-secret-key",
+    enable_roles_feature=True,
+    enable_public_registration=True,
+)
+```
+
+**Caractéristiques :**
+- Route `/register` publique pour l'inscription
+- Les utilisateurs créent leur compte via l'API
+- Rôle par défaut assigné automatiquement
+- Idéal pour : blogs, forums, apps grand public
+
+### Mode SaaS Multi-Tenant
+
+Pour les applications SaaS où des propriétaires de business (pressing, garage, etc.) créent leur compte puis gèrent leurs employés.
+
+```python
+config = ACLConfig(
+    database_type="postgresql",
+    postgresql_uri="postgresql+asyncpg://...",
+    jwt_secret_key="your-secret-key",
+    enable_roles_feature=True,
+    enable_public_registration=False,  # L'app gère l'inscription
+)
+```
+
+**Caractéristiques :**
+- Route `/register` désactivée (l'app hôte gère l'inscription)
+- L'app hôte crée les comptes propriétaires via `acl.create_account()` + crée le tenant
+- Le propriétaire crée les comptes employés via son espace admin (`acl.create_account()`)
+- Un utilisateur peut appartenir à plusieurs organisations
+- Table de membership : user ↔ tenant ↔ role
+- Idéal pour : SaaS B2B, plateformes multi-organisations
+
+**Flux typique :**
+1. Le propriétaire s'inscrit via un formulaire personnalisé de l'app hôte
+2. L'app hôte crée le compte (`acl.create_account()`) + le tenant + assigne le rôle owner
+3. Le propriétaire crée ses employés via son dashboard admin
+
+### Mode B2B Privé
+
+Pour les applications internes où seul l'administrateur crée les comptes.
+
+```python
+config = ACLConfig(
+    database_type="postgresql",
+    postgresql_uri="postgresql+asyncpg://...",
+    jwt_secret_key="your-secret-key",
+    enable_roles_feature=True,
+    enable_public_registration=False,  # Désactivé
+)
+```
+
+**Caractéristiques :**
+- Route `/register` désactivée (retourne 403)
+- L'administrateur crée tous les comptes via `acl.create_account()`
+- Idéal pour : intranets, outils internes d'entreprise
+
+## Architecture SaaS Multi-Tenant
+
+ALAK-ACL est conçu pour les applications SaaS où un utilisateur peut appartenir à **plusieurs organisations (tenants)** avec des rôles différents dans chacune.
+
+### Concepts clés
+
+- **Utilisateurs globaux** : Les usernames et emails sont uniques globalement
+- **Tenants gérés par l'app hôte** : Le package ne gère pas la création des tenants
+- **Memberships** : Table pivot qui lie utilisateur ↔ tenant ↔ rôle
+- **Propriétaires de tenant** : Créés par l'app hôte via un formulaire personnalisé
+- **Employés** : Créés par le propriétaire via son espace admin
+
+### Flux d'onboarding SaaS
+
+**Étape 1 : Le propriétaire s'inscrit (via formulaire personnalisé de l'app)**
+```python
+# Route personnalisée de l'app hôte (ex: POST /signup)
+@app.post("/signup")
+async def signup_tenant_owner(data: SignupSchema):
+    # 1. Créer le compte utilisateur via le package
+    owner = await acl.create_account(
+        username=data.username,
+        email=data.email,
+        password=data.password,
+    )
+
+    # 2. Créer le tenant dans votre base
+    tenant = await my_app.create_tenant(
+        name=data.business_name,  # Ex: "Pressing du Centre"
+        owner_id=owner.id,
+    )
+
+    # 3. Assigner le rôle "owner" au propriétaire
+    await acl.assign_role(
+        user_id=owner.id,
+        tenant_id=tenant.id,
+        role_name="owner",
+    )
+
+    return {"user_id": owner.id, "tenant_id": tenant.id}
+```
+
+**Étape 2 : Le propriétaire crée ses employés (via son dashboard)**
+```python
+# Dans la route admin du propriétaire (ex: POST /admin/employees)
+employee = await acl.create_account(
+    username="marie_dupont",
+    email="marie@pressing-du-centre.com",
+    password="tempPassword123",
+)
+
+await acl.assign_role(
+    user_id=employee.id,
+    tenant_id=tenant.id,
+    role_name="employee",
+)
+```
+
+### Un utilisateur, plusieurs tenants
+
+```python
+# John est admin chez Acme Corp
+await acl.assign_role(
+    user_id=john.id,
+    tenant_id="acme-corp-id",
+    role_name="admin",
+)
+
+# John est aussi membre de Startup Inc
+await acl.assign_role(
+    user_id=john.id,
+    tenant_id="startup-inc-id",
+    role_name="user",
+)
+
+# Récupérer les tenants de John
+tenants = await acl.get_user_tenants(john.id)
+# ["acme-corp-id", "startup-inc-id"]
+```
 
 ### Configuration
 
-Le `tenant_id` est **optionnel** par défaut. Vous pouvez l'utiliser pour isoler les données par client/organisation.
+```python
+config = ACLConfig(
+    database_type="postgresql",
+    postgresql_uri="postgresql+asyncpg://...",
+    jwt_secret_key="your-secret-key",
+    enable_roles_feature=True,
+    # Désactivé par défaut pour SaaS
+    enable_public_registration=False,
+)
+```
 
-### Inscription avec tenant
+### Vérification d'appartenance à un tenant
 
 ```python
-# Via l'API - POST /api/v1/auth/register
+from fastapi import Depends, Header, HTTPException
+from alak_acl import get_current_user, ACLManager
+
+@app.get("/tenant/{tenant_id}/data")
+async def get_tenant_data(
+    tenant_id: str,
+    user=Depends(get_current_user),
+    acl: ACLManager = Depends(get_acl_manager),
+):
+    # Vérifier que l'utilisateur appartient au tenant
+    user_tenants = await acl.get_user_tenants(user.id)
+    if tenant_id not in user_tenants:
+        raise HTTPException(403, "Vous n'appartenez pas à ce tenant")
+
+    return await fetch_data_for_tenant(tenant_id)
+```
+
+### Middleware de tenant
+
+```python
+from fastapi import Request, HTTPException
+from starlette.middleware.base import BaseHTTPMiddleware
+
+class TenantMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        # Extraire le tenant_id du header
+        tenant_id = request.headers.get("X-Tenant-ID")
+
+        if not tenant_id:
+            # Optionnel: extraire du subdomain
+            # host = request.headers.get("host", "")
+            # tenant_id = host.split(".")[0]
+            pass
+
+        request.state.tenant_id = tenant_id
+        return await call_next(request)
+
+app.add_middleware(TenantMiddleware)
+```
+
+### API /me avec tenant
+
+L'endpoint `/me` accepte un header `X-Tenant-ID` pour retourner les rôles/permissions du tenant :
+
+```python
+# Sans X-Tenant-ID : retourne l'utilisateur + liste des tenants
+GET /api/v1/auth/me
+# Réponse
 {
-    "username": "john_doe",
-    "email": "john@company-a.com",
-    "password": "securepassword123",
-    "tenant_id": "company-a-uuid"  # Optionnel
+    "id": "user-uuid",
+    "username": "john",
+    "tenants": ["acme-corp-id", "startup-inc-id"],
+    "roles": [],
+    "permissions": []
+}
+
+# Avec X-Tenant-ID : retourne les rôles/permissions du tenant
+GET /api/v1/auth/me
+X-Tenant-ID: acme-corp-id
+# Réponse
+{
+    "id": "user-uuid",
+    "username": "john",
+    "tenants": ["acme-corp-id", "startup-inc-id"],
+    "roles": [{"name": "admin", "permissions": ["*"]}],
+    "permissions": ["*"]
 }
 ```
 
 ### Création de rôles par tenant
+
+Les rôles peuvent être :
+- **Globaux** (`tenant_id=None`) : Disponibles pour tous les tenants
+- **Spécifiques** : Créés pour un tenant particulier
 
 ```python
 # Via l'API - POST /api/v1/roles
 {
     "name": "manager",
     "display_name": "Manager",
-    "description": "Gestionnaire de l'équipe",
     "permissions": ["team:read", "team:update"],
-    "tenant_id": "company-a-uuid"  # Optionnel
+    "tenant_id": "acme-corp-id"  # Rôle spécifique à ce tenant
 }
-```
-
-### Contraintes d'unicité
-
-Les contraintes d'unicité sont **composites** avec le `tenant_id` :
-
-| Table | Contrainte unique |
-|-------|-------------------|
-| `acl_auth_users` | (`tenant_id`, `username`) |
-| `acl_auth_users` | (`tenant_id`, `email`) |
-| `acl_roles` | (`tenant_id`, `name`) |
-
-Cela signifie que :
-- Deux tenants différents peuvent avoir un utilisateur avec le même `username`
-- Deux tenants différents peuvent avoir un rôle avec le même `name`
-- Au sein d'un même tenant, les usernames, emails et noms de rôles restent uniques
-
-### Filtrage manuel
-
-Le filtrage par `tenant_id` est **manuel** - vous devez filtrer vos requêtes selon vos besoins métier :
-
-```python
-from fastapi import Depends, Header, HTTPException
-from fastapi_acl import get_current_user
-
-@app.get("/my-data")
-async def get_tenant_data(
-    user=Depends(get_current_user),
-    x_tenant_id: str = Header(None)
-):
-    # Vérifier que l'utilisateur appartient au tenant
-    if user.tenant_id != x_tenant_id:
-        raise HTTPException(403, "Accès refusé")
-
-    # Filtrer les données par tenant
-    return await fetch_data_for_tenant(x_tenant_id)
-```
-
-### Middleware de tenant (exemple)
-
-```python
-from fastapi import Request
-from starlette.middleware.base import BaseHTTPMiddleware
-
-class TenantMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
-        # Extraire le tenant_id du header, subdomain, ou path
-        tenant_id = request.headers.get("X-Tenant-ID")
-
-        # Ou depuis le subdomain
-        # host = request.headers.get("host", "")
-        # tenant_id = host.split(".")[0]
-
-        request.state.tenant_id = tenant_id
-        return await call_next(request)
-
-app.add_middleware(TenantMiddleware)
 ```
 
 ## Protection contre la suppression
@@ -562,34 +729,37 @@ alembic current
 
 | Table | Description |
 |-------|-------------|
-| `acl_auth_users` | Utilisateurs |
+| `acl_auth_users` | Utilisateurs (globaux) |
 | `acl_roles` | Rôles |
-| `acl_user_roles` | Association utilisateurs-rôles |
+| `acl_memberships` | Pivot user ↔ tenant ↔ role |
 | `acl_permissions` | Permissions |
 
 ### Structure des tables
 
 #### `acl_auth_users`
 
+Utilisateurs globaux (un utilisateur peut appartenir à plusieurs tenants).
+
 | Colonne | Type | Description |
 |---------|------|-------------|
 | `id` | VARCHAR(36) | UUID primary key |
-| `username` | VARCHAR(50) | Nom d'utilisateur |
-| `email` | VARCHAR(255) | Email |
+| `username` | VARCHAR(50) | Nom d'utilisateur (unique globalement) |
+| `email` | VARCHAR(255) | Email (unique globalement) |
 | `hashed_password` | VARCHAR(255) | Mot de passe hashé |
 | `is_active` | BOOLEAN | Compte actif |
 | `is_verified` | BOOLEAN | Email vérifié |
-| `is_superuser` | BOOLEAN | Administrateur |
-| `tenant_id` | VARCHAR(36) | ID du tenant (optionnel) |
+| `is_superuser` | BOOLEAN | Super-administrateur |
 | `created_at` | DATETIME | Date de création |
 | `updated_at` | DATETIME | Date de mise à jour |
 | `last_login` | DATETIME | Dernière connexion |
 
-**Index uniques composites** :
-- `(tenant_id, username)` - Un username unique par tenant
-- `(tenant_id, email)` - Un email unique par tenant
+**Index uniques** :
+- `username` - Unique globalement
+- `email` - Unique globalement
 
 #### `acl_roles`
+
+Les rôles peuvent être globaux ou spécifiques à un tenant.
 
 | Colonne | Type | Description |
 |---------|------|-------------|
@@ -599,23 +769,31 @@ alembic current
 | `description` | VARCHAR(500) | Description |
 | `permissions` | JSON | Liste des permissions |
 | `is_active` | BOOLEAN | Rôle actif |
-| `is_default` | BOOLEAN | Rôle par défaut |
+| `is_default` | BOOLEAN | Rôle par défaut pour les nouveaux membres |
 | `is_system` | BOOLEAN | Rôle système (non supprimable) |
 | `priority` | INTEGER | Priorité |
-| `tenant_id` | VARCHAR(36) | ID du tenant (optionnel) |
+| `tenant_id` | VARCHAR(36) | NULL=global, sinon spécifique au tenant |
 | `created_at` | DATETIME | Date de création |
 | `updated_at` | DATETIME | Date de mise à jour |
 
 **Index unique composite** :
 - `(tenant_id, name)` - Un nom de rôle unique par tenant
 
-#### `acl_user_roles`
+#### `acl_memberships`
+
+Table pivot pour lier utilisateurs, tenants et rôles.
 
 | Colonne | Type | Description |
 |---------|------|-------------|
+| `id` | VARCHAR(36) | UUID primary key |
 | `user_id` | VARCHAR(36) | FK vers acl_auth_users |
+| `tenant_id` | VARCHAR(36) | ID du tenant (fourni par l'app hôte) |
 | `role_id` | VARCHAR(36) | FK vers acl_roles |
 | `assigned_at` | DATETIME | Date d'assignation |
+| `assigned_by` | VARCHAR(36) | ID de l'utilisateur ayant assigné (optionnel) |
+
+**Index unique** :
+- `(user_id, tenant_id, role_id)` - Un utilisateur ne peut avoir le même rôle qu'une fois par tenant
 
 ## Rôles et permissions par défaut
 
@@ -735,23 +913,26 @@ async def update_article(
     return {"message": f"Article {id} modifié"}
 ```
 
-### Application multi-tenant
+### Application SaaS multi-tenant
 
 ```python
 from fastapi import FastAPI, Depends, Header, HTTPException, Request
 from contextlib import asynccontextmanager
 from starlette.middleware.base import BaseHTTPMiddleware
-from fastapi_acl import (
+from alak_acl import (
     ACLManager,
     ACLConfig,
     get_current_user,
     RequireRole,
 )
+from alak_acl.auth.domain.entities.auth_user import AuthUser
+
+# Variable globale pour ACLManager
+acl: ACLManager = None
 
 # Middleware pour extraire le tenant_id
 class TenantMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
-        # Extraction depuis le header X-Tenant-ID
         tenant_id = request.headers.get("X-Tenant-ID")
         request.state.tenant_id = tenant_id
         return await call_next(request)
@@ -761,47 +942,95 @@ config = ACLConfig(
     postgresql_uri="postgresql+asyncpg://user:pass@localhost/db",
     jwt_secret_key="your-production-secret-key-here",
     enable_roles_feature=True,
+    enable_public_registration=False,  # L'app gère l'inscription
 )
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    global acl
+    acl = ACLManager(config, app=app)
     await acl.initialize()
     yield
     await acl.close()
 
-app = FastAPI(title="API Multi-Tenant", lifespan=lifespan)
+app = FastAPI(title="API SaaS Multi-Tenant", lifespan=lifespan)
 app.add_middleware(TenantMiddleware)
-acl = ACLManager(config, app=app)
 
 # Dépendance pour vérifier l'appartenance au tenant
-async def verify_tenant(
-    user=Depends(get_current_user),
-    x_tenant_id: str = Header(None, alias="X-Tenant-ID")
+async def verify_tenant_membership(
+    user: AuthUser = Depends(get_current_user),
+    x_tenant_id: str = Header(..., alias="X-Tenant-ID"),
 ):
-    if user.tenant_id and user.tenant_id != x_tenant_id:
+    """Vérifie que l'utilisateur appartient au tenant spécifié."""
+    user_tenants = await acl.get_user_tenants(user.id)
+    if x_tenant_id not in user_tenants:
         raise HTTPException(
             status_code=403,
-            detail="Accès refusé: vous n'appartenez pas à ce tenant"
+            detail="Vous n'appartenez pas à ce tenant"
         )
-    return user
+    return user, x_tenant_id
+
+# Route personnalisée d'inscription pour les propriétaires de tenant
+@app.post("/signup")
+async def signup_tenant_owner(
+    username: str,
+    email: str,
+    password: str,
+    business_name: str,
+):
+    """Inscription d'un propriétaire de business (pressing, garage, etc.)."""
+    # 1. Créer le compte utilisateur
+    owner = await acl.create_account(
+        username=username,
+        email=email,
+        password=password,
+    )
+
+    # 2. Créer le tenant dans votre base
+    tenant = await my_app.create_tenant(name=business_name, owner_id=owner.id)
+
+    # 3. Assigner le rôle "owner" au propriétaire
+    await acl.assign_role(
+        user_id=owner.id,
+        tenant_id=tenant.id,
+        role_name="owner",
+    )
+
+    return {"user_id": owner.id, "tenant_id": tenant.id, "business": business_name}
 
 @app.get("/tenant/data")
-async def get_tenant_data(user=Depends(verify_tenant)):
-    # L'utilisateur appartient au bon tenant
+async def get_tenant_data(membership=Depends(verify_tenant_membership)):
+    user, tenant_id = membership
     return {
-        "message": f"Données du tenant {user.tenant_id}",
+        "message": f"Données du tenant {tenant_id}",
         "user": user.username
     }
 
-@app.get("/tenant/admin")
-async def tenant_admin(
-    user=Depends(RequireRole("admin")),
-    x_tenant_id: str = Header(None, alias="X-Tenant-ID")
+# Route pour que le propriétaire crée un employé
+@app.post("/admin/employees")
+async def create_employee(
+    username: str,
+    email: str,
+    password: str,
+    x_tenant_id: str = Header(..., alias="X-Tenant-ID"),
+    owner: AuthUser = Depends(get_current_user),  # Vérifier que c'est l'owner
 ):
-    # Vérification admin + tenant
-    if user.tenant_id != x_tenant_id:
-        raise HTTPException(403, "Accès refusé")
-    return {"message": "Admin du tenant", "tenant": user.tenant_id}
+    """Le propriétaire crée un compte employé."""
+    # 1. Créer le compte employé
+    employee = await acl.create_account(
+        username=username,
+        email=email,
+        password=password,
+    )
+
+    # 2. L'ajouter au tenant avec le rôle "employee"
+    await acl.assign_role(
+        user_id=employee.id,
+        tenant_id=x_tenant_id,
+        role_name="employee",
+    )
+
+    return {"id": employee.id, "username": employee.username}
 ```
 
 ## Licence
@@ -816,6 +1045,9 @@ Les contributions sont les bienvenues ! Voir [CONTRIBUTING.md](CONTRIBUTING.md)
 
 - Issues : [GitHub Issues](https://github.com/your-repo/fastapi-acl/issues)
 - Documentation : [Documentation complète](https://fastapi-acl.readthedocs.io)
+
+
+
 
 
 
