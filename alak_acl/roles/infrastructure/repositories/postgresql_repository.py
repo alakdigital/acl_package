@@ -160,6 +160,7 @@ class PostgreSQLRoleRepository(IRoleRepository):
         skip: int = 0,
         limit: int = 100,
         is_active: Optional[bool] = None,
+        tenant_id: Optional[str] = None,
     ) -> List[Role]:
         """Liste les rôles avec pagination."""
         async with self._db.session() as session:
@@ -167,6 +168,9 @@ class PostgreSQLRoleRepository(IRoleRepository):
 
             if is_active is not None:
                 query = query.where(self._model_class.is_active == is_active)
+
+            if tenant_id is not None:
+                query = query.where(self._model_class.tenant_id == tenant_id)
 
             query = query.offset(skip).limit(limit).order_by(
                 self._model_class.priority.desc(),
@@ -178,13 +182,20 @@ class PostgreSQLRoleRepository(IRoleRepository):
 
             return [self._mapper.to_entity(model) for model in models]
 
-    async def count_roles(self, is_active: Optional[bool] = None) -> int:
+    async def count_roles(
+        self,
+        is_active: Optional[bool] = None,
+        tenant_id: Optional[str] = None,
+    ) -> int:
         """Compte le nombre de rôles."""
         async with self._db.session() as session:
             query = select(func.count(self._model_class.id))
 
             if is_active is not None:
                 query = query.where(self._model_class.is_active == is_active)
+
+            if tenant_id is not None:
+                query = query.where(self._model_class.tenant_id == tenant_id)
 
             result = await session.execute(query)
             return result.scalar_one()

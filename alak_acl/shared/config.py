@@ -175,8 +175,8 @@ class ACLConfig(BaseSettings):
         default=False,
         description=(
             "Activer l'API publique d'inscription (/register). "
-            "Recommandé: True pour apps classiques (non-SaaS), False pour SaaS multi-tenant. "
-            "En mode SaaS, utilisez ACLManager.create_account() pour créer des comptes."
+            "True: apps classiques où les utilisateurs s'inscrivent eux-mêmes. "
+            "False: SaaS multi-tenant et apps B2B où l'app gère l'inscription via ACLManager.create_account()."
         )
     )
 

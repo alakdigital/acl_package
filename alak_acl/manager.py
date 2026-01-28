@@ -952,6 +952,10 @@ class ACLManager:
                 "Permission repository non initialisé. "
                 "Vérifiez que enable_permissions_feature=True"
             )
+            
         return self._permission_repository
+
+
+
 
 

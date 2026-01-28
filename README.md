@@ -60,8 +60,7 @@ config = ACLConfig(
     jwt_secret_key="your-super-secret-key-min-32-chars",
     enable_roles_feature=True,
     enable_permissions_feature=True,
-    # Activer l'inscription publique (recommandé pour apps non-SaaS)
-    enable_public_registration=True,
+    enable_public_registration=True,  # Pour apps classiques
 )
 
 @asynccontextmanager
@@ -92,15 +91,17 @@ async def admin_only(user=Depends(RequireRole("admin"))):
 
 | Méthode | Endpoint | Description |
 |---------|----------|-------------|
-| POST | `/register` | Inscription (désactivé par défaut*) |
+| POST | `/register` | Inscription (désactivé par défaut) |
 | POST | `/login` | Connexion (retourne JWT) |
 | POST | `/refresh` | Rafraîchir le token |
 | GET | `/me` | Profil utilisateur + rôles |
 | PUT | `/me` | Modifier son profil |
+| POST | `/forgot-password` | Envoie un email avec un lien de réinitialisation |
+| POST | `/reset-password` | Réinitialisation du mot de passe |
 | POST | `/change-password` | Changer de mot de passe |
 
-> **\*** La route `/register` est désactivée par défaut pour le mode SaaS.
-> Pour les applications classiques, activez-la avec `enable_public_registration=True`.
+> La route `/register` est désactivée par défaut pour le mode SaaS multi-tenant.
+> Activez-la avec `enable_public_registration=True` pour les apps classiques.
 
 ### Rôles (`/api/v1/roles`)
 
@@ -271,9 +272,9 @@ Les permissions supportent les wildcards pour des droits globaux :
 
 ## Modes d'utilisation
 
-ALAK-ACL supporte deux modes d'utilisation selon vos besoins.
+ALAK-ACL supporte trois modes d'utilisation selon vos besoins.
 
-### Mode Classique (non-SaaS)
+### Mode Classique
 
 Pour les applications simples où les utilisateurs s'inscrivent eux-mêmes.
 
@@ -283,20 +284,19 @@ config = ACLConfig(
     postgresql_uri="postgresql+asyncpg://...",
     jwt_secret_key="your-secret-key",
     enable_roles_feature=True,
-    # Activer l'inscription publique
     enable_public_registration=True,
 )
 ```
 
 **Caractéristiques :**
 - Route `/register` publique pour l'inscription
-- Les utilisateurs peuvent créer leur compte via l'API
+- Les utilisateurs créent leur compte via l'API
 - Rôle par défaut assigné automatiquement
 - Idéal pour : blogs, forums, apps grand public
 
 ### Mode SaaS Multi-Tenant
 
-Pour les applications B2B où l'administrateur crée les comptes.
+Pour les applications SaaS où des propriétaires de business (pressing, garage, etc.) créent leur compte puis gèrent leurs employés.
 
 ```python
 config = ACLConfig(
@@ -304,17 +304,41 @@ config = ACLConfig(
     postgresql_uri="postgresql+asyncpg://...",
     jwt_secret_key="your-secret-key",
     enable_roles_feature=True,
-    # Désactiver l'inscription publique (par défaut)
-    enable_public_registration=False,
+    enable_public_registration=False,  # L'app gère l'inscription
+)
+```
+
+**Caractéristiques :**
+- Route `/register` désactivée (l'app hôte gère l'inscription)
+- L'app hôte crée les comptes propriétaires via `acl.create_account()` + crée le tenant
+- Le propriétaire crée les comptes employés via son espace admin (`acl.create_account()`)
+- Un utilisateur peut appartenir à plusieurs organisations
+- Table de membership : user ↔ tenant ↔ role
+- Idéal pour : SaaS B2B, plateformes multi-organisations
+
+**Flux typique :**
+1. Le propriétaire s'inscrit via un formulaire personnalisé de l'app hôte
+2. L'app hôte crée le compte (`acl.create_account()`) + le tenant + assigne le rôle owner
+3. Le propriétaire crée ses employés via son dashboard admin
+
+### Mode B2B Privé
+
+Pour les applications internes où seul l'administrateur crée les comptes.
+
+```python
+config = ACLConfig(
+    database_type="postgresql",
+    postgresql_uri="postgresql+asyncpg://...",
+    jwt_secret_key="your-secret-key",
+    enable_roles_feature=True,
+    enable_public_registration=False,  # Désactivé
 )
 ```
 
 **Caractéristiques :**
 - Route `/register` désactivée (retourne 403)
-- L'app hôte crée les comptes via `acl.create_account()`
-- Un utilisateur peut appartenir à plusieurs organisations
-- Table de membership : user ↔ tenant ↔ role
-- Idéal pour : SaaS B2B, plateformes multi-organisations
+- L'administrateur crée tous les comptes via `acl.create_account()`
+- Idéal pour : intranets, outils internes d'entreprise
 
 ## Architecture SaaS Multi-Tenant
 
@@ -325,26 +349,52 @@ ALAK-ACL est conçu pour les applications SaaS où un utilisateur peut apparteni
 - **Utilisateurs globaux** : Les usernames et emails sont uniques globalement
 - **Tenants gérés par l'app hôte** : Le package ne gère pas la création des tenants
 - **Memberships** : Table pivot qui lie utilisateur ↔ tenant ↔ rôle
-- **API de registration désactivée** : L'app hôte crée les comptes
+- **Propriétaires de tenant** : Créés par l'app hôte via un formulaire personnalisé
+- **Employés** : Créés par le propriétaire via son espace admin
 
-### Flux d'onboarding
+### Flux d'onboarding SaaS
 
+**Étape 1 : Le propriétaire s'inscrit (via formulaire personnalisé de l'app)**
 ```python
-# 1. L'app hôte crée le tenant (dans sa propre base)
-tenant = await my_app.create_tenant(name="Acme Corp")
+# Route personnalisée de l'app hôte (ex: POST /signup)
+@app.post("/signup")
+async def signup_tenant_owner(data: SignupSchema):
+    # 1. Créer le compte utilisateur via le package
+    owner = await acl.create_account(
+        username=data.username,
+        email=data.email,
+        password=data.password,
+    )
 
-# 2. L'app hôte crée l'utilisateur via le package
-user = await acl.create_account(
-    username="john_doe",
-    email="john@example.com",
-    password="securepassword123",
+    # 2. Créer le tenant dans votre base
+    tenant = await my_app.create_tenant(
+        name=data.business_name,  # Ex: "Pressing du Centre"
+        owner_id=owner.id,
+    )
+
+    # 3. Assigner le rôle "owner" au propriétaire
+    await acl.assign_role(
+        user_id=owner.id,
+        tenant_id=tenant.id,
+        role_name="owner",
+    )
+
+    return {"user_id": owner.id, "tenant_id": tenant.id}
+```
+
+**Étape 2 : Le propriétaire crée ses employés (via son dashboard)**
+```python
+# Dans la route admin du propriétaire (ex: POST /admin/employees)
+employee = await acl.create_account(
+    username="marie_dupont",
+    email="marie@pressing-du-centre.com",
+    password="tempPassword123",
 )
 
-# 3. L'app hôte assigne l'utilisateur au tenant avec un rôle
 await acl.assign_role(
-    user_id=user.id,
+    user_id=employee.id,
     tenant_id=tenant.id,
-    role_name="admin",  # ou role_id="..."
+    role_name="employee",
 )
 ```
 
@@ -873,6 +923,7 @@ from alak_acl import (
     ACLManager,
     ACLConfig,
     get_current_user,
+    RequireRole,
 )
 from alak_acl.auth.domain.entities.auth_user import AuthUser
 
@@ -891,7 +942,7 @@ config = ACLConfig(
     postgresql_uri="postgresql+asyncpg://user:pass@localhost/db",
     jwt_secret_key="your-production-secret-key-here",
     enable_roles_feature=True,
-    enable_public_registration=False,  # SaaS: l'app crée les comptes
+    enable_public_registration=False,  # L'app gère l'inscription
 )
 
 @asynccontextmanager
@@ -919,6 +970,34 @@ async def verify_tenant_membership(
         )
     return user, x_tenant_id
 
+# Route personnalisée d'inscription pour les propriétaires de tenant
+@app.post("/signup")
+async def signup_tenant_owner(
+    username: str,
+    email: str,
+    password: str,
+    business_name: str,
+):
+    """Inscription d'un propriétaire de business (pressing, garage, etc.)."""
+    # 1. Créer le compte utilisateur
+    owner = await acl.create_account(
+        username=username,
+        email=email,
+        password=password,
+    )
+
+    # 2. Créer le tenant dans votre base
+    tenant = await my_app.create_tenant(name=business_name, owner_id=owner.id)
+
+    # 3. Assigner le rôle "owner" au propriétaire
+    await acl.assign_role(
+        user_id=owner.id,
+        tenant_id=tenant.id,
+        role_name="owner",
+    )
+
+    return {"user_id": owner.id, "tenant_id": tenant.id, "business": business_name}
+
 @app.get("/tenant/data")
 async def get_tenant_data(membership=Depends(verify_tenant_membership)):
     user, tenant_id = membership
@@ -927,30 +1006,31 @@ async def get_tenant_data(membership=Depends(verify_tenant_membership)):
         "user": user.username
     }
 
-# Route admin pour créer un utilisateur et l'ajouter au tenant
-@app.post("/admin/users")
-async def create_user_for_tenant(
+# Route pour que le propriétaire crée un employé
+@app.post("/admin/employees")
+async def create_employee(
     username: str,
     email: str,
     password: str,
     x_tenant_id: str = Header(..., alias="X-Tenant-ID"),
-    admin: AuthUser = Depends(get_current_user),  # TODO: vérifier admin
+    owner: AuthUser = Depends(get_current_user),  # Vérifier que c'est l'owner
 ):
-    # 1. Créer l'utilisateur
-    user = await acl.create_account(
+    """Le propriétaire crée un compte employé."""
+    # 1. Créer le compte employé
+    employee = await acl.create_account(
         username=username,
         email=email,
         password=password,
     )
 
-    # 2. L'ajouter au tenant avec le rôle "user"
+    # 2. L'ajouter au tenant avec le rôle "employee"
     await acl.assign_role(
-        user_id=user.id,
+        user_id=employee.id,
         tenant_id=x_tenant_id,
-        role_name="user",
+        role_name="employee",
     )
 
-    return {"id": user.id, "username": user.username}
+    return {"id": employee.id, "username": employee.username}
 ```
 
 ## Licence
@@ -965,6 +1045,9 @@ Les contributions sont les bienvenues ! Voir [CONTRIBUTING.md](CONTRIBUTING.md)
 
 - Issues : [GitHub Issues](https://github.com/your-repo/fastapi-acl/issues)
 - Documentation : [Documentation complète](https://fastapi-acl.readthedocs.io)
+
+
+
 
 
 

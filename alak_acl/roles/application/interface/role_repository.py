@@ -101,6 +101,7 @@ class IRoleRepository(ABC):
         skip: int = 0,
         limit: int = 100,
         is_active: Optional[bool] = None,
+        tenant_id: Optional[str] = None,
     ) -> List[Role]:
         """
         Liste les rôles avec pagination.
@@ -109,6 +110,7 @@ class IRoleRepository(ABC):
             skip: Nombre d'éléments à sauter
             limit: Nombre maximum d'éléments
             is_active: Filtrer par statut actif (optionnel)
+            tenant_id: Filtrer par tenant (optionnel)
 
         Returns:
             Liste des rôles
@@ -116,12 +118,17 @@ class IRoleRepository(ABC):
         pass
 
     @abstractmethod
-    async def count_roles(self, is_active: Optional[bool] = None) -> int:
+    async def count_roles(
+        self,
+        is_active: Optional[bool] = None,
+        tenant_id: Optional[str] = None,
+    ) -> int:
         """
         Compte le nombre de rôles.
 
         Args:
             is_active: Filtrer par statut actif (optionnel)
+            tenant_id: Filtrer par tenant (optionnel)
 
         Returns:
             Nombre de rôles

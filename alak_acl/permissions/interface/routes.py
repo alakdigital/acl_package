@@ -30,7 +30,15 @@ from alak_acl.permissions.domain.entities.permission import Permission
 from alak_acl.permissions.interface.dependencies import get_permission_repository
 from alak_acl.roles.application.interface.role_repository import IRoleRepository
 from alak_acl.roles.interface.dependencies import get_role_repository
-from alak_acl.auth.interface.dependencies import get_current_superuser
+from alak_acl.auth.interface.dependencies import get_config, get_current_superuser
+from alak_acl.shared.cache.utils import (
+    CachePrefix,
+    build_cache_key,
+    get_cache_value,
+    set_cache,
+    invalidate_cache_pattern,
+)
+from alak_acl.shared.config import ACLConfig
 from alak_acl.shared.exceptions import (
     PermissionNotFoundError,
     PermissionAlreadyExistsError,
@@ -74,9 +82,24 @@ async def list_permissions(
     is_active: Optional[bool] = Query(None, description="Filtrer par statut actif"),
     category: Optional[str] = Query(None, description="Filtrer par catégorie"),
     resource: Optional[str] = Query(None, description="Filtrer par ressource"),
+    config: ACLConfig = Depends(get_config),
     repository: IPermissionRepository = Depends(get_permission_repository),
 ):
     """Liste les permissions avec pagination et filtres."""
+    # Vérifier le cache
+    if config.enable_cache:
+        cache_key = build_cache_key(
+            CachePrefix.PERMISSION,
+            params={
+                "skip": skip, "limit": limit, "is_active": is_active,
+                "category": category, "resource": resource, "action": "list"
+            },
+        )
+        cached = await get_cache_value(cache_key)
+        if cached:
+            return PermissionListResponseDTO(**cached)
+
+    # Cache MISS
     usecase = ListPermissionsUseCase(repository)
     permissions, total = await usecase.execute(
         skip=skip,
@@ -86,12 +109,18 @@ async def list_permissions(
         resource=resource,
     )
 
-    return PermissionListResponseDTO(
+    response = PermissionListResponseDTO(
         permissions=[_to_response_dto(p) for p in permissions],
         total=total,
         skip=skip,
         limit=limit,
     )
+
+    if config.enable_cache:
+        # Stocker en cache
+        await set_cache(cache_key, response, ttl=300)
+
+    return response
 
 
 @router.get(
@@ -221,6 +250,7 @@ async def get_permission_by_name(
 )
 async def create_permission(
     dto: CreatePermissionDTO,
+    config: ACLConfig = Depends(get_config),
     repository: IPermissionRepository = Depends(get_permission_repository),
     _: None = Depends(get_current_superuser),
 ):
@@ -228,6 +258,11 @@ async def create_permission(
     usecase = CreatePermissionUseCase(repository)
     try:
         permission = await usecase.execute(dto)
+        
+        if config.enable_cache:
+            # Invalider le cache des permissions
+            await invalidate_cache_pattern("ALAKACL:permission:*")
+
         return _to_response_dto(permission)
     except PermissionAlreadyExistsError as e:
         raise e
@@ -242,12 +277,18 @@ async def create_permission(
 )
 async def create_bulk_permissions(
     permissions: List[CreatePermissionDTO],
+    config: ACLConfig = Depends(get_config),
     repository: IPermissionRepository = Depends(get_permission_repository),
     _: None = Depends(get_current_superuser),
 ):
     """Crée plusieurs permissions."""
     usecase = CreateBulkPermissionsUseCase(repository)
     created = await usecase.execute(permissions)
+
+    # Invalider le cache des permissions
+    if created and config.enable_cache:
+        await invalidate_cache_pattern("ALAKACL:permission:*")
+
     return [_to_response_dto(p) for p in created]
 
 
@@ -260,6 +301,7 @@ async def create_bulk_permissions(
 async def update_permission(
     permission_id: str,
     dto: UpdatePermissionDTO,
+    config: ACLConfig = Depends(get_config),
     repository: IPermissionRepository = Depends(get_permission_repository),
     _: None = Depends(get_current_superuser),
 ):
@@ -267,6 +309,11 @@ async def update_permission(
     usecase = UpdatePermissionUseCase(repository)
     try:
         permission = await usecase.execute(permission_id, dto)
+
+        if config.enable_cache:
+            # Invalider le cache des permissions
+            await invalidate_cache_pattern("ALAKACL:permission:*")
+
         return _to_response_dto(permission)
     except PermissionNotFoundError as e:
         raise e
@@ -284,12 +331,18 @@ async def delete_permission(
     permission_id: str,
     repository: IPermissionRepository = Depends(get_permission_repository),
     role_repository: IRoleRepository = Depends(get_role_repository),
+    config: ACLConfig = Depends(get_config),
     _: None = Depends(get_current_superuser),
 ):
     """Supprime une permission."""
     usecase = DeletePermissionUseCase(repository, role_repository)
     try:
         await usecase.execute(permission_id)
+
+        if config.enable_cache:
+            # Invalider le cache des permissions
+            await invalidate_cache_pattern("ALAKACL:permission:*")
+
     except PermissionNotFoundError as e:
         raise e
     except PermissionInUseError as e:

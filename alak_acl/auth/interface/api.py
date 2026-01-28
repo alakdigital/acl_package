@@ -40,6 +40,7 @@ from alak_acl.auth.interface.dependencies import (
 )
 from alak_acl.roles.application.interface.role_repository import IRoleRepository
 from alak_acl.shared.config import ACLConfig
+from alak_acl.shared.cache.utils import CachePrefix, get_user_cache, invalidate_all_user_caches, set_user_cache
 from alak_acl.shared.exceptions import (
     ACLException,
     InvalidCredentialsError,
@@ -214,6 +215,7 @@ async def refresh_token(
 async def get_me(
     current_user: AuthUser = Depends(get_current_active_user),
     role_repository: IRoleRepository = Depends(get_role_repository),
+    config: ACLConfig = Depends(get_config),
     x_tenant_id: Optional[str] = Header(None, alias="X-Tenant-ID"),
 ) -> UserMeResponse:
     """
@@ -227,11 +229,23 @@ async def get_me(
     Args:
         current_user: Utilisateur authentifié
         role_repository: Repository des rôles
+        config: Configuration ACL
         x_tenant_id: ID du tenant (header optionnel)
 
     Returns:
         Informations utilisateur avec rôles et permissions du tenant
     """
+    # Vérifier le cache si activé
+    if config.enable_cache:
+        cached_data = await get_user_cache(
+            user_id=current_user.id,
+            tenant_id=x_tenant_id,
+            prefix=CachePrefix.USER_ME,
+        )
+        if cached_data:
+            return UserMeResponse(**cached_data)
+
+    # Cache MISS - Récupérer les données
     roles_response = []
     all_permissions = set()
     user_tenants = []
@@ -257,7 +271,7 @@ async def get_me(
         except Exception as e:
             logger.warning(f"Erreur lors de la récupération des rôles: {e}")
 
-    return UserMeResponse(
+    response = UserMeResponse(
         id=current_user.id,
         username=current_user.username,
         email=current_user.email,
@@ -270,6 +284,18 @@ async def get_me(
         permissions=sorted(list(all_permissions)),
         tenants=user_tenants,
     )
+
+    # Stocker en cache si activé
+    if config.enable_cache:
+        await set_user_cache(
+            user_id=current_user.id,
+            data=response,
+            tenant_id=x_tenant_id,
+            prefix=CachePrefix.USER_ME,
+            ttl=config.cache_ttl,
+        )
+
+    return response
 
 
 @router.post(
@@ -295,7 +321,7 @@ async def logout(
         Message de confirmation
     """
     logger.info(f"Déconnexion de l'utilisateur: {current_user.username}")
-
+    await invalidate_all_user_caches(current_user.id)
     return MessageResponse(
         message="Déconnexion réussie",
         success=True,

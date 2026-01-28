@@ -185,3 +185,31 @@ class MemoryCache(CacheBackend):
     def size(self) -> int:
         """Retourne le nombre d'entrées dans le cache."""
         return len(self._cache)
+
+    async def scan_and_delete(self, pattern: str) -> int:
+        """
+        Supprime toutes les clés correspondant au pattern.
+
+        Args:
+            pattern: Pattern de recherche (ex: "acl:user_me:*")
+                     Supporte uniquement le wildcard * en fin de pattern.
+
+        Returns:
+            Nombre de clés supprimées
+        """
+        import fnmatch
+
+        deleted_count = 0
+        keys_to_delete = [
+            key for key in self._cache.keys()
+            if fnmatch.fnmatch(key, pattern)
+        ]
+
+        for key in keys_to_delete:
+            del self._cache[key]
+            deleted_count += 1
+
+        if deleted_count > 0:
+            logger.debug(f"Cache mémoire: {deleted_count} clés supprimées (pattern: {pattern})")
+
+        return deleted_count
