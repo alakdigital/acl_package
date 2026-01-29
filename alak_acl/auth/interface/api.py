@@ -208,8 +208,8 @@ async def refresh_token(
     summary="Informations utilisateur connecté",
     description=(
         "Retourne les informations de l'utilisateur authentifié avec ses rôles et permissions. "
-        "En mode SaaS, spécifiez le header X-Tenant-ID pour obtenir les rôles/permissions "
-        "du tenant concerné."
+        "Les rôles globaux (sans tenant) sont toujours inclus. "
+        "En mode SaaS, spécifiez le header X-Tenant-ID pour inclure également les rôles du tenant."
     ),
 )
 async def get_me(
@@ -221,19 +221,19 @@ async def get_me(
     """
     Récupère les informations de l'utilisateur connecté avec ses rôles et permissions.
 
-    En mode SaaS multi-tenant:
-    - Spécifiez X-Tenant-ID pour obtenir les rôles/permissions dans ce tenant
-    - Sans X-Tenant-ID, les listes roles/permissions seront vides
+    Comportement:
+    - Les rôles globaux (tenant_id=NULL) sont toujours retournés
+    - Si X-Tenant-ID est spécifié, les rôles de ce tenant sont aussi inclus
     - La liste 'tenants' contient tous les tenants de l'utilisateur
 
     Args:
         current_user: Utilisateur authentifié
         role_repository: Repository des rôles
         config: Configuration ACL
-        x_tenant_id: ID du tenant (header optionnel)
+        x_tenant_id: ID du tenant (header optionnel, pour inclure les rôles du tenant)
 
     Returns:
-        Informations utilisateur avec rôles et permissions du tenant
+        Informations utilisateur avec rôles et permissions
     """
     # Vérifier le cache si activé
     if config.enable_cache:
@@ -255,10 +255,23 @@ async def get_me(
             # Récupérer la liste des tenants de l'utilisateur
             user_tenants = await role_repository.get_user_tenants(current_user.id)
 
-            # Récupérer les rôles pour le tenant spécifié
+            # Toujours récupérer les rôles globaux (tenant_id=NULL)
+            global_roles = await role_repository.get_user_roles(current_user.id, None)
+            for role in global_roles:
+                if role.is_active:
+                    roles_response.append(RoleResponse(
+                        id=role.id,
+                        name=role.name,
+                        display_name=role.display_name,
+                        permissions=role.permissions or [],
+                        tenant_id=None,
+                    ))
+                    all_permissions.update(role.permissions or [])
+
+            # Si un tenant est spécifié, récupérer aussi les rôles de ce tenant
             if x_tenant_id:
-                roles = await role_repository.get_user_roles(current_user.id, x_tenant_id)
-                for role in roles:
+                tenant_roles = await role_repository.get_user_roles(current_user.id, x_tenant_id)
+                for role in tenant_roles:
                     if role.is_active:
                         roles_response.append(RoleResponse(
                             id=role.id,

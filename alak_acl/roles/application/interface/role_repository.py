@@ -177,7 +177,7 @@ class IRoleRepository(ABC):
         self,
         user_id: str,
         role_id: str,
-        tenant_id: str,
+        tenant_id: Optional[str] = None,
         assigned_by: Optional[str] = None,
     ) -> bool:
         """
@@ -186,7 +186,7 @@ class IRoleRepository(ABC):
         Args:
             user_id: ID de l'utilisateur
             role_id: ID du rôle
-            tenant_id: ID du tenant (fourni par l'app hôte)
+            tenant_id: ID du tenant (None pour rôle global sans tenant)
             assigned_by: ID de l'utilisateur ayant fait l'assignation (optionnel)
 
         Returns:

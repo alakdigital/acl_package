@@ -197,9 +197,13 @@ def get_login_usecase(
 def get_register_usecase(
     auth_repository: IAuthRepository = Depends(get_auth_repository),
     password_hasher: IPasswordHasher = Depends(get_password_hasher),
+    role_repository: Optional["IRoleRepository"] = Depends(get_role_repository),
 ) -> RegisterUseCase:
     """
     Instancie le use case d'inscription.
+
+    Le role_repository est injecté pour permettre l'assignation automatique
+    du rôle par défaut lors de l'inscription.
 
     Returns:
         Instance de RegisterUseCase
@@ -207,6 +211,7 @@ def get_register_usecase(
     return RegisterUseCase(
         auth_repository=auth_repository,
         password_hasher=password_hasher,
+        role_repository=role_repository,
     )
 
 

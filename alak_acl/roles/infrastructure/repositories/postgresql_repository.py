@@ -244,10 +244,10 @@ class PostgreSQLRoleRepository(IRoleRepository):
         self,
         user_id: str,
         role_id: str,
-        tenant_id: str,
+        tenant_id: Optional[str] = None,
         assigned_by: Optional[str] = None,
     ) -> bool:
-        """Assigne un rôle à un utilisateur dans un tenant."""
+        """Assigne un rôle à un utilisateur (avec ou sans tenant)."""
         async with self._db.session() as session:
             # Vérifier que le rôle existe
             role_result = await session.execute(
@@ -307,7 +307,16 @@ class PostgreSQLRoleRepository(IRoleRepository):
         user_id: str,
         tenant_id: Optional[str] = None,
     ) -> List[Role]:
-        """Récupère les rôles d'un utilisateur."""
+        """
+        Récupère les rôles d'un utilisateur.
+
+        Args:
+            user_id: ID de l'utilisateur
+            tenant_id: ID du tenant. Si None, retourne les rôles globaux (tenant_id IS NULL).
+
+        Returns:
+            Liste des rôles de l'utilisateur pour le tenant spécifié
+        """
         async with self._db.session() as session:
             query = (
                 select(self._model_class)
@@ -315,7 +324,10 @@ class PostgreSQLRoleRepository(IRoleRepository):
                 .where(SQLMembershipModel.user_id == user_id)
             )
 
-            if tenant_id is not None:
+            # Filtrer par tenant_id (y compris NULL pour les rôles globaux)
+            if tenant_id is None:
+                query = query.where(SQLMembershipModel.tenant_id.is_(None))
+            else:
                 query = query.where(SQLMembershipModel.tenant_id == tenant_id)
 
             query = query.order_by(self._model_class.priority.desc())
