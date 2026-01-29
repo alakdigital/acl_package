@@ -34,6 +34,30 @@ Example:
     ```
 """
 
+from typing import TYPE_CHECKING
+
+# Type hints pour l'autocomplétion IDE (non exécuté à runtime)
+if TYPE_CHECKING:
+    from alak_acl.roles.infrastructure.models.sql_model import SQLRoleModel as SQLRoleModel
+    from alak_acl.roles.infrastructure.models.sql_model import SQLUserRoleModel as SQLUserRoleModel
+    from alak_acl.roles.infrastructure.models.sql_model import SQLMembershipModel as SQLMembershipModel
+    from alak_acl.roles.infrastructure.models.mongo_model import MongoRoleModel as MongoRoleModel
+    from alak_acl.roles.infrastructure.models.mongo_model import MongoUserRoleModel as MongoUserRoleModel
+    from alak_acl.roles.infrastructure.repositories.postgresql_repository import PostgreSQLRoleRepository as PostgreSQLRoleRepository
+    from alak_acl.roles.infrastructure.repositories.mysql_repository import MySQLRoleRepository as MySQLRoleRepository
+    from alak_acl.roles.infrastructure.repositories.mongodb_repository import MongoDBRoleRepository as MongoDBRoleRepository
+    from alak_acl.roles.interface.routes import router as router
+    from alak_acl.roles.interface.dependencies import (
+        set_role_dependencies as set_role_dependencies,
+        get_role_repository as get_role_repository,
+        get_current_user_roles as get_current_user_roles,
+        get_current_user_permissions as get_current_user_permissions,
+        RequireRole as RequireRole,
+        RequireRoles as RequireRoles,
+        RequirePermission as RequirePermission,
+        RequirePermissions as RequirePermissions,
+    )
+
 # Domain
 from alak_acl.roles.domain import (
     Role,

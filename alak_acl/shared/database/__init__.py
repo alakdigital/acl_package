@@ -7,6 +7,15 @@ Les imports sont conditionnels pour éviter de charger des dépendances
 non installées (ex: SQLAlchemy pour les utilisateurs MongoDB uniquement).
 """
 
+from typing import TYPE_CHECKING
+
+# Type hints pour l'autocomplétion IDE (non exécuté à runtime)
+if TYPE_CHECKING:
+    from alak_acl.shared.database.declarative_base import Base as Base
+    from alak_acl.shared.database.postgresql import PostgreSQLDatabase as PostgreSQLDatabase
+    from alak_acl.shared.database.mysql import MySQLDatabase as MySQLDatabase
+    from alak_acl.shared.database.mongodb import MongoDBDatabase as MongoDBDatabase
+
 from alak_acl.shared.database.factory import DatabaseFactory, get_database
 from alak_acl.shared.database.base import BaseDatabase
 

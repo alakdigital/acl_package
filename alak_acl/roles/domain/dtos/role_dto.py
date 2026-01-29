@@ -103,16 +103,16 @@ class RoleListResponseDTO(BaseModel):
 
 
 class AssignRoleDTO(BaseModel):
-    """DTO pour assigner/retirer un rôle à un utilisateur."""
+    """DTO pour assigner un ou plusieurs rôles à un utilisateur."""
 
     user_id: str = Field(..., description="ID de l'utilisateur")
-    role_id: str = Field(..., description="ID du rôle")
+    role_ids: List[str] = Field(..., min_length=1, description="Liste des IDs de rôles à assigner")
 
     model_config = {
         "json_schema_extra": {
             "example": {
                 "user_id": "550e8400-e29b-41d4-a716-446655440001",
-                "role_id": "550e8400-e29b-41d4-a716-446655440000",
+                "role_ids": ["550e8400-e29b-41d4-a716-446655440000", "550e8400-e29b-41d4-a716-446655440002"],
             }
         }
     }
@@ -136,21 +136,17 @@ class UserRolesResponseDTO(BaseModel):
     )
 
 
-class AddPermissionDTO(BaseModel):
-    """DTO pour ajouter une permission à un rôle."""
+class SetPermissionsDTO(BaseModel):
+    """DTO pour définir les permissions d'un rôle (remplace les existantes)."""
 
-    permission: str = Field(..., min_length=1, max_length=100, description="Permission à ajouter")
+    permissions: List[str] = Field(..., description="Permissions à attribuer (remplace les existantes)")
 
     model_config = {
         "json_schema_extra": {
             "example": {
-                "permission": "users:delete",
+                "permissions": ["users:delete", "users:update", "posts:create"],
             }
         }
     }
 
 
-class RemovePermissionDTO(BaseModel):
-    """DTO pour retirer une permission d'un rôle."""
-
-    permission: str = Field(..., min_length=1, max_length=100, description="Permission à retirer")

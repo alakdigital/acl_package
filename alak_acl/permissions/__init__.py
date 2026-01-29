@@ -34,6 +34,16 @@ Example:
     ```
 """
 
+from typing import TYPE_CHECKING
+
+# Type hints pour l'autocomplétion IDE (non exécuté à runtime)
+if TYPE_CHECKING:
+    from alak_acl.permissions.infrastructure.models.sql_model import SQLPermissionModel as SQLPermissionModel
+    from alak_acl.permissions.infrastructure.models.mongo_model import MongoPermissionModel as MongoPermissionModel
+    from alak_acl.permissions.infrastructure.repositories.postgresql_repository import PostgreSQLPermissionRepository as PostgreSQLPermissionRepository
+    from alak_acl.permissions.infrastructure.repositories.mysql_repository import MySQLPermissionRepository as MySQLPermissionRepository
+    from alak_acl.permissions.infrastructure.repositories.mongodb_repository import MongoDBPermissionRepository as MongoDBPermissionRepository
+
 # Domain
 from alak_acl.permissions.domain import (
     Permission,

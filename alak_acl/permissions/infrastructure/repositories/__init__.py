@@ -5,6 +5,14 @@ Les imports SQL sont conditionnels pour éviter de charger SQLAlchemy
 si l'utilisateur n'utilise que MongoDB.
 """
 
+from typing import TYPE_CHECKING
+
+# Type hints pour l'autocomplétion IDE (non exécuté à runtime)
+if TYPE_CHECKING:
+    from alak_acl.permissions.infrastructure.repositories.postgresql_repository import PostgreSQLPermissionRepository as PostgreSQLPermissionRepository
+    from alak_acl.permissions.infrastructure.repositories.mysql_repository import MySQLPermissionRepository as MySQLPermissionRepository
+    from alak_acl.permissions.infrastructure.repositories.mongodb_repository import MongoDBPermissionRepository as MongoDBPermissionRepository
+
 
 # Lazy imports pour éviter les erreurs de dépendances manquantes
 def __getattr__(name: str):

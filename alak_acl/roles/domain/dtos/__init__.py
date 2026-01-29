@@ -10,8 +10,7 @@ from alak_acl.roles.domain.dtos.role_dto import (
     AssignRoleDTO,
     AssignRolesDTO,
     UserRolesResponseDTO,
-    AddPermissionDTO,
-    RemovePermissionDTO,
+    SetPermissionsDTO,
 )
 
 __all__ = [
@@ -22,6 +21,5 @@ __all__ = [
     "AssignRoleDTO",
     "AssignRolesDTO",
     "UserRolesResponseDTO",
-    "AddPermissionDTO",
-    "RemovePermissionDTO",
+    "SetPermissionsDTO",
 ]

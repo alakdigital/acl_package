@@ -8,6 +8,13 @@ Les imports sont conditionnels (lazy) pour éviter de charger
 les dépendances non installées (SQLAlchemy ou motor/pymongo).
 """
 
+from typing import TYPE_CHECKING
+
+# Type hints pour l'autocomplétion IDE (non exécuté à runtime)
+if TYPE_CHECKING:
+    from alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel as SQLAuthUserModel
+    from alak_acl.auth.infrastructure.models.mongo_model import MongoAuthUserModel as MongoAuthUserModel
+
 
 # Lazy imports pour éviter les erreurs de dépendances manquantes
 def __getattr__(name: str):

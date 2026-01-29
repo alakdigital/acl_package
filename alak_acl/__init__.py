@@ -34,9 +34,21 @@ Example:
     ```
 """
 
+from typing import TYPE_CHECKING
+
 __version__ = "0.1.0"
 __author__ = "ALAK Team"
 __license__ = "MIT"
+
+# Type hints pour l'autocomplétion IDE (non exécuté à runtime)
+if TYPE_CHECKING:
+    from alak_acl.shared.database.declarative_base import Base as Base
+    from alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel as SQLAuthUserModel
+    from alak_acl.auth.infrastructure.models.mongo_model import MongoAuthUserModel as MongoAuthUserModel
+    from alak_acl.roles.infrastructure.models.sql_model import SQLRoleModel as SQLRoleModel
+    from alak_acl.roles.infrastructure.models.sql_model import SQLUserRoleModel as SQLUserRoleModel
+    from alak_acl.roles.infrastructure.models.sql_model import SQLMembershipModel as SQLMembershipModel
+    from alak_acl.permissions.infrastructure.models.sql_model import SQLPermissionModel as SQLPermissionModel
 
 from alak_acl.manager import ACLManager
 from alak_acl.shared.config import ACLConfig
@@ -132,6 +144,9 @@ def __getattr__(name: str):
     elif name == "SQLUserRoleModel":
         from alak_acl.roles.infrastructure.models.sql_model import SQLUserRoleModel
         return SQLUserRoleModel
+    elif name == "SQLMembershipModel":
+        from alak_acl.roles.infrastructure.models.sql_model import SQLMembershipModel
+        return SQLMembershipModel
     # Modèles SQL Permissions
     elif name == "SQLPermissionModel":
         from alak_acl.permissions.infrastructure.models.sql_model import SQLPermissionModel
@@ -204,5 +219,6 @@ __all__ = [
     "Base",
     "SQLRoleModel",
     "SQLUserRoleModel",
+    "SQLMembershipModel",
     "SQLPermissionModel",
 ]

@@ -5,6 +5,19 @@ Les imports sont conditionnels pour éviter de charger des dépendances
 non installées (SQLAlchemy ou motor/pymongo).
 """
 
+from typing import TYPE_CHECKING
+
+# Type hints pour l'autocomplétion IDE (non exécuté à runtime)
+if TYPE_CHECKING:
+    from alak_acl.roles.infrastructure.models.sql_model import SQLRoleModel as SQLRoleModel
+    from alak_acl.roles.infrastructure.models.sql_model import SQLUserRoleModel as SQLUserRoleModel
+    from alak_acl.roles.infrastructure.models.sql_model import SQLMembershipModel as SQLMembershipModel
+    from alak_acl.roles.infrastructure.models.mongo_model import MongoRoleModel as MongoRoleModel
+    from alak_acl.roles.infrastructure.models.mongo_model import MongoUserRoleModel as MongoUserRoleModel
+    from alak_acl.roles.infrastructure.repositories.postgresql_repository import PostgreSQLRoleRepository as PostgreSQLRoleRepository
+    from alak_acl.roles.infrastructure.repositories.mysql_repository import MySQLRoleRepository as MySQLRoleRepository
+    from alak_acl.roles.infrastructure.repositories.mongodb_repository import MongoDBRoleRepository as MongoDBRoleRepository
+
 from alak_acl.roles.infrastructure.mappers.role_mapper import RoleMapper
 
 

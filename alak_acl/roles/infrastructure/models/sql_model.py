@@ -137,17 +137,18 @@ class SQLMembershipModel(Base):
     - Appartenir à plusieurs tenants
     - Avoir plusieurs rôles dans un même tenant
     - Avoir des rôles différents selon le tenant
+    - Avoir des rôles globaux (tenant_id=NULL) assignés lors de l'inscription
 
     Attributes:
         user_id: FK vers l'utilisateur
-        tenant_id: ID du tenant (fourni par l'app hôte, pas de FK)
+        tenant_id: ID du tenant (NULL pour rôle global, sinon fourni par l'app hôte)
         role_id: FK vers le rôle
         assigned_at: Date d'assignation
         assigned_by: ID de l'utilisateur ayant fait l'assignation (optionnel)
 
     Note:
         tenant_id n'a pas de FK car les tenants sont gérés par l'app hôte,
-        pas par le package ACL.
+        pas par le package ACL. Il est nullable pour permettre les rôles globaux.
     """
 
     __tablename__ = "acl_memberships"
@@ -171,7 +172,7 @@ class SQLMembershipModel(Base):
     )
     tenant_id = Column(
         String(36),
-        nullable=False,  # Obligatoire pour SaaS
+        nullable=True,  # Nullable pour les rôles globaux (sans tenant)
         index=True,
     )
     role_id = Column(

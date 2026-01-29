@@ -7,6 +7,16 @@ Les imports sont conditionnels pour éviter de charger des dépendances
 non installées (ex: SQLAlchemy pour les utilisateurs MongoDB).
 """
 
+from typing import TYPE_CHECKING
+
+# Type hints pour l'autocomplétion IDE (non exécuté à runtime)
+if TYPE_CHECKING:
+    from alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel as SQLAuthUserModel
+    from alak_acl.auth.infrastructure.models.mongo_model import MongoAuthUserModel as MongoAuthUserModel
+    from alak_acl.auth.infrastructure.repositories.postgresql_repository import PostgreSQLAuthRepository as PostgreSQLAuthRepository
+    from alak_acl.auth.infrastructure.repositories.mysql_repository import MySQLAuthRepository as MySQLAuthRepository
+    from alak_acl.auth.infrastructure.repositories.mongodb_repository import MongoDBAuthRepository as MongoDBAuthRepository
+
 from alak_acl.auth.infrastructure.mappers.auth_user_mapper import AuthUserMapper
 from alak_acl.auth.infrastructure.services.argon2_password_hasher import Argon2PasswordHasher
 from alak_acl.auth.infrastructure.services.jwt_token_service import JWTTokenService

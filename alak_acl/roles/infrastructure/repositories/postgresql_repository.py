@@ -341,7 +341,10 @@ class PostgreSQLRoleRepository(IRoleRepository):
         async with self._db.session() as session:
             result = await session.execute(
                 select(SQLMembershipModel.tenant_id)
-                .where(SQLMembershipModel.user_id == user_id)
+                .where(
+                    SQLMembershipModel.user_id == user_id,
+                    SQLMembershipModel.tenant_id.isnot(None),  # Exclure les rôles globaux
+                )
                 .distinct()
             )
             return [row[0] for row in result.all()]

@@ -27,7 +27,7 @@ from alak_acl.roles.domain.dtos.role_dto import (
     RoleListResponseDTO,
     AssignRoleDTO,
     UserRolesResponseDTO,
-    AddPermissionDTO,
+    SetPermissionsDTO,
 )
 from alak_acl.roles.domain.entities.role import Role
 from alak_acl.roles.interface.dependencies import RequirePermission, get_role_repository
@@ -263,19 +263,20 @@ async def delete_role(
 # Routes pour les permissions des rôles
 # ==========================================
 
-@router.post(
+@router.put(
     "/{role_id}/permissions",
     response_model=RoleResponseDTO,
-    summary="Ajouter une permission",
-    description="Ajoute une permission à un rôle.",
+    summary="Définir les permissions",
+    description="Définit les permissions d'un rôle (remplace les existantes).",
 )
-async def add_permission_to_role(
+async def set_role_permissions(
     role_id: str,
-    dto: AddPermissionDTO,
+    dto: SetPermissionsDTO,
+    config: ACLConfig = Depends(get_config),
     current_user: AuthUser = Depends(RequirePermission("roles:update")),
     role_repository: IRoleRepository = Depends(get_role_repository),
 ):
-    """Ajoute une permission à un rôle."""
+    """Définit les permissions d'un rôle (remplace les existantes)."""
     role = await role_repository.get_by_id(role_id)
     if not role:
         raise HTTPException(
@@ -283,32 +284,14 @@ async def add_permission_to_role(
             detail=f"Rôle non trouvé: {role_id}",
         )
 
-    role.add_permission(dto.permission)
+    # Remplacer toutes les permissions
+    role.permissions = dto.permissions
     updated_role = await role_repository.update_role(role)
-    return role_to_response(updated_role)
 
+    if config.enable_cache:
+        # Invalider le cache des rôles du tenant concerné
+        await invalidate_cache_pattern(_build_role_cache_pattern(role.tenant_id))
 
-@router.delete(
-    "/{role_id}/permissions/{permission}",
-    response_model=RoleResponseDTO,
-    summary="Retirer une permission",
-    description="Retire une permission d'un rôle.",
-)
-async def remove_permission_from_role(
-    role_id: str,
-    permission: str,
-    current_user: AuthUser = Depends(RequirePermission("roles:update")),
-    role_repository: IRoleRepository = Depends(get_role_repository),
-):
-    """Retire une permission d'un rôle."""
-    role = await role_repository.get_by_id(role_id)
-    if not role:
-        raise RoleNotFoundError(
-            "id",f"Rôle non trouvé: {role_id}",
-        )
-
-    role.remove_permission(permission)
-    updated_role = await role_repository.update_role(role)
     return role_to_response(updated_role)
 
 
@@ -316,28 +299,33 @@ async def remove_permission_from_role(
 # Routes pour l'assignation des rôles
 # ==========================================
 
-@router.post(
+@router.put(
     "/assign",
     status_code=status.HTTP_200_OK,
-    summary="Assigner un rôle",
-    description="Assigne un rôle à un utilisateur.",
+    summary="Définir les rôles d'un utilisateur",
+    description="Définit les rôles d'un utilisateur (remplace les existants).",
 )
-async def assign_role_to_user(
+async def set_user_roles(
     dto: AssignRoleDTO,
     config: ACLConfig = Depends(get_config),
     current_user: AuthUser = Depends(RequirePermission("roles:assign")),
     role_repository: IRoleRepository = Depends(get_role_repository),
+    x_tenant_id: Optional[str] = Header(None, alias="X-Tenant-ID"),
 ):
-    """Assigne un rôle à un utilisateur."""
+    """Définit les rôles d'un utilisateur (remplace les existants)."""
     try:
-        use_case = AssignRoleUseCase(role_repository)
-        await use_case.execute(dto.user_id, dto.role_id)
+        # Utilise set_user_roles qui remplace tous les rôles existants
+        await role_repository.set_user_roles(
+            user_id=dto.user_id,
+            role_ids=dto.role_ids,
+            tenant_id=x_tenant_id,
+        )
 
         if config.enable_cache:
             # Invalider tous les caches utilisateur
             await invalidate_all_user_caches(dto.user_id)
 
-        return {"message": "Rôle assigné avec succès"}
+        return {"message": f"{len(dto.role_ids)} rôle(s) assigné(s) avec succès"}
     except RoleNotFoundError as e:
         raise e
 
