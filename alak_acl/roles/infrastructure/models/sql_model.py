@@ -9,7 +9,7 @@ from datetime import datetime
 from uuid import uuid4
 
 from sqlalchemy import Column, String, Boolean, DateTime, JSON, Integer, ForeignKey, UniqueConstraint
-from sqlalchemy.orm import declared_attr, relationship
+from sqlalchemy.orm import relationship
 
 from alak_acl.shared.database.declarative_base import Base
 
@@ -45,18 +45,12 @@ class SQLRoleModel(Base):
     """
 
     __tablename__ = "acl_roles"
-
-    @declared_attr
-    def __tablename__(cls) -> str:
-        return getattr(cls, '_custom_tablename', 'acl_roles')
-
-    @declared_attr
-    def __table_args__(cls):
-        return (
-            # Index unique composite : un nom de rôle est unique par tenant
-            # Si tenant_id=None, le nom est unique parmi les rôles globaux
-            UniqueConstraint('tenant_id', 'name', name='uq_role_tenant_name'),
-        )
+    __table_args__ = (
+        # Index unique composite : un nom de rôle est unique par tenant
+        # Si tenant_id=None, le nom est unique parmi les rôles globaux
+        UniqueConstraint('tenant_id', 'name', name='uq_role_tenant_name'),
+        {'extend_existing': True},
+    )
 
     id = Column(
         String(36),
@@ -157,13 +151,11 @@ class SQLMembershipModel(Base):
     """
 
     __tablename__ = "acl_memberships"
-
-    @declared_attr
-    def __table_args__(cls):
-        return (
-            # Un utilisateur ne peut avoir le même rôle qu'une fois par tenant
-            UniqueConstraint('user_id', 'tenant_id', 'role_id', name='uq_membership'),
-        )
+    __table_args__ = (
+        # Un utilisateur ne peut avoir le même rôle qu'une fois par tenant
+        UniqueConstraint('user_id', 'tenant_id', 'role_id', name='uq_membership'),
+        {'extend_existing': True},
+    )
 
     id = Column(
         String(36),

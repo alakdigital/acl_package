@@ -75,13 +75,14 @@ class RegisterUseCase:
         hashed_password = self._password_hasher.hash(register_dto.password)
 
         # Créer l'entité utilisateur
+        # Note: pas de tenant_id car un utilisateur peut appartenir à plusieurs tenants
+        # via la table acl_memberships (user_id, tenant_id, role_id)
         user = AuthUser(
             username=register_dto.username,
             email=register_dto.email,
             hashed_password=hashed_password,
             is_active=True,
             is_verified=False,  # Nécessite vérification email
-            tenant_id=register_dto.tenant_id,
         )
 
         # Persister l'utilisateur

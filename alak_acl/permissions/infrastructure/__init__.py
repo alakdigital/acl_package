@@ -1,20 +1,25 @@
 """
 Couche infrastructure de la feature Permissions.
 
-Les imports SQL sont conditionnels pour éviter de charger SQLAlchemy
-si l'utilisateur n'utilise que MongoDB.
+Les imports sont conditionnels pour éviter de charger des dépendances
+non installées (SQLAlchemy ou motor/pymongo).
 """
 
 from alak_acl.permissions.infrastructure.mappers.permission_mapper import PermissionMapper
-from alak_acl.permissions.infrastructure.models.mongo_model import MongoPermissionModel
 
 
 # Lazy imports pour éviter les erreurs de dépendances manquantes
 def __getattr__(name: str):
-    """Lazy loading des classes SQL pour éviter les dépendances manquantes."""
-    if name == "SQLPermissionModel":
+    """Lazy loading des classes pour éviter les dépendances manquantes."""
+    # Modèles MongoDB (nécessite motor/pymongo/bson)
+    if name == "MongoPermissionModel":
+        from alak_acl.permissions.infrastructure.models.mongo_model import MongoPermissionModel
+        return MongoPermissionModel
+    # Modèles SQL (nécessite SQLAlchemy)
+    elif name == "SQLPermissionModel":
         from alak_acl.permissions.infrastructure.models.sql_model import SQLPermissionModel
         return SQLPermissionModel
+    # Repositories
     elif name == "PostgreSQLPermissionRepository":
         from alak_acl.permissions.infrastructure.repositories.postgresql_repository import PostgreSQLPermissionRepository
         return PostgreSQLPermissionRepository

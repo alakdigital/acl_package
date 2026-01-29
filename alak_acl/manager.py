@@ -278,6 +278,12 @@ class ACLManager:
 
         # Créer les tables si PostgreSQL/MySQL
         if self._config.database_type in ("postgresql", "mysql"):
+            # Importer tous les modèles SQL pour qu'ils soient enregistrés dans le metadata
+            # AVANT de créer les tables (sinon seules certaines tables seraient créées)
+            from alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel  # noqa: F401
+            from alak_acl.roles.infrastructure.models.sql_model import SQLRoleModel, SQLMembershipModel  # noqa: F401
+            from alak_acl.permissions.infrastructure.models.sql_model import SQLPermissionModel  # noqa: F401
+
             await self._database.create_tables()
 
     async def _init_cache(self) -> None:

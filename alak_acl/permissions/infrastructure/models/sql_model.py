@@ -118,6 +118,7 @@ class SQLPermissionModel(Base):
     __table_args__ = (
         Index("idx_permission_resource_action", "resource", "action"),
         Index("idx_permission_category_active", "category", "is_active"),
+        {'extend_existing': True},
     )
 
     def __repr__(self) -> str:

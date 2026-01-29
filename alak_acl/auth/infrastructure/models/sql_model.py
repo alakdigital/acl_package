@@ -31,7 +31,7 @@ class SQLAuthUserModel(Base):
     Compatible PostgreSQL et MySQL.
 
     Ce modèle peut être étendu par le développeur pour ajouter
-    des colonnes personnalisées via héritage.
+    des colonnes personnalisées via héritage de table unique (single table inheritance).
 
     Attributes:
         id: Identifiant unique UUID (stocké en VARCHAR(36))
@@ -50,14 +50,15 @@ class SQLAuthUserModel(Base):
         via la table acl_memberships (user_id, tenant_id, role_id).
 
     Example:
-        Pour ajouter des colonnes personnalisées, créez une sous-classe:
+        Pour ajouter des colonnes personnalisées, créez une sous-classe
+        sans redéfinir __tablename__ (single table inheritance):
 
         ```python
         from sqlalchemy import Column, String, Integer
-        from alak_acl.auth.infrastructure.models import SQLAuthUserModel
+        from alak_acl import SQLAuthUserModel
 
         class CustomUserModel(SQLAuthUserModel):
-            __tablename__ = "users"
+            # Pas de __tablename__ - les colonnes sont ajoutées à acl_auth_users
 
             # Colonnes personnalisées
             phone = Column(String(20), nullable=True)
@@ -67,11 +68,7 @@ class SQLAuthUserModel(Base):
     """
 
     __tablename__ = "acl_auth_users"
-
-    # Permet aux sous-classes de définir leur propre nom de table
-    @declared_attr
-    def __tablename__(cls) -> str:
-        return getattr(cls, '_custom_tablename', 'acl_auth_users')
+    __table_args__ = {'extend_existing': True}
 
     # UUID stocké en VARCHAR(36) pour compatibilité PostgreSQL et MySQL
     id = Column(
