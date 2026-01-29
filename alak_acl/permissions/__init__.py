@@ -7,8 +7,8 @@ Supporte les wildcards pour les permissions globales.
 Example:
     ```python
     from fastapi import FastAPI
-    from fastapi_acl import ACLManager, ACLConfig
-    from fastapi_acl.permissions import Permission, CreatePermissionDTO
+    from alak_acl import ACLManager, ACLConfig
+    from alak_acl.permissions import Permission, CreatePermissionDTO
 
     app = FastAPI()
 
@@ -60,9 +60,8 @@ from alak_acl.permissions.application.usecases import (
     CreateBulkPermissionsUseCase,
 )
 
-# Infrastructure - imports directs uniquement pour les modèles Mongo et le mapper
+# Infrastructure - imports directs uniquement pour le mapper (pas de dépendance externe)
 from alak_acl.permissions.infrastructure.mappers.permission_mapper import PermissionMapper
-from alak_acl.permissions.infrastructure.models.mongo_model import MongoPermissionModel
 
 # Interface (Routes et dépendances)
 from alak_acl.permissions.interface import (
@@ -71,10 +70,15 @@ from alak_acl.permissions.interface import (
     get_permission_repository,
 )
 
-# Lazy imports pour les classes SQL qui nécessitent SQLAlchemy
+# Lazy imports pour les classes qui nécessitent des dépendances externes
 def __getattr__(name: str):
-    """Lazy loading des classes SQL pour éviter les dépendances manquantes."""
-    if name == "SQLPermissionModel":
+    """Lazy loading pour éviter les dépendances manquantes."""
+    # Modèles MongoDB (nécessite motor/pymongo)
+    if name == "MongoPermissionModel":
+        from alak_acl.permissions.infrastructure.models.mongo_model import MongoPermissionModel
+        return MongoPermissionModel
+    # Modèles SQL (nécessite SQLAlchemy)
+    elif name == "SQLPermissionModel":
         from alak_acl.permissions.infrastructure.models.sql_model import SQLPermissionModel
         return SQLPermissionModel
     elif name == "PostgreSQLPermissionRepository":

@@ -36,7 +36,7 @@ class MongoDBAuthRepository(IAuthRepository):
         # Avec modèle personnalisé
         from typing import Optional
         from pydantic import Field
-        from fastapi_acl.auth.infrastructure.models import MongoAuthUserModel
+        from alak_acl.auth.infrastructure.models import MongoAuthUserModel
 
         class CustomUserModel(MongoAuthUserModel):
             phone: Optional[str] = Field(None, max_length=20)

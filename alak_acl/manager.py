@@ -23,7 +23,6 @@ from alak_acl.auth.application.interface.token_service import ITokenService
 from alak_acl.auth.application.interface.password_hasher import IPasswordHasher
 from alak_acl.auth.infrastructure.services.jwt_token_service import JWTTokenService
 from alak_acl.auth.infrastructure.services.argon2_password_hasher import Argon2PasswordHasher
-from alak_acl.auth.infrastructure.models.mongo_model import MongoAuthUserModel
 from alak_acl.auth.infrastructure.mappers.auth_user_mapper import AuthUserMapper
 from alak_acl.auth.interface.dependencies import set_auth_dependencies, set_email_dependencies
 from alak_acl.auth.application.interface.email_service import IEmailService
@@ -50,6 +49,7 @@ if TYPE_CHECKING:
     from alak_acl.shared.database.postgresql import PostgreSQLDatabase
     from alak_acl.shared.database.mysql import MySQLDatabase
     from alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel
+    from alak_acl.auth.infrastructure.models.mongo_model import MongoAuthUserModel
 
 
 class ACLManager:
@@ -71,7 +71,7 @@ class ACLManager:
     Example:
         ```python
         from fastapi import FastAPI
-        from fastapi_acl import ACLManager, ACLConfig
+        from alak_acl import ACLManager, ACLConfig
 
         app = FastAPI()
         config = ACLConfig(
@@ -93,8 +93,8 @@ class ACLManager:
     Example avec modèle personnalisé:
         ```python
         from sqlalchemy import Column, String, Integer
-        from fastapi_acl import ACLManager, ACLConfig
-        from fastapi_acl.auth.infrastructure.models import SQLAuthUserModel
+        from alak_acl import ACLManager, ACLConfig
+        from alak_acl.auth.infrastructure.models import SQLAuthUserModel
 
         # Définir un modèle personnalisé avec des colonnes supplémentaires
         class CustomUserModel(SQLAuthUserModel):
@@ -115,7 +115,7 @@ class ACLManager:
         config: ACLConfig,
         app: Optional[FastAPI] = None,
         sql_user_model: Optional[Type["SQLAuthUserModel"]] = None,
-        mongo_user_model: Optional[Type[MongoAuthUserModel]] = None,
+        mongo_user_model: Optional[Type["MongoAuthUserModel"]] = None,
         extra_user_indexes: Optional[List[str]] = None,
     ):
         """
@@ -132,12 +132,17 @@ class ACLManager:
         self._app = app
         self._initialized = False
 
-        # Modèles personnalisés (SQL chargé uniquement si nécessaire)
+        # Modèles personnalisés (chargés uniquement si nécessaire selon le type de DB)
         self._sql_user_model = sql_user_model
         if self._sql_user_model is None and config.database_type in ("postgresql", "mysql"):
             from alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel
             self._sql_user_model = SQLAuthUserModel
-        self._mongo_user_model = mongo_user_model or MongoAuthUserModel
+
+        # Modèle Mongo (chargé uniquement si MongoDB est utilisé)
+        self._mongo_user_model = mongo_user_model
+        if self._mongo_user_model is None and config.database_type == "mongodb":
+            from alak_acl.auth.infrastructure.models.mongo_model import MongoAuthUserModel
+            self._mongo_user_model = MongoAuthUserModel
         self._extra_user_indexes = extra_user_indexes or self._parse_extra_indexes()
 
         # Infrastructure (initialisées dans initialize())

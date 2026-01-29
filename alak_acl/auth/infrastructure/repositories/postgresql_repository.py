@@ -34,7 +34,7 @@ class PostgreSQLAuthRepository(IAuthRepository):
         ```python
         # Avec modèle personnalisé
         from sqlalchemy import Column, String
-        from fastapi_acl.auth.infrastructure.models import SQLAuthUserModel
+        from alak_acl.auth.infrastructure.models import SQLAuthUserModel
 
         class CustomUserModel(SQLAuthUserModel):
             __tablename__ = "users"

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "alak-acl"
-version = "0.1.28"
+version = "0.1.29"
 description = "Package professionnel pour gérer l'authentification et les permissions ACL dans FastAPI"
 readme = "README.md"
 license = {text = "MIT"}
@@ -57,7 +57,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-postgres = [
+postgresql = [
     "sqlalchemy[asyncio]>=2,<3",
     "asyncpg>=0.31.0"
 ]
@@ -67,7 +67,7 @@ mysql = [
     "asyncmy>=0.2.10"
 ]
 
-mongo = [
+mongodb = [
     "motor>=3.3.0"
 ]
 

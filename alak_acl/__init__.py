@@ -7,7 +7,7 @@ Package professionnel pour gérer l'authentification et les permissions
 Example:
     ```python
     from fastapi import FastAPI
-    from fastapi_acl import ACLManager, ACLConfig
+    from alak_acl import ACLManager, ACLConfig
 
     app = FastAPI()
 
@@ -70,8 +70,7 @@ from alak_acl.auth.domain.dtos.register_dto import RegisterDTO
 from alak_acl.auth.domain.dtos.token_dto import TokenDTO
 from alak_acl.auth.domain.dtos.password_reset_dto import ForgotPasswordDTO, ResetPasswordDTO
 
-# Modèle MongoDB (pas de dépendance SQL)
-from alak_acl.auth.infrastructure.models.mongo_model import MongoAuthUserModel
+# Mapper Auth (pas de dépendance externe)
 from alak_acl.auth.infrastructure.mappers.auth_user_mapper import AuthUserMapper
 
 # Dépendances FastAPI Auth
@@ -111,11 +110,15 @@ from alak_acl.permissions.domain.dtos.permission_dto import (
 )
 
 
-# Lazy imports pour les modèles SQL (évite de charger SQLAlchemy si non utilisé)
+# Lazy imports pour les modèles (évite de charger les dépendances non installées)
 def __getattr__(name: str):
-    """Lazy loading des classes SQL pour éviter les dépendances manquantes."""
-    # Modèles SQL Auth
-    if name == "SQLAuthUserModel":
+    """Lazy loading des classes pour éviter les dépendances manquantes."""
+    # Modèles MongoDB Auth (nécessite motor/pymongo)
+    if name == "MongoAuthUserModel":
+        from alak_acl.auth.infrastructure.models.mongo_model import MongoAuthUserModel
+        return MongoAuthUserModel
+    # Modèles SQL Auth (nécessite SQLAlchemy)
+    elif name == "SQLAuthUserModel":
         from alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel
         return SQLAuthUserModel
     # Base SQLAlchemy

@@ -11,11 +11,11 @@ par héritage dans les sous-classes de modèles.
 from typing import Union, Dict, Any, TYPE_CHECKING, Optional, Type, Set
 
 from alak_acl.permissions.domain.entities.permission import Permission
-from alak_acl.permissions.infrastructure.models.mongo_model import MongoPermissionModel
 
-# Import conditionnel pour éviter de charger SQLAlchemy si non utilisé
+# Import conditionnel pour éviter de charger les dépendances non installées
 if TYPE_CHECKING:
     from alak_acl.permissions.infrastructure.models.sql_model import SQLPermissionModel
+    from alak_acl.permissions.infrastructure.models.mongo_model import MongoPermissionModel
 
 
 # Champs standards du modèle de base (ne sont pas des champs personnalisés)
@@ -50,7 +50,7 @@ def get_custom_columns_from_sql_model(model: Any) -> dict:
     return extra
 
 
-def get_custom_fields_from_mongo_model(model: MongoPermissionModel) -> dict:
+def get_custom_fields_from_mongo_model(model: "MongoPermissionModel") -> dict:
     """
     Extrait les champs personnalisés d'un modèle Pydantic MongoDB.
 
@@ -100,7 +100,7 @@ class PermissionMapper:
     def __init__(
         self,
         sql_model_class: Optional[Type["SQLPermissionModel"]] = None,
-        mongo_model_class: Type[MongoPermissionModel] = MongoPermissionModel,
+        mongo_model_class: Optional[Type["MongoPermissionModel"]] = None,
     ):
         """
         Initialise le mapper.
@@ -119,9 +119,16 @@ class PermissionMapper:
             self._sql_model_class = SQLPermissionModel
         return self._sql_model_class
 
+    def _get_mongo_model_class(self) -> Type["MongoPermissionModel"]:
+        """Retourne la classe Mongo, avec import lazy si nécessaire."""
+        if self._mongo_model_class is None:
+            from alak_acl.permissions.infrastructure.models.mongo_model import MongoPermissionModel
+            self._mongo_model_class = MongoPermissionModel
+        return self._mongo_model_class
+
     def to_entity(
         self,
-        model: Union["SQLPermissionModel", MongoPermissionModel, Dict[str, Any], Any]
+        model: Union["SQLPermissionModel", "MongoPermissionModel", Dict[str, Any], Any]
     ) -> Permission:
         """
         Convertit un modèle de persistance en entité Permission.
@@ -153,7 +160,8 @@ class PermissionMapper:
             )
             return entity
 
-        elif isinstance(model, MongoPermissionModel):
+        # Modèle Pydantic MongoDB - vérifie par duck typing (model_fields est spécifique à Pydantic)
+        elif hasattr(model, 'model_fields') and hasattr(model, 'resource'):
             extra_fields = get_custom_fields_from_mongo_model(model)
             return Permission(
                 id=model.id or "",
@@ -169,8 +177,8 @@ class PermissionMapper:
                 extra_fields=extra_fields,
             )
 
-        # Modèle SQL (SQLAlchemy) - vérifie par duck typing
-        elif hasattr(model, 'resource') and hasattr(model, 'action') and hasattr(model, 'is_system'):
+        # Modèle SQL (SQLAlchemy) - vérifie par duck typing (__table__ est spécifique à SQLAlchemy)
+        elif hasattr(model, '__table__') and hasattr(model, 'resource'):
             extra_fields = get_custom_columns_from_sql_model(model)
             return Permission(
                 id=model.id,
@@ -238,8 +246,8 @@ class PermissionMapper:
     def to_mongo_model(
         self,
         entity: Permission,
-        model_class: Optional[Type[MongoPermissionModel]] = None,
-    ) -> MongoPermissionModel:
+        model_class: Optional[Type["MongoPermissionModel"]] = None,
+    ) -> "MongoPermissionModel":
         """
         Convertit une entité Permission en modèle MongoDB.
 
@@ -253,7 +261,7 @@ class PermissionMapper:
         Returns:
             Modèle MongoPermissionModel
         """
-        cls = model_class or self._mongo_model_class
+        cls = model_class or self._get_mongo_model_class()
 
         model_data = {
             "id": entity.id if entity.id else None,
@@ -364,7 +372,7 @@ def to_sql_model(entity: Permission) -> "SQLPermissionModel":
     return _default_mapper.to_sql_model(entity)
 
 
-def to_mongo_model(entity: Permission) -> MongoPermissionModel:
+def to_mongo_model(entity: Permission) -> "MongoPermissionModel":
     """Alias pour PermissionMapper.to_mongo_model."""
     return _default_mapper.to_mongo_model(entity)
 

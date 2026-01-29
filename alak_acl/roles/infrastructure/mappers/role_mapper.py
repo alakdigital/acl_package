@@ -11,11 +11,11 @@ par héritage dans les sous-classes de modèles.
 from typing import Any, Type, Union, Optional, TYPE_CHECKING, Set
 
 from alak_acl.roles.domain.entities.role import Role
-from alak_acl.roles.infrastructure.models.mongo_model import MongoRoleModel
 
-# Import conditionnel pour éviter de charger SQLAlchemy si non utilisé
+# Import conditionnel pour éviter de charger les dépendances non installées
 if TYPE_CHECKING:
     from alak_acl.roles.infrastructure.models.sql_model import SQLRoleModel
+    from alak_acl.roles.infrastructure.models.mongo_model import MongoRoleModel
 
 
 # Champs standards du modèle de base (ne sont pas des champs personnalisés)
@@ -49,7 +49,7 @@ def get_custom_columns_from_sql_model(model: Any) -> dict:
     return extra
 
 
-def get_custom_fields_from_mongo_model(model: MongoRoleModel) -> dict:
+def get_custom_fields_from_mongo_model(model: "MongoRoleModel") -> dict:
     """
     Extrait les champs personnalisés d'un modèle Pydantic MongoDB.
 
@@ -94,7 +94,7 @@ class RoleMapper:
     def __init__(
         self,
         sql_model_class: Optional[Type["SQLRoleModel"]] = None,
-        mongo_model_class: Type[MongoRoleModel] = MongoRoleModel,
+        mongo_model_class: Optional[Type["MongoRoleModel"]] = None,
     ):
         """
         Initialise le mapper.
@@ -113,9 +113,16 @@ class RoleMapper:
             self._sql_model_class = SQLRoleModel
         return self._sql_model_class
 
+    def _get_mongo_model_class(self) -> Type["MongoRoleModel"]:
+        """Retourne la classe Mongo, avec import lazy si nécessaire."""
+        if self._mongo_model_class is None:
+            from alak_acl.roles.infrastructure.models.mongo_model import MongoRoleModel
+            self._mongo_model_class = MongoRoleModel
+        return self._mongo_model_class
+
     def to_entity(
         self,
-        model: Union["SQLRoleModel", MongoRoleModel, dict, Any],
+        model: Union["SQLRoleModel", "MongoRoleModel", dict, Any],
     ) -> Role:
         """
         Convertit un modèle DB en entité domaine.
@@ -148,7 +155,8 @@ class RoleMapper:
                 extra_fields=extra_fields,
             )
 
-        if isinstance(model, MongoRoleModel):
+        # Modèle Pydantic MongoDB - vérifie par duck typing (model_fields est spécifique à Pydantic)
+        if hasattr(model, 'model_fields') and hasattr(model, 'permissions'):
             extra_fields = get_custom_fields_from_mongo_model(model)
             return Role(
                 id=str(model.id) if model.id else None,
@@ -166,8 +174,8 @@ class RoleMapper:
                 extra_fields=extra_fields,
             )
 
-        # Modèle SQL (SQLAlchemy) - vérifie par duck typing
-        if hasattr(model, 'permissions') and hasattr(model, 'is_system'):
+        # Modèle SQL (SQLAlchemy) - vérifie par duck typing (__table__ est spécifique à SQLAlchemy)
+        if hasattr(model, '__table__') and hasattr(model, 'permissions'):
             extra_fields = get_custom_columns_from_sql_model(model)
             return Role(
                 id=str(model.id),
@@ -238,8 +246,8 @@ class RoleMapper:
     def to_mongo_model(
         self,
         entity: Role,
-        model_class: Optional[Type[MongoRoleModel]] = None,
-    ) -> MongoRoleModel:
+        model_class: Optional[Type["MongoRoleModel"]] = None,
+    ) -> "MongoRoleModel":
         """
         Convertit une entité en modèle Pydantic pour MongoDB.
 
@@ -253,7 +261,7 @@ class RoleMapper:
         Returns:
             Modèle Pydantic MongoDB
         """
-        cls = model_class or self._mongo_model_class
+        cls = model_class or self._get_mongo_model_class()
 
         # Champs de base
         model_data = {
@@ -363,7 +371,7 @@ class RoleMapper:
 _default_mapper = RoleMapper()
 
 
-def to_entity(model: Union["SQLRoleModel", MongoRoleModel, dict, Any]) -> Role:
+def to_entity(model: Union["SQLRoleModel", "MongoRoleModel", dict, Any]) -> Role:
     """Fonction de compatibilité - utilise le mapper par défaut."""
     return _default_mapper.to_entity(model)
 
@@ -373,7 +381,7 @@ def to_sql_model(entity: Role) -> "SQLRoleModel":
     return _default_mapper.to_sql_model(entity)
 
 
-def to_mongo_model(entity: Role) -> MongoRoleModel:
+def to_mongo_model(entity: Role) -> "MongoRoleModel":
     """Fonction de compatibilité - utilise le mapper par défaut."""
     return _default_mapper.to_mongo_model(entity)
 

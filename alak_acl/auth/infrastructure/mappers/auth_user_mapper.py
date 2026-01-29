@@ -11,11 +11,11 @@ par héritage dans les sous-classes de modèles.
 from typing import Type, Union, Optional, TYPE_CHECKING, Any, Set
 
 from alak_acl.auth.domain.entities.auth_user import AuthUser
-from alak_acl.auth.infrastructure.models.mongo_model import MongoAuthUserModel
 
-# Import conditionnel pour éviter de charger SQLAlchemy si non utilisé
+# Import conditionnel pour éviter de charger les dépendances non installées
 if TYPE_CHECKING:
     from alak_acl.auth.infrastructure.models.sql_model import SQLAuthUserModel
+    from alak_acl.auth.infrastructure.models.mongo_model import MongoAuthUserModel
 
 
 # Champs standards du modèle de base (ne sont pas des champs personnalisés)
@@ -50,7 +50,7 @@ def get_custom_columns_from_sql_model(model: Any) -> dict:
     return extra
 
 
-def get_custom_fields_from_mongo_model(model: MongoAuthUserModel) -> dict:
+def get_custom_fields_from_mongo_model(model: "MongoAuthUserModel") -> dict:
     """
     Extrait les champs personnalisés d'un modèle Pydantic MongoDB.
 
@@ -99,7 +99,7 @@ class AuthUserMapper:
     def __init__(
         self,
         sql_model_class: Optional[Type["SQLAuthUserModel"]] = None,
-        mongo_model_class: Type[MongoAuthUserModel] = MongoAuthUserModel,
+        mongo_model_class: Optional[Type["MongoAuthUserModel"]] = None,
     ):
         """
         Initialise le mapper avec les classes de modèles personnalisées.
@@ -118,9 +118,16 @@ class AuthUserMapper:
             self._sql_model_class = SQLAuthUserModel
         return self._sql_model_class
 
+    def _get_mongo_model_class(self) -> Type["MongoAuthUserModel"]:
+        """Retourne la classe Mongo, avec import lazy si nécessaire."""
+        if self._mongo_model_class is None:
+            from alak_acl.auth.infrastructure.models.mongo_model import MongoAuthUserModel
+            self._mongo_model_class = MongoAuthUserModel
+        return self._mongo_model_class
+
     def to_entity(
         self,
-        model: Union["SQLAuthUserModel", MongoAuthUserModel, dict, Any],
+        model: Union["SQLAuthUserModel", "MongoAuthUserModel", dict, Any],
     ) -> AuthUser:
         """
         Convertit un modèle DB en entité domaine.
@@ -151,7 +158,8 @@ class AuthUserMapper:
                 extra_fields=extra_fields,
             )
 
-        if isinstance(model, MongoAuthUserModel):
+        # Modèle Pydantic MongoDB - vérifie par duck typing (model_fields est spécifique à Pydantic)
+        if hasattr(model, 'model_fields') and hasattr(model, 'hashed_password'):
             extra_fields = get_custom_fields_from_mongo_model(model)
             return AuthUser(
                 id=str(model.id),
@@ -167,8 +175,8 @@ class AuthUserMapper:
                 extra_fields=extra_fields,
             )
 
-        # Modèle SQL (SQLAlchemy) - vérifie par duck typing
-        if hasattr(model, 'hashed_password') and hasattr(model, 'username'):
+        # Modèle SQL (SQLAlchemy) - vérifie par duck typing (__table__ est spécifique à SQLAlchemy)
+        if hasattr(model, '__table__') and hasattr(model, 'hashed_password'):
             extra_fields = get_custom_columns_from_sql_model(model)
             return AuthUser(
                 id=str(model.id),
@@ -235,8 +243,8 @@ class AuthUserMapper:
     def to_mongo_model(
         self,
         entity: AuthUser,
-        model_class: Optional[Type[MongoAuthUserModel]] = None,
-    ) -> MongoAuthUserModel:
+        model_class: Optional[Type["MongoAuthUserModel"]] = None,
+    ) -> "MongoAuthUserModel":
         """
         Convertit une entité en modèle Pydantic pour MongoDB.
 
@@ -250,7 +258,7 @@ class AuthUserMapper:
         Returns:
             Modèle Pydantic MongoDB
         """
-        cls = model_class or self._mongo_model_class
+        cls = model_class or self._get_mongo_model_class()
 
         # Champs de base
         model_data = {
@@ -353,7 +361,7 @@ _default_mapper = AuthUserMapper()
 
 
 # Fonctions statiques pour compatibilité avec l'ancien code
-def to_entity(model: Union["SQLAuthUserModel", MongoAuthUserModel, dict, Any]) -> AuthUser:
+def to_entity(model: Union["SQLAuthUserModel", "MongoAuthUserModel", dict, Any]) -> AuthUser:
     """Fonction de compatibilité - utilise le mapper par défaut."""
     return _default_mapper.to_entity(model)
 
@@ -363,7 +371,7 @@ def to_sql_model(entity: AuthUser) -> "SQLAuthUserModel":
     return _default_mapper.to_sql_model(entity)
 
 
-def to_mongo_model(entity: AuthUser) -> MongoAuthUserModel:
+def to_mongo_model(entity: AuthUser) -> "MongoAuthUserModel":
     """Fonction de compatibilité - utilise le mapper par défaut."""
     return _default_mapper.to_mongo_model(entity)
 

@@ -7,8 +7,8 @@ et l'assignation des rôles aux utilisateurs.
 Example:
     ```python
     from fastapi import FastAPI, Depends
-    from fastapi_acl import ACLManager, ACLConfig
-    from fastapi_acl.roles import RequireRole, RequirePermission
+    from alak_acl import ACLManager, ACLConfig
+    from alak_acl.roles import RequireRole, RequirePermission
 
     app = FastAPI()
 
@@ -66,16 +66,22 @@ from alak_acl.roles.application.usecases import (
     AssignDefaultRolesUseCase,
 )
 
-# Infrastructure - imports directs uniquement pour les modèles Mongo et le mapper
+# Infrastructure - imports directs uniquement pour le mapper (pas de dépendance externe)
 from alak_acl.roles.infrastructure.mappers.role_mapper import RoleMapper
-from alak_acl.roles.infrastructure.models.mongo_model import MongoRoleModel, MongoUserRoleModel
 
 
 # Lazy imports pour éviter les imports circulaires et les dépendances manquantes
 def __getattr__(name: str):
-    """Lazy loading pour éviter les imports circulaires."""
+    """Lazy loading pour éviter les imports circulaires et dépendances manquantes."""
+    # Modèles MongoDB (nécessite motor/pymongo)
+    if name == "MongoRoleModel":
+        from alak_acl.roles.infrastructure.models.mongo_model import MongoRoleModel
+        return MongoRoleModel
+    elif name == "MongoUserRoleModel":
+        from alak_acl.roles.infrastructure.models.mongo_model import MongoUserRoleModel
+        return MongoUserRoleModel
     # Interface (Routes et dépendances) - lazy pour éviter import circulaire avec auth
-    if name == "router":
+    elif name == "router":
         from alak_acl.roles.interface.routes import router
         return router
     elif name == "set_role_dependencies":

@@ -13,7 +13,7 @@ Gérez l'authentification, les rôles et les permissions dans vos applications F
 - **Authentication JWT** complète (access + refresh tokens)
 - **Gestion des rôles** avec permissions hiérarchiques
 - **Permissions granulaires** au format `resource:action`
-- **Multi-tenant** : Isolation des données par tenant 
+- **Multi-tenant** : Isolation des données par tenant
 - **Multi-database** : PostgreSQL, MySQL, MongoDB
 - **Cache Redis** avec fallback mémoire automatique
 - **Auto-registration** des routes dans Swagger
@@ -51,7 +51,7 @@ pip install alak-acl[all]
 ```python
 from fastapi import FastAPI, Depends
 from contextlib import asynccontextmanager
-from fastapi_acl import ACLManager, ACLConfig, get_current_user, RequireRole
+from alak_acl import ACLManager, ACLConfig, get_current_user, RequireRole
 
 # Configuration
 config = ACLConfig(
@@ -89,41 +89,41 @@ async def admin_only(user=Depends(RequireRole("admin"))):
 
 ### Authentication (`/api/v1/auth`)
 
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| POST | `/register` | Inscription (désactivé par défaut) |
-| POST | `/login` | Connexion (retourne JWT) |
-| POST | `/refresh` | Rafraîchir le token |
-| GET | `/me` | Profil utilisateur + rôles |
-| PUT | `/me` | Modifier son profil |
-| POST | `/forgot-password` | Envoie un email avec un lien de réinitialisation |
-| POST | `/reset-password` | Réinitialisation du mot de passe |
-| POST | `/change-password` | Changer de mot de passe |
+| Méthode | Endpoint           | Description                                      |
+| ------- | ------------------ | ------------------------------------------------ |
+| POST    | `/register`        | Inscription (désactivé par défaut)               |
+| POST    | `/login`           | Connexion (retourne JWT)                         |
+| POST    | `/refresh`         | Rafraîchir le token                              |
+| GET     | `/me`              | Profil utilisateur + rôles                       |
+| PUT     | `/me`              | Modifier son profil                              |
+| POST    | `/forgot-password` | Envoie un email avec un lien de réinitialisation |
+| POST    | `/reset-password`  | Réinitialisation du mot de passe                 |
+| POST    | `/change-password` | Changer de mot de passe                          |
 
 > La route `/register` est désactivée par défaut pour le mode SaaS multi-tenant.
 > Activez-la avec `enable_public_registration=True` pour les apps classiques.
 
 ### Rôles (`/api/v1/roles`)
 
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| GET | `/` | Liste des rôles |
-| POST | `/` | Créer un rôle |
-| GET | `/{id}` | Détails d'un rôle |
-| PATCH | `/{id}` | Modifier un rôle |
-| DELETE | `/{id}` | Supprimer un rôle |
-| POST | `/users/{user_id}/roles` | Assigner un rôle |
-| DELETE | `/users/{user_id}/roles/{role_id}` | Retirer un rôle |
+| Méthode | Endpoint                           | Description       |
+| ------- | ---------------------------------- | ----------------- |
+| GET     | `/`                                | Liste des rôles   |
+| POST    | `/`                                | Créer un rôle     |
+| GET     | `/{id}`                            | Détails d'un rôle |
+| PATCH   | `/{id}`                            | Modifier un rôle  |
+| DELETE  | `/{id}`                            | Supprimer un rôle |
+| POST    | `/users/{user_id}/roles`           | Assigner un rôle  |
+| DELETE  | `/users/{user_id}/roles/{role_id}` | Retirer un rôle   |
 
 ### Permissions (`/api/v1/permissions`)
 
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| GET | `/` | Liste des permissions |
-| POST | `/` | Créer une permission |
-| GET | `/search?q=` | Rechercher |
-| GET | `/resources` | Lister les ressources |
-| GET | `/categories` | Lister les catégories |
+| Méthode | Endpoint      | Description           |
+| ------- | ------------- | --------------------- |
+| GET     | `/`           | Liste des permissions |
+| POST    | `/`           | Créer une permission  |
+| GET     | `/search?q=`  | Rechercher            |
+| GET     | `/resources`  | Lister les ressources |
+| GET     | `/categories` | Lister les catégories |
 
 ## Configuration
 
@@ -161,7 +161,7 @@ ACL_DEFAULT_ADMIN_PASSWORD=admin123
 ### Via code Python
 
 ```python
-from fastapi_acl import ACLConfig
+from alak_acl import ACLConfig
 
 config = ACLConfig(
     # Database
@@ -199,7 +199,7 @@ config = ACLConfig(
 ### Protection par authentification
 
 ```python
-from fastapi_acl import get_current_user, get_current_active_user, get_current_superuser
+from alak_acl import get_current_user, get_current_active_user, get_current_superuser
 
 @app.get("/me")
 async def my_profile(user=Depends(get_current_user)):
@@ -217,7 +217,7 @@ async def superuser_only(user=Depends(get_current_superuser)):
 ### Protection par rôle
 
 ```python
-from fastapi_acl import RequireRole, RequireRoles
+from alak_acl import RequireRole, RequireRoles
 
 # Un seul rôle requis
 @app.get("/admin")
@@ -238,7 +238,7 @@ async def super_staff(user=Depends(RequireRoles(["admin", "moderator"], require_
 ### Protection par permission
 
 ```python
-from fastapi_acl import RequirePermission, RequirePermissions
+from alak_acl import RequirePermission, RequirePermissions
 
 # Une permission requise
 @app.post("/posts")
@@ -289,6 +289,7 @@ config = ACLConfig(
 ```
 
 **Caractéristiques :**
+
 - Route `/register` publique pour l'inscription
 - Les utilisateurs créent leur compte via l'API
 - Rôle par défaut assigné automatiquement
@@ -309,6 +310,7 @@ config = ACLConfig(
 ```
 
 **Caractéristiques :**
+
 - Route `/register` désactivée (l'app hôte gère l'inscription)
 - L'app hôte crée les comptes propriétaires via `acl.create_account()` + crée le tenant
 - Le propriétaire crée les comptes employés via son espace admin (`acl.create_account()`)
@@ -317,6 +319,7 @@ config = ACLConfig(
 - Idéal pour : SaaS B2B, plateformes multi-organisations
 
 **Flux typique :**
+
 1. Le propriétaire s'inscrit via un formulaire personnalisé de l'app hôte
 2. L'app hôte crée le compte (`acl.create_account()`) + le tenant + assigne le rôle owner
 3. Le propriétaire crée ses employés via son dashboard admin
@@ -336,6 +339,7 @@ config = ACLConfig(
 ```
 
 **Caractéristiques :**
+
 - Route `/register` désactivée (retourne 403)
 - L'administrateur crée tous les comptes via `acl.create_account()`
 - Idéal pour : intranets, outils internes d'entreprise
@@ -355,6 +359,7 @@ ALAK-ACL est conçu pour les applications SaaS où un utilisateur peut apparteni
 ### Flux d'onboarding SaaS
 
 **Étape 1 : Le propriétaire s'inscrit (via formulaire personnalisé de l'app)**
+
 ```python
 # Route personnalisée de l'app hôte (ex: POST /signup)
 @app.post("/signup")
@@ -383,6 +388,7 @@ async def signup_tenant_owner(data: SignupSchema):
 ```
 
 **Étape 2 : Le propriétaire crée ses employés (via son dashboard)**
+
 ```python
 # Dans la route admin du propriétaire (ex: POST /admin/employees)
 employee = await acl.create_account(
@@ -508,6 +514,7 @@ X-Tenant-ID: acme-corp-id
 ### Création de rôles par tenant
 
 Les rôles peuvent être :
+
 - **Globaux** (`tenant_id=None`) : Disponibles pour tous les tenants
 - **Spécifiques** : Créés pour un tenant particulier
 
@@ -528,6 +535,7 @@ ALAK-ACL protège l'intégrité de vos données en empêchant la suppression d'e
 ### Rôles
 
 Un rôle **ne peut pas être supprimé** s'il :
+
 - Est assigné à au moins un utilisateur
 - Contient des permissions
 
@@ -610,7 +618,7 @@ Si vous utilisez votre propre `Base`, vous devrez configurer Alembic pour combin
 
 ```python
 # alembic/env.py
-from fastapi_acl import Base as ACLBase
+from alak_acl import Base as ACLBase
 from myapp.models import Base as AppBase
 from sqlalchemy import MetaData
 
@@ -627,7 +635,7 @@ target_metadata = combined_metadata
 
 ```python
 from sqlalchemy import Column, String, Integer
-from fastapi_acl import SQLAuthUserModel, ACLManager, ACLConfig
+from alak_acl import SQLAuthUserModel, ACLManager, ACLConfig
 
 class CustomUserModel(SQLAuthUserModel):
     __tablename__ = "users"  # Optionnel: changer le nom de table
@@ -648,7 +656,7 @@ acl = ACLManager(
 
 ```python
 from pydantic import Field
-from fastapi_acl import MongoAuthUserModel, ACLManager, ACLConfig
+from alak_acl import MongoAuthUserModel, ACLManager, ACLConfig
 
 class CustomUserModel(MongoAuthUserModel):
     phone: str | None = Field(None, max_length=20)
@@ -675,7 +683,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
 
 # Importer la Base et tous les modèles
-from fastapi_acl import (
+from alak_acl import (
     Base,
     SQLAuthUserModel,
     SQLRoleModel,
@@ -727,12 +735,12 @@ alembic current
 
 ## Tables créées
 
-| Table | Description |
-|-------|-------------|
-| `acl_auth_users` | Utilisateurs (globaux) |
-| `acl_roles` | Rôles |
+| Table             | Description                |
+| ----------------- | -------------------------- |
+| `acl_auth_users`  | Utilisateurs (globaux)     |
+| `acl_roles`       | Rôles                      |
 | `acl_memberships` | Pivot user ↔ tenant ↔ role |
-| `acl_permissions` | Permissions |
+| `acl_permissions` | Permissions                |
 
 ### Structure des tables
 
@@ -740,20 +748,21 @@ alembic current
 
 Utilisateurs globaux (un utilisateur peut appartenir à plusieurs tenants).
 
-| Colonne | Type | Description |
-|---------|------|-------------|
-| `id` | VARCHAR(36) | UUID primary key |
-| `username` | VARCHAR(50) | Nom d'utilisateur (unique globalement) |
-| `email` | VARCHAR(255) | Email (unique globalement) |
-| `hashed_password` | VARCHAR(255) | Mot de passe hashé |
-| `is_active` | BOOLEAN | Compte actif |
-| `is_verified` | BOOLEAN | Email vérifié |
-| `is_superuser` | BOOLEAN | Super-administrateur |
-| `created_at` | DATETIME | Date de création |
-| `updated_at` | DATETIME | Date de mise à jour |
-| `last_login` | DATETIME | Dernière connexion |
+| Colonne           | Type         | Description                            |
+| ----------------- | ------------ | -------------------------------------- |
+| `id`              | VARCHAR(36)  | UUID primary key                       |
+| `username`        | VARCHAR(50)  | Nom d'utilisateur (unique globalement) |
+| `email`           | VARCHAR(255) | Email (unique globalement)             |
+| `hashed_password` | VARCHAR(255) | Mot de passe hashé                     |
+| `is_active`       | BOOLEAN      | Compte actif                           |
+| `is_verified`     | BOOLEAN      | Email vérifié                          |
+| `is_superuser`    | BOOLEAN      | Super-administrateur                   |
+| `created_at`      | DATETIME     | Date de création                       |
+| `updated_at`      | DATETIME     | Date de mise à jour                    |
+| `last_login`      | DATETIME     | Dernière connexion                     |
 
 **Index uniques** :
+
 - `username` - Unique globalement
 - `email` - Unique globalement
 
@@ -761,38 +770,40 @@ Utilisateurs globaux (un utilisateur peut appartenir à plusieurs tenants).
 
 Les rôles peuvent être globaux ou spécifiques à un tenant.
 
-| Colonne | Type | Description |
-|---------|------|-------------|
-| `id` | VARCHAR(36) | UUID primary key |
-| `name` | VARCHAR(50) | Nom du rôle |
-| `display_name` | VARCHAR(100) | Nom d'affichage |
-| `description` | VARCHAR(500) | Description |
-| `permissions` | JSON | Liste des permissions |
-| `is_active` | BOOLEAN | Rôle actif |
-| `is_default` | BOOLEAN | Rôle par défaut pour les nouveaux membres |
-| `is_system` | BOOLEAN | Rôle système (non supprimable) |
-| `priority` | INTEGER | Priorité |
-| `tenant_id` | VARCHAR(36) | NULL=global, sinon spécifique au tenant |
-| `created_at` | DATETIME | Date de création |
-| `updated_at` | DATETIME | Date de mise à jour |
+| Colonne        | Type         | Description                               |
+| -------------- | ------------ | ----------------------------------------- |
+| `id`           | VARCHAR(36)  | UUID primary key                          |
+| `name`         | VARCHAR(50)  | Nom du rôle                               |
+| `display_name` | VARCHAR(100) | Nom d'affichage                           |
+| `description`  | VARCHAR(500) | Description                               |
+| `permissions`  | JSON         | Liste des permissions                     |
+| `is_active`    | BOOLEAN      | Rôle actif                                |
+| `is_default`   | BOOLEAN      | Rôle par défaut pour les nouveaux membres |
+| `is_system`    | BOOLEAN      | Rôle système (non supprimable)            |
+| `priority`     | INTEGER      | Priorité                                  |
+| `tenant_id`    | VARCHAR(36)  | NULL=global, sinon spécifique au tenant   |
+| `created_at`   | DATETIME     | Date de création                          |
+| `updated_at`   | DATETIME     | Date de mise à jour                       |
 
 **Index unique composite** :
+
 - `(tenant_id, name)` - Un nom de rôle unique par tenant
 
 #### `acl_memberships`
 
 Table pivot pour lier utilisateurs, tenants et rôles.
 
-| Colonne | Type | Description |
-|---------|------|-------------|
-| `id` | VARCHAR(36) | UUID primary key |
-| `user_id` | VARCHAR(36) | FK vers acl_auth_users |
-| `tenant_id` | VARCHAR(36) | ID du tenant (fourni par l'app hôte) |
-| `role_id` | VARCHAR(36) | FK vers acl_roles |
-| `assigned_at` | DATETIME | Date d'assignation |
+| Colonne       | Type        | Description                                   |
+| ------------- | ----------- | --------------------------------------------- |
+| `id`          | VARCHAR(36) | UUID primary key                              |
+| `user_id`     | VARCHAR(36) | FK vers acl_auth_users                        |
+| `tenant_id`   | VARCHAR(36) | ID du tenant (fourni par l'app hôte)          |
+| `role_id`     | VARCHAR(36) | FK vers acl_roles                             |
+| `assigned_at` | DATETIME    | Date d'assignation                            |
 | `assigned_by` | VARCHAR(36) | ID de l'utilisateur ayant assigné (optionnel) |
 
 **Index unique** :
+
 - `(user_id, tenant_id, role_id)` - Un utilisateur ne peut avoir le même rôle qu'une fois par tenant
 
 ## Rôles et permissions par défaut
@@ -800,10 +811,12 @@ Table pivot pour lier utilisateurs, tenants et rôles.
 Au démarrage, le package crée automatiquement :
 
 **Rôles :**
+
 - `admin` : Tous les droits (`*`)
 - `user` : Droits basiques (`profile:read`, `profile:update`)
 
 **Permissions :**
+
 - `profile:read`, `profile:update`
 - `users:read`, `users:create`, `users:update`, `users:delete`
 - `roles:read`, `roles:create`, `roles:update`, `roles:delete`, `roles:assign`
@@ -814,7 +827,7 @@ Au démarrage, le package crée automatiquement :
 Le package suit une **Vertical Slice Architecture** avec Clean Architecture par feature :
 
 ```
-fastapi_acl/
+alak_acl/
 ├── auth/                    # Feature Authentication
 │   ├── domain/              # Entités et DTOs
 │   ├── application/         # Use cases et interfaces
@@ -836,7 +849,7 @@ fastapi_acl/
 ```python
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from fastapi_acl import ACLManager, ACLConfig
+from alak_acl import ACLManager, ACLConfig
 
 config = ACLConfig(
     database_type="postgresql",
@@ -859,7 +872,7 @@ acl = ACLManager(config, app=app)
 ```python
 from fastapi import FastAPI, Depends
 from contextlib import asynccontextmanager
-from fastapi_acl import (
+from alak_acl import (
     ACLManager,
     ACLConfig,
     get_current_user,
@@ -1045,12 +1058,3 @@ Les contributions sont les bienvenues ! Voir [CONTRIBUTING.md](CONTRIBUTING.md)
 
 - Issues : [GitHub Issues](https://github.com/your-repo/fastapi-acl/issues)
 - Documentation : [Documentation complète](https://fastapi-acl.readthedocs.io)
-
-
-
-
-
-
-
-
-
